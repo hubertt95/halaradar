@@ -364,6 +364,27 @@
           </div>
         </div>
 
+        <!-- 4. KUBATURA (m³) -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kubatura (m³)</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label for="minVolInput" class="block text-[10px] font-semibold text-slate-500 mb-0.5">Od (min.)</label>
+              <input type="number" id="minVolInput" min="0" step="100" placeholder="np. 1500" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+            </div>
+            <div>
+              <label for="maxVolInput" class="block text-[10px] font-semibold text-slate-500 mb-0.5">Do (max.)</label>
+              <input type="number" id="maxVolInput" min="0" step="100" placeholder="bez limitu" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <button type="button" class="vol-preset text-[11px] px-2 py-1 rounded-md border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold transition" data-min="">Wszystkie</button>
+            <button type="button" class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="1500">&ge; 1,5 tys.</button>
+            <button type="button" class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="10000">&ge; 10 tys.</button>
+            <button type="button" class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="50000">&ge; 50 tys.</button>
+          </div>
+        </div>
+
         <!-- 5. STATUS WNIOSKU I POZWOLEŃ -->
         <div>
           <div class="flex items-center justify-between mb-2">
@@ -2152,53 +2173,6 @@
       return 'https://wyszukiwarka.gunb.gov.pl/';
     }
 
-    function persistLeadsAndNotes() {
-      try {
-        localStorage.setItem(STORAGE_LEADS_KEY, JSON.stringify([...savedLeads]));
-        localStorage.setItem(STORAGE_NOTES_KEY, JSON.stringify(savedNotes));
-      } catch (e) {}
-    }
-
-    function persistUldkCache() {
-      try {
-        localStorage.setItem(STORAGE_ULDK_CACHE_KEY, JSON.stringify(uldkCache));
-      } catch (e) {}
-    }
-
-    /*************************************************************************
-     * 5. LOGIKA SMART MATCH (WYŁAPYWANIE HAL, MAGAZYNÓW I BŁĘDNYCH WPISÓW)
-     *************************************************************************/
-    function analyzeSmartMatch(rec) {
-      const reasons = [];
-      const nazwaLower = (rec.nazwa || '').toLowerCase();
-      const rodzajLower = (rec.rodzaj || '').toLowerCase();
-      const cat = normalizeCategory(rec.kategoria);
-      const kub = Number(rec.kubatura) || 0;
-
-      const matchedKw = SMART_KEYWORDS.filter(kw => nazwaLower.includes(kw));
-      if (matchedKw.length > 0) {
-        reasons.push(`słowa kluczowe w nazwie (${matchedKw.slice(0, 3).join(', ')})`);
-      }
-
-      if (['XVIII', 'XVII', 'XVI', 'XIX', 'XX'].includes(cat)) {
-        reasons.push(`kategoria obiektu ${cat}`);
-      }
-
-      if (kub >= 1500) {
-        reasons.push(`duża kubatura (${formatNumber(kub)} m³)`);
-      } else if (rodzajLower.includes('inny niż') && kub >= 500) {
-        reasons.push(`obiekt niemieszkalny (${formatNumber(kub)} m³)`);
-      }
-
-      const isMatch = reasons.length > 0;
-      const isMisclassifiedGem = isMatch && (cat === 'I' || rodzajLower.includes('jednorodzinny'));
-      if (isMisclassifiedGem) {
-        reasons.push('uwaga: prawdopodobnie błędnie zaklasyfikowany w RWDZ jako kat. I / jednorodzinny');
-      }
-
-      return { isMatch, reasons, isMisclassifiedGem };
-    }
-
     /*************************************************************************
      * 6. MAPA LEAFLET 1.9.4 + WARSTWY GUGiK WMS (EPSG:3857 + WMS 1.1.1)
      *************************************************************************/
@@ -2709,21 +2683,6 @@
       return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
     }
 
-    function getAllGminyForSelection(woj, powiat) {
-      const set = new Set();
-      if (powiat === 'wołomiński') {
-        GMINY_WOLOMINSKI.forEach(g => set.add(g));
-      }
-      allRecords.forEach(r => {
-        const matchWoj = woj === '__ALL__' || r.wojewodztwo === woj;
-        const matchPow = powiat === '__ALL__' || r.powiat === powiat;
-        if (matchWoj && matchPow && r.gmina) {
-          set.add(r.gmina);
-        }
-      });
-      return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
-    }
-
     function populateWojSelect() {
       const select = document.getElementById('wojSelect');
       const dynamicWojs = new Set(WOJEWODZTWA);
@@ -2779,8 +2738,16 @@
           </label>
         `;
       }).join('') + truncatedNote;
+
+      container.querySelectorAll('.gmina-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) {
+            locState.selectedGminy.add(cb.value);
+          } else {
+            locState.selectedGminy.delete(cb.value);
+          }
           updateSelectedGminyCount();
-          applyFilters();
+          applyFilters(false);
         });
       });
 
@@ -3530,6 +3497,35 @@
           handleCsvImport(e.dataTransfer.files[0]);
         }
       });
+
+      document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
+        allRecords = DEMO_DATA.map(r => ({ ...r, dzialki: r.dzialki.map(d => ({ ...d })) }));
+        document.getElementById('dataSourceText').textContent = 'Baza demo RWDZ';
+        locState.wojewodztwo = 'mazowieckie';
+        locState.powiat = 'wołomiński';
+        locState.selectedGminy = new Set(GMINY_WOLOMINSKI);
+        populateWojSelect();
+        applyFilters(true);
+        closeImportModal();
+        showToast('Przywrócono wbudowaną bazę demo.', 'info');
+      });
+
+      // Kaskadowy filtr lokalizacji (Województwo -> Powiat -> Gminy)
+      document.getElementById('wojSelect').addEventListener('change', (e) => {
+        locState.wojewodztwo = e.target.value;
+        locState.powiat = '__ALL__';
+        document.getElementById('powiatSearchInput').value = '';
+        document.getElementById('gminaSearchInput').value = '';
+        populatePowiatSelect();
+        locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
+        populateGminyList();
+        applyFilters(true);
+      });
+
+      document.getElementById('powiatSearchInput').addEventListener('input', (e) => {
+        populatePowiatSelect(e.target.value);
+      });
+
       document.getElementById('powiatSelect').addEventListener('change', async (e) => {
         locState.powiat = e.target.value;
         document.getElementById('gminaSearchInput').value = '';

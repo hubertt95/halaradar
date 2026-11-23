@@ -266,34 +266,46 @@
       <!-- Przewijana zawartość filtrów -->
       <div class="flex-1 overflow-y-auto p-4 space-y-5">
 
-        <!-- 1. TRYB SMART MATCH: BUDOWA HAL -->
-        <div class="p-3.5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/80">
-          <div class="flex items-start justify-between gap-2.5">
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-extrabold text-emerald-950">Smart Match: Budowa Hal</span>
-                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">ON/OFF</span>
-              </div>
-              <p class="text-[11px] text-emerald-900/80 mt-1 leading-relaxed">
-                Wyłapuje hale, magazyny, produkcję i usługi po nazwie, kategoriach (XVII, XVIII, XIX, XVI, XX) lub kubaturze &ge; 1500 m³ — nawet przy błędnej kategorii I.
-              </p>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
-              <input type="checkbox" id="smartMatchToggle" class="sr-only peer" checked />
-              <div class="w-10 h-5 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+        <!-- 1. GOTOWE FILTRY OBIEKTÓW BUDOWLANYCH (PRAWO BUDOWLANE) -->
+        <div class="p-3.5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/80 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <label for="objectPresetSelect" class="text-xs font-extrabold text-emerald-950 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+              Gotowy filtr obiektów
             </label>
+            <span id="presetBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white shrink-0">SMART MATCH</span>
           </div>
+          <select id="objectPresetSelect" class="w-full px-2.5 py-2 text-xs font-semibold bg-white border border-emerald-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs">
+            <option value="hale" selected>🏭 Hale, magazyny, produkcja i usługi (Smart Match)</option>
+            <option value="all">📋 Wszystkie obiekty budowlane (bez ograniczeń)</option>
+            <option value="mieszkalne_jedno">🏠 Budynki mieszkalne jednorodzinne (Kat. I)</option>
+            <option value="mieszkalne_wielo">🏢 Budynki wielorodzinne / bloki (Kat. XIII)</option>
+            <option value="handel_uslugi">🛍️ Handel, gastronomia, warsztaty, usługi (Kat. XVII)</option>
+            <option value="biura_hotele">💼 Biurowce, hotele, zamieszkanie zbiorowe (Kat. XIV, XVI)</option>
+            <option value="rolnicze_gosp">🚜 Rolnicze, gospodarcze, silosy, garaże (Kat. II, III, XIX)</option>
+            <option value="uzytecznosc_pub">🏫 Użyteczność publiczna: szkoły, szpitale, sport (Kat. V, IX–XII, XV)</option>
+            <option value="infrastruktura_drogi">🛣️ Drogi, mosty, parkingi, stacje paliw (Kat. IV, XX, XXII, XXV, XXVIII)</option>
+            <option value="sieci_oze">⚡ Sieci uzbrojenia, energetyka, OZE, telekom. (Kat. XXVI, XXIX, XXX)</option>
+          </select>
+          <p id="objectPresetDesc" class="text-[11px] text-emerald-900/85 leading-relaxed">
+            Wyłapuje hale, magazyny, produkcję i usługi po nazwie, kategoriach (XVII, XVIII, XIX, XVI, XX) lub kubaturze &ge; 1500 m³ — nawet przy błędnej kategorii I.
+          </p>
         </div>
 
         <!-- 2. KASKADOWY FILTR LOKALIZACJI (CAŁA POLSKA) -->
         <div class="space-y-3 bg-slate-50 border border-slate-200/90 rounded-xl p-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            Lokalizacja (Cała Polska)
-          </h3>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Lokalizacja (Cała Polska)
+            </h3>
+            <span id="bdlStatusBadge" class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600" title="Baza powiatów i gmin całej Polski (GUS BDL)">PL</span>
+          </div>
 
           <!-- Województwo -->
           <div>
@@ -352,30 +364,16 @@
           </div>
         </div>
 
-        <!-- 4. ZAKRES KUBATURY (m³) -->
+        <!-- 5. STATUS WNIOSKU I POZWOLEŃ -->
         <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kubatura obiektu (m³)</h3>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[11px] text-slate-500">Min (m³)</label>
-              <input type="number" id="minVolInput" min="0" placeholder="0" class="w-full mt-0.5 px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
-            </div>
-            <div>
-              <label class="text-[11px] text-slate-500">Max (m³)</label>
-              <input type="number" id="maxVolInput" min="0" placeholder="Bez limitu" class="w-full mt-0.5 px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" />
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Status sprawy i pozwolenia</h3>
+            <div class="flex items-center gap-1 text-[10px]">
+              <button id="statusPresetPendingBtn" class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold hover:bg-emerald-200 transition">Wnioski</button>
+              <button id="statusPresetIssuedBtn" class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200 transition">Wydane</button>
+              <button id="statusPresetAllBtn" class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200 transition">Wszystkie</button>
             </div>
           </div>
-          <div class="flex flex-wrap gap-1 mt-2">
-            <button class="vol-preset text-[11px] px-2 py-1 rounded-md border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold transition" data-min="">Wszystkie</button>
-            <button class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="500">&ge; 500</button>
-            <button class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="5000">&ge; 5 000</button>
-            <button class="vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition" data-min="50000">&ge; 50 000</button>
-          </div>
-        </div>
-
-        <!-- 5. STATUS WNIOSKU I LEADY -->
-        <div>
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Status sprawy i CRM</h3>
           <div class="space-y-1.5 text-xs">
             <label class="flex items-center justify-between p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
               <span class="flex items-center gap-2 font-medium text-slate-800">
@@ -390,6 +388,20 @@
                 W rozpatrywaniu
               </span>
               <span id="countStatusRozpatrywanie" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">0</span>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-lg border border-teal-200 bg-teal-50/40 hover:bg-teal-50 cursor-pointer">
+              <span class="flex items-center gap-2 font-semibold text-teal-900">
+                <input type="checkbox" class="status-checkbox rounded text-teal-600 focus:ring-teal-500" value="Wydane pozwolenie" />
+                Wydane pozwolenie
+              </span>
+              <span id="countStatusWydane" class="text-[10px] font-bold text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded">0</span>
+            </label>
+            <label class="flex items-center justify-between p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <span class="flex items-center gap-2 font-medium text-slate-700">
+                <input type="checkbox" class="status-checkbox rounded text-slate-600 focus:ring-slate-500" value="Rozpatrzony (inna decyzja)" />
+                Rozpatrzony (odmowa / umorz.)
+              </span>
+              <span id="countStatusInna" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">0</span>
             </label>
             <label class="flex items-center justify-between p-2 rounded-lg border border-violet-200 bg-violet-50/50 hover:bg-violet-50 cursor-pointer">
               <span class="flex items-center gap-2 font-semibold text-violet-900">
@@ -536,7 +548,11 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="w-4 h-3 rounded-xs shrink-0" style="background: rgba(37, 99, 235, 0.45); border: 2px solid #2563eb;"></span>
-              <span>Pozostałe wnioski</span>
+              <span>Pozostałe obiekty</span>
+            </div>
+            <div class="pt-1.5 mt-1 border-t border-slate-200 flex items-center gap-2 text-[10px] text-slate-500">
+              <span class="w-4 h-3 rounded-xs shrink-0" style="background: rgba(13, 148, 136, 0.25); border: 2px dashed #0d9488;"></span>
+              <span>Obrys przerywany = wydane pozwolenie / rozpatrzony</span>
             </div>
           </div>
         </div>
@@ -649,6 +665,10 @@
               <span class="text-slate-500 shrink-0">Nr sprawy / Organ</span>
               <span id="detailCaseOrgan" class="font-mono text-[11px] font-medium text-slate-800 text-right">—</span>
             </div>
+            <div id="detailDecisionRow" class="hidden p-3 flex justify-between gap-3 bg-teal-50/60">
+              <span class="text-teal-800 font-semibold shrink-0">Decyzja / Pozwolenie</span>
+              <span id="detailDecisionInfo" class="font-mono text-[11px] font-bold text-teal-900 text-right">—</span>
+            </div>
           </div>
 
           <!-- Panel Handlowy (CRM) -->
@@ -669,6 +689,12 @@
           </div>
 
           <!-- Przyciski akcji zewnętrznych -->
+          <a id="detailGunbLink" href="https://wyszukiwarka.gunb.gov.pl/" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold flex items-center justify-center gap-2 transition shadow-sm">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+            <span id="detailGunbLinkText">Przejdź na stronę wniosku (GUNB RWDZ)</span>
+          </a>
           <div class="grid grid-cols-2 gap-2">
             <a id="detailGeoportalLink" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -806,7 +832,7 @@
   <!-- ==================== GŁÓWNY SKRYPT APLIKACJI ==================== -->
   <script>
     /*************************************************************************
-     * 1. BAZA WOJEWÓDZTW, POWIATÓW I GMIN POLSKI + WSPÓŁRZĘDNE CENTRÓW
+     * 1. BAZA WOJEWÓDZTW, POWIATÓW I GMIN CAŁEJ POLSKI + GUS BDL API
      *************************************************************************/
     const WOJEWODZTWA = [
       'dolnośląskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie',
@@ -821,27 +847,76 @@
     ];
 
     const POWIATY_BY_WOJ = {
-      'dolnośląskie': ['wrocławski', 'm. Wrocław', 'legnicki', 'lubiński', 'oleśnicki', 'świdnicki', 'wałbrzyski', 'oławski', 'trzebnicki', 'średzki'],
-      'kujawsko-pomorskie': ['bydgoski', 'm. Bydgoszcz', 'toruński', 'm. Toruń', 'inowrocławski', 'włocławski', 'grudziądzki', 'świecki'],
-      'lubelskie': ['lubelski', 'm. Lublin', 'puławski', 'świdnicki', 'zamojski', 'bialski', 'chełmski', 'łukowski'],
-      'lubuskie': ['zielonogórski', 'm. Zielona Góra', 'gorzowski', 'm. Gorzów Wielkopolski', 'nowosolski', 'świebodziński', 'żarski'],
-      'łódzkie': ['łódzki wschodni', 'm. Łódź', 'pabianicki', 'zgierski', 'piotrkowski', 'bełchatowski', 'skierniewicki', 'kutnowski', 'strykowski'],
-      'małopolskie': ['krakowski', 'm. Kraków', 'wielicki', 'tarnowski', 'nowosądecki', 'chrzanowski', 'oświęcimski', 'bocheński', 'myślenicki'],
+      'dolnośląskie': ['wrocławski', 'm. Wrocław', 'legnicki', 'lubiński', 'oleśnicki', 'świdnicki', 'wałbrzyski', 'oławski', 'trzebnicki', 'średzki', 'bolesławiecki', 'głogowski', 'jeleniogórski', 'kłodzki', 'polkowicki', 'zgorzelecki'],
+      'kujawsko-pomorskie': ['bydgoski', 'm. Bydgoszcz', 'toruński', 'm. Toruń', 'inowrocławski', 'włocławski', 'grudziądzki', 'świecki', 'brodnicki', 'nakielski'],
+      'lubelskie': ['lubelski', 'm. Lublin', 'puławski', 'świdnicki', 'zamojski', 'bialski', 'chełmski', 'łukowski', 'lubartowski', 'kraśnicki'],
+      'lubuskie': ['zielonogórski', 'm. Zielona Góra', 'gorzowski', 'm. Gorzów Wielkopolski', 'nowosolski', 'świebodziński', 'żarski', 'międzyrzecki', 'słubicki'],
+      'łódzkie': ['łódzki wschodni', 'm. Łódź', 'pabianicki', 'zgierski', 'piotrkowski', 'bełchatowski', 'skierniewicki', 'kutnowski', 'tomaszowski', 'sieradzki', 'radomszczański'],
+      'małopolskie': ['krakowski', 'm. Kraków', 'wielicki', 'tarnowski', 'nowosądecki', 'chrzanowski', 'oświęcimski', 'bocheński', 'myślenicki', 'wadowicki', 'olkuski', 'nowotarski'],
       'mazowieckie': [
         'wołomiński', 'legionowski', 'miński', 'wyszkowski', 'm.st. Warszawa',
         'piaseczyński', 'pruszkowski', 'warszawski zachodni', 'otwocki', 'grodziski',
         'sochaczewski', 'nowodworski', 'płocki', 'radomski', 'siedlecki', 'żyrardowski',
-        'grójecki', 'pułtuski', 'ciechanowski', 'ostrołęcki', 'garwoliński'
+        'grójecki', 'pułtuski', 'ciechanowski', 'ostrołęcki', 'garwoliński', 'węgrowski', 'ostrowski'
       ],
-      'opolskie': ['opolski', 'm. Opole', 'kędzierzyńsko-kozielski', 'nyski', 'strzelecki', 'brzeski', 'krapkowicki'],
-      'podkarpackie': ['rzeszowski', 'm. Rzeszów', 'mielecki', 'stalowowolski', 'dębicki', 'krośnieński', 'przemyski', 'łańcucki'],
-      'podlaskie': ['białostocki', 'm. Białystok', 'łomżyński', 'suwalski', 'bielski', 'sokólski', 'augustowski'],
-      'pomorskie': ['gdański', 'm. Gdańsk', 'm. Gdynia', 'kartuski', 'wejherowski', 'tczewski', 'słupski', 'starogardzki', 'pucki'],
-      'śląskie': ['m. Katowice', 'gliwicki', 'm. Gliwice', 'mikołowski', 'bieruńsko-lędziński', 'będziński', 'bielski', 'częstochowski', 'rybnicki', 'tarnogórski', 'm. Tychy', 'm. Sosnowiec'],
-      'świętokrzyskie': ['kielecki', 'm. Kielce', 'ostrowiecki', 'starachowicki', 'sandomierski', 'jędrzejowski', 'staszowski'],
-      'warmińsko-mazurskie': ['olsztyński', 'm. Olsztyn', 'elbląski', 'iławski', 'ostródzki', 'ełcki', 'giżycki', 'szczycieński'],
-      'wielkopolskie': ['poznański', 'm. Poznań', 'kaliski', 'koniński', 'leszczyński', 'gnieźnieński', 'wrzesiński', 'śremski', 'nowotomyski', 'szamotulski'],
-      'zachodniopomorskie': ['policki', 'm. Szczecin', 'goleniowski', 'stargardzki', 'koszaliński', 'kołobrzeski', 'gryfiński']
+      'opolskie': ['opolski', 'm. Opole', 'kędzierzyńsko-kozielski', 'nyski', 'strzelecki', 'brzeski', 'krapkowicki', 'kluczborski'],
+      'podkarpackie': ['rzeszowski', 'm. Rzeszów', 'mielecki', 'stalowowolski', 'dębicki', 'krośnieński', 'przemyski', 'łańcucki', 'jarosławski', 'sanocki'],
+      'podlaskie': ['białostocki', 'm. Białystok', 'łomżyński', 'suwalski', 'bielski', 'sokólski', 'augustowski', 'wysokomazowiecki', 'zambrowski'],
+      'pomorskie': ['gdański', 'm. Gdańsk', 'm. Gdynia', 'm. Sopot', 'kartuski', 'wejherowski', 'tczewski', 'słupski', 'starogardzki', 'pucki', 'chojnicki', 'malborski'],
+      'śląskie': ['m. Katowice', 'gliwicki', 'm. Gliwice', 'mikołowski', 'bieruńsko-lędziński', 'będziński', 'bielski', 'częstochowski', 'rybnicki', 'tarnogórski', 'm. Tychy', 'm. Sosnowiec', 'pszczyński', 'cieszyński', 'wodzisławski'],
+      'świętokrzyskie': ['kielecki', 'm. Kielce', 'ostrowiecki', 'starachowicki', 'sandomierski', 'jędrzejowski', 'staszowski', 'buski', 'konecki'],
+      'warmińsko-mazurskie': ['olsztyński', 'm. Olsztyn', 'elbląski', 'iławski', 'ostródzki', 'ełcki', 'giżycki', 'szczycieński', 'mrągowski'],
+      'wielkopolskie': ['poznański', 'm. Poznań', 'kaliski', 'koniński', 'leszczyński', 'gnieźnieński', 'wrzesiński', 'śremski', 'nowotomyski', 'szamotulski', 'pilski', 'ostrowski'],
+      'zachodniopomorskie': ['policki', 'm. Szczecin', 'goleniowski', 'stargardzki', 'koszaliński', 'kołobrzeski', 'gryfiński', 'szczecinecki', 'm. Świnoujście']
+    };
+
+    // Wbudowany słownik gmin dla kluczowych powiatów (natychmiastowy start + fallback offline;
+    // pełna lista wszystkich 380 powiatów i ~2477 gmin Polski dociąga się w tle z GUS BDL API).
+    const GMINY_BY_POWIAT = {
+      'wołomiński': [...GMINY_WOLOMINSKI],
+      'legionowski': ['Jabłonna', 'Legionowo', 'Nieporęt', 'Serock', 'Wieliszew'],
+      'miński': ['Cegłów', 'Dębe Wielkie', 'Dobre', 'Halinów', 'Jakubów', 'Kałuszyn', 'Latowicz', 'Mińsk Mazowiecki', 'Mrozy', 'Siennica', 'Stanisławów', 'Sulejówek'],
+      'wyszkowski': ['Brańszczyk', 'Długosiodło', 'Rząśnik', 'Somianka', 'Wyszków', 'Zabrodzie'],
+      'm.st. Warszawa': ['Bemowo', 'Białołęka', 'Bielany', 'Mokotów', 'Ochota', 'Praga-Południe', 'Praga-Północ', 'Rembertów', 'Śródmieście', 'Targówek', 'Ursus', 'Ursynów', 'Wawer', 'Wesoła', 'Wilanów', 'Włochy', 'Wola', 'Żoliborz'],
+      'piaseczyński': ['Góra Kalwaria', 'Konstancin-Jeziorna', 'Lesznowola', 'Piaseczno', 'Prażmów', 'Tarczyn'],
+      'pruszkowski': ['Brwinów', 'Michałowice', 'Nadarzyn', 'Piastów', 'Pruszków', 'Raszyn'],
+      'warszawski zachodni': ['Błonie', 'Izabelin', 'Kampinos', 'Leszno', 'Łomianki', 'Ożarów Mazowiecki', 'Stare Babice'],
+      'otwocki': ['Celestynów', 'Józefów', 'Karczew', 'Kołbiel', 'Osieck', 'Otwock', 'Sobienie-Jeziory', 'Wiązowna'],
+      'grodziski': ['Baranów', 'Grodzisk Mazowiecki', 'Jaktorów', 'Milanówek', 'Podkowa Leśna', 'Żabia Wola'],
+      'nowodworski': ['Czosnów', 'Leoncin', 'Nasielsk', 'Nowy Dwór Mazowiecki', 'Pomiechówek', 'Zakroczym'],
+      'pułtuski': ['Gzy', 'Obryte', 'Pokrzywnica', 'Pułtusk', 'Świercze', 'Winnica', 'Zatory'],
+      'poznański': ['Buk', 'Czerwonak', 'Dopiewo', 'Kleszczewo', 'Komorniki', 'Kostrzyn', 'Kórnik', 'Luboń', 'Mosina', 'Murowana Goślina', 'Pobiedziska', 'Puszczykowo', 'Rokietnica', 'Stęszew', 'Suchy Las', 'Swarzędz', 'Tarnowo Podgórne'],
+      'm. Poznań': ['Poznań'],
+      'wrocławski': ['Czernica', 'Długołęka', 'Jordanów Śląski', 'Kąty Wrocławskie', 'Kobierzyce', 'Mietków', 'Siechnice', 'Sobótka', 'Żórawina'],
+      'm. Wrocław': ['Wrocław'],
+      'gdański': ['Cedry Wielkie', 'Kolbudy', 'Pruszcz Gdański', 'Przywidz', 'Pszczółki', 'Suchy Dąb', 'Trąbki Wielkie'],
+      'm. Gdańsk': ['Gdańsk'],
+      'm. Gdynia': ['Gdynia'],
+      'krakowski': ['Czernichów', 'Igołomia-Wawrzeńczyce', 'Iwanowice', 'Jerzmanowice-Przeginia', 'Kocmyrzów-Luborzyca', 'Krzeszowice', 'Liszki', 'Michałowice', 'Mogilany', 'Skała', 'Skawina', 'Słomniki', 'Sułoszowa', 'Świątniki Górne', 'Wielka Wieś', 'Zabierzów', 'Zielonki'],
+      'm. Kraków': ['Kraków'],
+      'm. Katowice': ['Katowice'],
+      'gliwicki': ['Gierałtowice', 'Knurów', 'Pilchowice', 'Pyskowice', 'Rudziniec', 'Sośnicowice', 'Toszek', 'Wielowieś'],
+      'łódzki wschodni': ['Andrespol', 'Brójce', 'Koluszki', 'Nowosolna', 'Rzgów', 'Tuszyn'],
+      'm. Łódź': ['Łódź'],
+      'rzeszowski': ['Błażowa', 'Boguchwała', 'Chmielnik', 'Dynów', 'Głogów Małopolski', 'Hyżne', 'Kamień', 'Krasne', 'Lubenia', 'Sokołów Małopolski', 'Świlcza', 'Trzebownisko', 'Tyczyn'],
+      'm. Rzeszów': ['Rzeszów'],
+      'lubelski': ['Bełżyce', 'Borzechów', 'Bychawa', 'Garbów', 'Głusk', 'Jabłonna', 'Jastków', 'Konopnica', 'Krzczonów', 'Niedrzwica Duża', 'Niemce', 'Strzyżewice', 'Wojciechów', 'Wólka', 'Wysokie', 'Zakrzew'],
+      'bydgoski': ['Białe Błota', 'Dąbrowa Chełmińska', 'Dobrcz', 'Koronowo', 'Nowa Wieś Wielka', 'Osielsko', 'Sicienko', 'Solec Kujawski'],
+      'policki': ['Dobra (Szczecińska)', 'Kołbaskowo', 'Nowe Warpno', 'Police'],
+      'goleniowski': ['Goleniów', 'Maszewo', 'Nowogard', 'Osina', 'Przybiernów', 'Stepnica'],
+      'kielecki': ['Bieliny', 'Bodzentyn', 'Chęciny', 'Chmielnik', 'Daleszyce', 'Górno', 'Łagów', 'Łopuszno', 'Masłów', 'Miedziana Góra', 'Morawica', 'Nowa Słupia', 'Nowiny', 'Piekoszów', 'Pierzchnica', 'Raków', 'Strawczyn', 'Zagnańsk'],
+      'białostocki': ['Choroszcz', 'Czarna Białostocka', 'Dobrzyniewo Duże', 'Gródek', 'Juchnowiec Kościelny', 'Łapy', 'Michałowo', 'Poświętne', 'Supraśl', 'Suraż', 'Turośń Kościelna', 'Tykocin', 'Wasilków', 'Zabłudów', 'Zawady'],
+      'olsztyński': ['Barczewo', 'Biskupiec', 'Dobre Miasto', 'Dywity', 'Gietrzwałd', 'Jeziorany', 'Jonkowo', 'Kolno', 'Olsztynek', 'Purda', 'Stawiguda', 'Świątki'],
+      'opolski': ['Chrząstowice', 'Dąbrowa', 'Dobrzeń Wielki', 'Komprachcice', 'Łubniany', 'Murów', 'Niemodlin', 'Ozimek', 'Popielów', 'Prószków', 'Tarnów Opolski', 'Tułowice', 'Turawa'],
+      'zielonogórski': ['Babimost', 'Bojadła', 'Czerwieńsk', 'Kargowa', 'Nowogród Bobrzański', 'Sulechów', 'Świdnica', 'Trzebiechów', 'Zabór']
+    };
+
+    // Mapowanie 2-cyfrowego kodu TERYT województwa (pozycje 2..4 w 12-znakowym ID BDL GUS)
+    const BDL_WOJ_CODE_MAP = {
+      '02': 'dolnośląskie', '04': 'kujawsko-pomorskie', '06': 'lubelskie', '08': 'lubuskie',
+      '10': 'łódzkie', '12': 'małopolskie', '14': 'mazowieckie', '16': 'opolskie',
+      '18': 'podkarpackie', '20': 'podlaskie', '22': 'pomorskie', '24': 'śląskie',
+      '26': 'świętokrzyskie', '28': 'warmińsko-mazurskie', '30': 'wielkopolskie', '32': 'zachodniopomorskie'
     };
 
     const AREA_CENTERS = {
@@ -852,6 +927,9 @@
       'm.st. warszawa': [52.230, 21.012, 11],
       'piaseczyński': [52.073, 21.026, 11],
       'pruszkowski': [52.170, 20.805, 12],
+      'otwocki': [52.105, 21.261, 11],
+      'warszawski zachodni': [52.235, 20.730, 11],
+      'grodziski': [52.107, 20.633, 11],
       'poznański': [52.406, 16.925, 11],
       'wrocławski': [51.108, 17.038, 11],
       'gdański': [54.260, 18.635, 11],
@@ -872,18 +950,73 @@
       'podkarpackie': [50.00, 22.00, 8],
       'zachodniopomorskie': [53.50, 15.20, 8],
       'kujawsko-pomorskie': [53.05, 18.45, 8],
-      'lubelskie': [51.25, 22.80, 8]
+      'lubelskie': [51.25, 22.80, 8],
+      'lubuskie': [52.20, 15.50, 8],
+      'opolskie': [50.67, 17.92, 9],
+      'podlaskie': [53.13, 23.16, 8],
+      'świętokrzyskie': [50.87, 20.63, 9],
+      'warmińsko-mazurskie': [53.78, 20.48, 8]
     };
 
     const CATEGORY_OPTIONS = [
       { id: 'XVIII', label: 'XVIII — Przemysłowe / Magazynowe' },
-      { id: 'XVII', label: 'XVII — Handlowe / Usługowe' },
+      { id: 'XVII', label: 'XVII — Handlowe / Usługowe / Warsztaty' },
       { id: 'XVI', label: 'XVI — Biurowe / Konferencyjne' },
-      { id: 'XIX', label: 'XIX — Zbiorniki / Silosy' },
-      { id: 'XX', label: 'XX — Stacje paliw / Zaplecze' },
-      { id: 'I', label: 'I — Mieszkalne (też błędne wpisy)' },
-      { id: 'Brak', label: 'Brak / Niepodana w wniosku' }
+      { id: 'XIV', label: 'XIV — Hotele / Zamieszkanie zbiorowe' },
+      { id: 'XIX', label: 'XIX — Zbiorniki / Silosy / Elewatory' },
+      { id: 'XX', label: 'XX — Stacje paliw' },
+      { id: 'I', label: 'I — Mieszkalne jednorodzinne' },
+      { id: 'XIII', label: 'XIII — Mieszkalne wielorodzinne (bloki)' },
+      { id: 'II', label: 'II — Gospodarka rolna (obory, stodoły)' },
+      { id: 'III', label: 'III — Gospodarcze / Letniskowe / Garaże' },
+      { id: 'IX-XII', label: 'V, IX–XII, XV — Szkoły, szpitale, sport, kultura' },
+      { id: 'XXV-XXVIII', label: 'IV, XXII, XXV, XXVIII — Drogi, mosty, parkingi' },
+      { id: 'XXVI-XXX', label: 'XXVI, XXIX, XXX — Sieci, OZE, oczyszczalnie' },
+      { id: 'Brak', label: 'Brak / Inne / Niepodana we wniosku' }
     ];
+
+    const OBJECT_PRESETS = {
+      hale: {
+        badge: 'SMART MATCH',
+        desc: 'Wyłapuje hale, magazyny, produkcję i usługi po nazwie, kategoriach (XVII, XVIII, XIX, XVI, XX) lub kubaturze ≥ 1500 m³ — nawet przy błędnej kategorii I.'
+      },
+      all: {
+        badge: 'WSZYSTKIE',
+        desc: 'Pokazuje wszystkie rodzaje obiektów budowlanych bez ograniczeń branżowych.'
+      },
+      mieszkalne_jedno: {
+        badge: 'KAT. I',
+        desc: 'Budynki mieszkalne jednorodzinne wolnostojące, bliźniacze i szeregowe (wymagające pozwolenia na budowę).'
+      },
+      mieszkalne_wielo: {
+        badge: 'KAT. XIII',
+        desc: 'Budynki mieszkalne wielorodzinne, bloki, apartamentowce i osiedla deweloperskie.'
+      },
+      handel_uslugi: {
+        badge: 'KAT. XVII',
+        desc: 'Sklepy, parki handlowe, restauracje, warsztaty, serwisy, myjnie i budynki usługowe.'
+      },
+      biura_hotele: {
+        badge: 'KAT. XIV, XVI',
+        desc: 'Biurowce, budynki administracyjne, hotele, pensjonaty, akademiki i domy opieki.'
+      },
+      rolnicze_gosp: {
+        badge: 'KAT. II, III, XIX',
+        desc: 'Budynki inwentarskie (obory, kurniki), składowe rolnicze, silosy, garaże i budynki gospodarcze.'
+      },
+      uzytecznosc_pub: {
+        badge: 'PUBLICZNE',
+        desc: 'Szkoły, przedszkola, żłobki, szpitale, przychodnie, hale sportowe, obiekty kultury i kultu religijnego.'
+      },
+      infrastruktura_drogi: {
+        badge: 'DROGI / PALIWA',
+        desc: 'Drogi, mosty, wiadukty, parkingi, place składowe, stacje paliw i obiekty kolejowe.'
+      },
+      sieci_oze: {
+        badge: 'SIECI / OZE',
+        desc: 'Sieci elektroenergetyczne, wod-kan, gazowe, farmy fotowoltaiczne, maszty telekomunikacyjne i oczyszczalnie.'
+      }
+    };
 
     const SMART_KEYWORDS = [
       'hal', 'magazyn', 'produkcyjn', 'logistyczn', 'usługow', 'uslugow',
@@ -987,6 +1120,10 @@
         id: cfg.id,
         status: cfg.status || 'Złożony wniosek',
         data_wplywu: cfg.data_wplywu,
+        nr_decyzji: cfg.nr_decyzji || '',
+        data_decyzji: cfg.data_decyzji || '',
+        gunb_uuid: cfg.gunb_uuid || '',
+        gunb_url: cfg.gunb_url || '',
         wojewodztwo: cfg.wojewodztwo || 'mazowieckie',
         powiat: cfg.powiat || 'wołomiński',
         gmina: cfg.gmina,
@@ -1006,7 +1143,7 @@
     }
 
     /*************************************************************************
-     * 3. DANE DEMONSTRACYJNE (~26 W POW. WOŁOMIŃSKIM + ~16 W CAŁEJ POLSCE)
+     * 3. DANE DEMONSTRACYJNE (WNIOSKI + WYDANE POZWOLENIA + INNE OBIEKTY)
      *************************************************************************/
     const DEMO_DATA = [
       // === 5 KLUCZOWYCH PRZYKŁADÓW UŻYTKOWNIKA (POWIAT WOŁOMIŃSKI) ===
@@ -1607,6 +1744,162 @@
         inwestor: 'AeroValley Industries Sp. z o.o.',
         lat: 50.1095, lng: 22.0420, angle: -24,
         dzialki: [{ id_teryt: '181613_2.0002.1890/4', obreb: '0002 Jasionka', nr: '1890/4' }]
+      }),
+
+      // === PRZYKŁADOWE WYDANE POZWOLENIA I ROZPATRZONE SPRAWY (POW. WOŁOMIŃSKI I POLSKA) ===
+      makeRecord({
+        id: 'WP-001',
+        status: 'Wydane pozwolenie',
+        data_wplywu: '2026-08-14',
+        nr_decyzji: '1142/2026',
+        data_decyzji: '2026-10-21',
+        gmina: 'Radzymin',
+        miejscowosc: 'Ciemne (strefa S8)',
+        ulica: 'ul. Wołomińska',
+        kategoria: 'XVIII',
+        nazwa: 'Budowa hali magazynowo-logistycznej H2 z dokami przeładunkowymi i częścią biurową',
+        kubatura: 162400,
+        inwestor: 'Radzymin S8 Park Sp. z o.o.',
+        nr_sprawy: 'WAB.6740.1142.2026',
+        lat: 52.3915, lng: 21.1865, angle: 18,
+        dzialki: [
+          { id_teryt: '143409_5.0005.221/4', obreb: '0005 Ciemne', nr: '221/4' },
+          { id_teryt: '143409_5.0005.222/1', obreb: '0005 Ciemne', nr: '222/1' }
+        ]
+      }),
+      makeRecord({
+        id: 'WP-002',
+        status: 'Wydane pozwolenie',
+        data_wplywu: '2026-07-29',
+        nr_decyzji: '985/2026',
+        data_decyzji: '2026-10-03',
+        gmina: 'Marki',
+        miejscowosc: 'Marki',
+        ulica: 'ul. Słoneczna',
+        kategoria: 'XVII',
+        nazwa: 'Budowa budynku handlowo-usługowego z garażem wielostanowiskowym',
+        kubatura: 18900,
+        inwestor: 'Marki Retail Center Sp. z o.o.',
+        nr_sprawy: 'WAB.6740.985.2026',
+        lat: 52.3235, lng: 21.1040, angle: -14,
+        dzialki: [{ id_teryt: '143402_1.0006.104/2', obreb: '0006 Marki 4-06', nr: '104/2' }]
+      }),
+      makeRecord({
+        id: 'WP-003',
+        status: 'Wydane pozwolenie',
+        data_wplywu: '2026-09-02',
+        nr_decyzji: '1290/2026',
+        data_decyzji: '2026-11-05',
+        gmina: 'Wołomin',
+        miejscowosc: 'Wołomin',
+        ulica: 'ul. Geodetów',
+        kategoria: 'XIII',
+        nazwa: 'Budowa budynku mieszkalnego wielorodzinnego (64 lokale) z garażem podziemnym',
+        kubatura: 24500,
+        inwestor: 'Wołomin Development Sp. z o.o.',
+        nr_sprawy: 'WAB.6740.1290.2026',
+        lat: 52.3510, lng: 21.2380, angle: 22,
+        dzialki: [{ id_teryt: '143412_4.0012.45/8', obreb: '0012 Wołomin 12', nr: '45/8' }]
+      }),
+      makeRecord({
+        id: 'WP-004',
+        status: 'Rozpatrzony (inna decyzja)',
+        data_wplywu: '2026-08-05',
+        nr_decyzji: 'Umorzenie 1044/2026',
+        data_decyzji: '2026-10-12',
+        gmina: 'Kobyłka',
+        miejscowosc: 'Kobyłka',
+        ulica: 'ul. Napoleona',
+        kategoria: 'XVIII',
+        nazwa: 'Budowa hali magazynowo-usługowej z placem składowym (postępowanie umorzone)',
+        kubatura: 14600,
+        inwestor: 'Kobyłka Invest Sp. j.',
+        nr_sprawy: 'WAB.6740.1044.2026',
+        lat: 52.3515, lng: 21.1790, angle: 8,
+        dzialki: [{ id_teryt: '143401_1.0019.88/3', obreb: '0019 Kobyłka 19', nr: '88/3' }]
+      }),
+      makeRecord({
+        id: 'WP-005',
+        status: 'Wydane pozwolenie',
+        data_wplywu: '2026-08-19',
+        nr_decyzji: '712/2026',
+        data_decyzji: '2026-10-28',
+        wojewodztwo: 'mazowieckie', powiat: 'legionowski', gmina: 'Serock',
+        miejscowosc: 'Serock', ulica: 'ul. Pułtuska',
+        kategoria: 'XIV',
+        nazwa: 'Budowa kompleksu hotelowo-konferencyjnego z częścią SPA',
+        kubatura: 32800,
+        inwestor: 'Zegrze Resort Sp. z o.o.',
+        nr_sprawy: 'AB.6740.712.2026',
+        lat: 52.5120, lng: 21.0640, angle: -18,
+        dzialki: [{ id_teryt: '140804_4.0001.142/5', obreb: '0001 Serock', nr: '142/5' }]
+      }),
+
+      // === PRZYKŁADOWE INNE OBIEKTY BUDOWLANE (DLA GOTOWYCH FILTRÓW PRAWA BUDOWLANEGO) ===
+      makeRecord({
+        id: 'OB-001',
+        data_wplywu: '2026-11-16',
+        gmina: 'Ząbki',
+        miejscowosc: 'Ząbki',
+        ulica: 'ul. Andersena',
+        kategoria: 'XIII',
+        nazwa: 'Budowa zespołu dwóch budynków mieszkalnych wielorodzinnych z usługami w parterze',
+        kubatura: 38200,
+        inwestor: 'Ząbki Mieszkania Sp. z o.o.',
+        lat: 52.2945, lng: 21.1165, angle: 12,
+        dzialki: [{ id_teryt: '143403_1.0012.71/4', obreb: '0012 Ząbki 03-12', nr: '71/4' }]
+      }),
+      makeRecord({
+        id: 'OB-002',
+        data_wplywu: '2026-11-13',
+        gmina: 'Zielonka',
+        miejscowosc: 'Zielonka',
+        ulica: 'ul. Wyszyńskiego',
+        kategoria: 'IX',
+        nazwa: 'Budowa przedszkola publicznego ze żłobkiem i salą wielofunkcyjną',
+        kubatura: 8450,
+        inwestor: 'Miasto Zielonka',
+        lat: 52.3065, lng: 21.1610, angle: -10,
+        dzialki: [{ id_teryt: '143404_1.0007.92/1', obreb: '0007 Zielonka 07', nr: '92/1' }]
+      }),
+      makeRecord({
+        id: 'OB-003',
+        data_wplywu: '2026-11-11',
+        gmina: 'Jadów',
+        miejscowosc: 'Myszadła',
+        ulica: 'ul. Wiejska',
+        kategoria: 'II',
+        nazwa: 'Budowa budynku inwentarskiego (obora wolnostanowiskowa) ze zbiornikiem na gnojowicę',
+        kubatura: 5200,
+        inwestor: 'Gospodarstwo Rolne Myszadła',
+        lat: 52.4640, lng: 21.6015, angle: 25,
+        dzialki: [{ id_teryt: '143406_5.0015.118/2', obreb: '0015 Myszadła', nr: '118/2' }]
+      }),
+      makeRecord({
+        id: 'OB-004',
+        data_wplywu: '2026-11-14',
+        gmina: 'Dąbrówka',
+        miejscowosc: 'Małopole (przy S8)',
+        ulica: 'ul. Szkolna',
+        kategoria: 'XX',
+        nazwa: 'Budowa stacji paliw płynnych i LPG z punktem ładowania pojazdów elektrycznych (MOP)',
+        kubatura: 2850,
+        inwestor: 'Energia-Paliwa S.A.',
+        lat: 52.4625, lng: 21.2420, angle: -22,
+        dzialki: [{ id_teryt: '143405_2.0011.64/7', obreb: '0011 Małopole', nr: '64/7' }]
+      }),
+      makeRecord({
+        id: 'OB-005',
+        data_wplywu: '2026-11-10',
+        gmina: 'Strachówka',
+        miejscowosc: 'Równe',
+        ulica: '',
+        kategoria: 'XXVI',
+        nazwa: 'Budowa elektrowni słonecznej (farmy fotowoltaicznej PV 2 MW) wraz ze stacją transformatorową i siecią SN',
+        kubatura: 450,
+        inwestor: 'SunPower Mazowsze Sp. z o.o.',
+        lat: 52.3920, lng: 21.5610, angle: 5,
+        dzialki: [{ id_teryt: '143410_2.0012.201/3', obreb: '0012 Równe', nr: '201/3' }]
       })
     ];
 
@@ -1616,6 +1909,8 @@
     const STORAGE_LEADS_KEY = 'halaradar_leads_v2';
     const STORAGE_NOTES_KEY = 'halaradar_notes_v2';
     const STORAGE_ULDK_CACHE_KEY = 'halaradar_uldk_cache_v2';
+    const STORAGE_BDL_POWIATY_KEY = 'halaradar_bdl_powiaty_v1';
+    const STORAGE_BDL_GMINY_KEY = 'halaradar_bdl_gminy_v1';
 
     let allRecords = DEMO_DATA.map(r => ({ ...r, dzialki: r.dzialki.map(d => ({ ...d })) }));
     let filteredRecords = [];
@@ -1625,6 +1920,11 @@
     let uldkCache = {};
     let uldkQueueRunning = false;
     let uldkAbortToken = 0;
+
+    // Cache GUS BDL dla całej Polski (380 powiatów i ~2477 gmin)
+    let bdlPowiatyMeta = {}; // woj -> [{ name, bdlId }]
+    let bdlGminyCache = {};  // powiatNameLower -> [gminaName, ...]
+    let bdlPowiatsLoaded = false;
 
     let locState = {
       wojewodztwo: 'mazowieckie',
@@ -1641,8 +1941,215 @@
       if (rawNotes) savedNotes = JSON.parse(rawNotes);
       const rawUldk = localStorage.getItem(STORAGE_ULDK_CACHE_KEY);
       if (rawUldk) uldkCache = JSON.parse(rawUldk);
+      const rawBdlPow = localStorage.getItem(STORAGE_BDL_POWIATY_KEY);
+      if (rawBdlPow) {
+        bdlPowiatyMeta = JSON.parse(rawBdlPow);
+        bdlPowiatsLoaded = Object.keys(bdlPowiatyMeta).length >= 16;
+      }
+      const rawBdlGm = localStorage.getItem(STORAGE_BDL_GMINY_KEY);
+      if (rawBdlGm) bdlGminyCache = JSON.parse(rawBdlGm);
     } catch (e) {
       console.warn('Brak dostępu do localStorage:', e);
+    }
+
+    function persistLeadsAndNotes() {
+      try {
+        localStorage.setItem(STORAGE_LEADS_KEY, JSON.stringify([...savedLeads]));
+        localStorage.setItem(STORAGE_NOTES_KEY, JSON.stringify(savedNotes));
+      } catch (e) {}
+    }
+
+    function persistUldkCache() {
+      try {
+        localStorage.setItem(STORAGE_ULDK_CACHE_KEY, JSON.stringify(uldkCache));
+      } catch (e) {}
+    }
+
+    function persistBdlCache() {
+      try {
+        localStorage.setItem(STORAGE_BDL_POWIATY_KEY, JSON.stringify(bdlPowiatyMeta));
+        localStorage.setItem(STORAGE_BDL_GMINY_KEY, JSON.stringify(bdlGminyCache));
+      } catch (e) {}
+    }
+
+    function normalizeBdlPowiatName(rawName) {
+      const s = String(rawName || '').trim();
+      if (/^Powiat m\. st\. Warszawa$/i.test(s) || /^Powiat m\.st\. Warszawa$/i.test(s)) return 'm.st. Warszawa';
+      if (/^Powiat m\.\s*/i.test(s)) return s.replace(/^Powiat\s+/i, '');
+      return s.replace(/^Powiat\s+/i, '');
+    }
+
+    function normalizeBdlGminaName(rawName) {
+      return String(rawName || '')
+        .replace(/\s*\(\d+\)\s*$/, '')
+        .replace(/\s*-\s*obszar.*$/i, '')
+        .trim();
+    }
+
+    /**
+     * Pobiera z publicznego GUS BDL API pełną listę wszystkich 380 powiatów w Polsce.
+     */
+    async function loadAllPolandPowiatsFromBDL() {
+      const badge = document.getElementById('bdlStatusBadge');
+      if (bdlPowiatsLoaded) {
+        if (badge) badge.textContent = '380 pow. PL ✓';
+        return;
+      }
+      if (badge) badge.textContent = 'Ładuję PL...';
+      try {
+        const meta = {};
+        for (let page = 0; page < 4; page++) {
+          const resp = await fetch(`https://bdl.stat.gov.pl/api/v1/units?level=5&page-size=100&page=${page}&format=json`);
+          if (!resp.ok) break;
+          const data = await resp.json();
+          const results = data.results || [];
+          results.forEach(u => {
+            const wojCode = String(u.id || '').slice(2, 4);
+            const wojName = BDL_WOJ_CODE_MAP[wojCode];
+            if (!wojName) return;
+            const pName = normalizeBdlPowiatName(u.name);
+            if (!meta[wojName]) meta[wojName] = [];
+            if (!meta[wojName].some(x => x.name === pName)) {
+              meta[wojName].push({ name: pName, bdlId: u.id });
+            }
+          });
+          if (results.length < 100) break;
+        }
+        if (Object.keys(meta).length >= 16) {
+          bdlPowiatyMeta = meta;
+          bdlPowiatsLoaded = true;
+          persistBdlCache();
+          if (badge) badge.textContent = '380 pow. PL ✓';
+          populatePowiatSelect(document.getElementById('powiatSearchInput').value);
+        }
+      } catch (e) {
+        if (badge) badge.textContent = 'PL (lokalnie)';
+      }
+    }
+
+    /**
+     * Pobiera z GUS BDL API pełną listę wszystkich gmin dla dowolnego wybranego powiatu w Polsce.
+     */
+    async function ensureGminyLoadedForPowiat(woj, powiat) {
+      if (!powiat || powiat === '__ALL__') return;
+      const key = powiat.toLowerCase();
+      if (GMINY_BY_POWIAT[powiat] && GMINY_BY_POWIAT[powiat].length > 0) return;
+      if (bdlGminyCache[key] && bdlGminyCache[key].length > 0) return;
+
+      // Znajdź ID powiatu w metadanych BDL
+      let foundId = null;
+      const searchWojs = woj === '__ALL__' ? Object.keys(bdlPowiatyMeta) : [woj];
+      for (const w of searchWojs) {
+        const match = (bdlPowiatyMeta[w] || []).find(p => p.name.toLowerCase() === key);
+        if (match) {
+          foundId = match.bdlId;
+          break;
+        }
+      }
+      if (!foundId) return;
+
+      const container = document.getElementById('gminyContainer');
+      if (container) {
+        container.innerHTML = `<p class="col-span-2 text-[11px] text-emerald-600 py-2 text-center animate-pulse">Pobieranie listy gmin z GUS BDL...</p>`;
+      }
+
+      try {
+        const resp = await fetch(`https://bdl.stat.gov.pl/api/v1/units?level=6&parent-id=${encodeURIComponent(foundId)}&page-size=100&format=json`);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const names = [...new Set((data.results || []).map(u => normalizeBdlGminaName(u.name)).filter(Boolean))]
+          .sort((a, b) => a.localeCompare(b, 'pl'));
+        if (names.length > 0) {
+          bdlGminyCache[key] = names;
+          persistBdlCache();
+          // Zaznacz automatycznie wszystkie pobrane gminy tego powiatu
+          names.forEach(g => locState.selectedGminy.add(g));
+          populateGminyList();
+          applyFilters(false);
+        }
+      } catch (e) {
+        populateGminyList();
+      }
+    }
+
+    /*************************************************************************
+     * 5. LOGIKA SMART MATCH ORAZ GOTOWYCH FILTRÓW OBIEKTÓW (PRAWO BUDOWLANE)
+     *************************************************************************/
+    function mapCategoryToBucket(rawCat) {
+      const c = normalizeCategory(rawCat);
+      if (['XVIII', 'XVII', 'XVI', 'XIV', 'XIX', 'XX', 'I', 'XIII', 'II', 'III'].includes(c)) return c;
+      if (['V', 'IX', 'X', 'XI', 'XII', 'XV'].includes(c)) return 'IX-XII';
+      if (['IV', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVII', 'XXVIII'].includes(c)) return 'XXV-XXVIII';
+      if (['XXVI', 'XXIX', 'XXX'].includes(c)) return 'XXVI-XXX';
+      return 'Brak';
+    }
+
+    function analyzeSmartMatch(rec) {
+      const reasons = [];
+      const nazwaLower = (rec.nazwa || '').toLowerCase();
+      const rodzajLower = (rec.rodzaj || '').toLowerCase();
+      const cat = normalizeCategory(rec.kategoria);
+      const kub = Number(rec.kubatura) || 0;
+
+      const matchedKw = SMART_KEYWORDS.filter(kw => nazwaLower.includes(kw));
+      if (matchedKw.length > 0) {
+        reasons.push(`słowa kluczowe w nazwie (${matchedKw.slice(0, 3).join(', ')})`);
+      }
+
+      if (['XVIII', 'XVII', 'XVI', 'XIX', 'XX'].includes(cat)) {
+        reasons.push(`kategoria obiektu ${cat}`);
+      }
+
+      if (kub >= 1500 && !['I', 'XIII', 'IX', 'X', 'XI', 'XII', 'II'].includes(cat)) {
+        reasons.push(`duża kubatura (${formatNumber(kub)} m³)`);
+      } else if (rodzajLower.includes('inny niż') && kub >= 500 && !['XIII', 'IX', 'X', 'XI', 'XII', 'II', 'XIV', 'XXVI'].includes(cat)) {
+        reasons.push(`obiekt niemieszkalny (${formatNumber(kub)} m³)`);
+      }
+
+      const isMatch = reasons.length > 0;
+      const isMisclassifiedGem = isMatch && (cat === 'I' || rodzajLower.includes('jednorodzinny'));
+      if (isMisclassifiedGem) {
+        reasons.push('uwaga: prawdopodobnie błędnie zaklasyfikowany w RWDZ jako kat. I / jednorodzinny');
+      }
+
+      return { isMatch, reasons, isMisclassifiedGem };
+    }
+
+    function matchesObjectPreset(rec, presetId) {
+      const cat = normalizeCategory(rec.kategoria);
+      const nazwa = (rec.nazwa || '').toLowerCase();
+      const rodzaj = (rec.rodzaj || '').toLowerCase();
+
+      switch (presetId) {
+        case 'all':
+          return true;
+        case 'hale':
+          return analyzeSmartMatch(rec).isMatch;
+        case 'mieszkalne_jedno':
+          return (cat === 'I' || rodzaj.includes('jednorodzinny') || nazwa.includes('jednorodzinn')) && !nazwa.includes('magazyn') && !nazwa.includes('warsztat');
+        case 'mieszkalne_wielo':
+          return cat === 'XIII' || nazwa.includes('wielorodzinn') || nazwa.includes('blok') || nazwa.includes('apartament');
+        case 'handel_uslugi':
+          return cat === 'XVII' || nazwa.includes('handlow') || nazwa.includes('usługow') || nazwa.includes('uslugow') || nazwa.includes('sklep') || nazwa.includes('pawilon') || nazwa.includes('warsztat') || nazwa.includes('myjni');
+        case 'biura_hotele':
+          return ['XIV', 'XVI'].includes(cat) || nazwa.includes('biurow') || nazwa.includes('hotel') || nazwa.includes('pensjonat') || nazwa.includes('konferencyj');
+        case 'rolnicze_gosp':
+          return ['II', 'III', 'XIX'].includes(cat) || nazwa.includes('rolnicz') || nazwa.includes('obora') || nazwa.includes('kurnik') || nazwa.includes('silos') || nazwa.includes('gospodarcz') || nazwa.includes('letniskow');
+        case 'uzytecznosc_pub':
+          return ['V', 'IX', 'X', 'XI', 'XII', 'XV'].includes(cat) || nazwa.includes('szkoł') || nazwa.includes('przedszkol') || nazwa.includes('żłobk') || nazwa.includes('szpital') || nazwa.includes('przychodni') || nazwa.includes('sportow');
+        case 'infrastruktura_drogi':
+          return ['IV', 'XX', 'XXII', 'XXV', 'XXVIII'].includes(cat) || nazwa.includes('stacj') && nazwa.includes('paliw') || nazwa.includes('drog') || nazwa.includes('most') || nazwa.includes('parking');
+        case 'sieci_oze':
+          return ['XXVI', 'XXIX', 'XXX'].includes(cat) || nazwa.includes('fotowoltaicz') || nazwa.includes('sieć') || nazwa.includes('sieci') || nazwa.includes('elektrowni') || nazwa.includes('oczyszczalni') || nazwa.includes('maszt');
+        default:
+          return true;
+      }
+    }
+
+    function getGunbApplicationUrl(rec) {
+      if (rec.gunb_url && /^https?:\/\//i.test(rec.gunb_url)) return rec.gunb_url;
+      if (rec.gunb_uuid) return `https://wyszukiwarka.gunb.gov.pl/wniosek/${encodeURIComponent(rec.gunb_uuid)}/`;
+      return 'https://wyszukiwarka.gunb.gov.pl/';
     }
 
     function persistLeadsAndNotes() {
@@ -2011,8 +2518,9 @@
       const isLead = savedLeads.has(rec.id);
       const smart = analyzeSmartMatch(rec);
       const kub = Number(rec.kubatura) || 0;
+      const isResolved = rec.status === 'Wydane pozwolenie' || rec.status === 'Rozpatrzony (inna decyzja)';
 
-      let color = '#2563eb'; // pozostałe wnioski
+      let color = '#2563eb'; // pozostałe obiekty
       if (isLead) {
         color = '#7c3aed'; // zapisany lead ★
       } else if (smart.isMatch && kub >= 50000) {
@@ -2026,8 +2534,8 @@
         fillColor: color,
         weight: isSelected ? 3.5 : 2.2,
         opacity: 1,
-        fillOpacity: isSelected ? 0.62 : 0.42,
-        dashArray: isSelected ? '' : null
+        fillOpacity: isSelected ? 0.62 : (isResolved ? 0.28 : 0.42),
+        dashArray: isResolved ? '6, 4' : null
       };
     }
 
@@ -2041,8 +2549,15 @@
         const style = getRecordStyle(rec, isSelected);
         const polys = [];
 
+        const statusColor = rec.status === 'Wydane pozwolenie'
+          ? 'text-teal-300'
+          : rec.status === 'Rozpatrzony (inna decyzja)'
+            ? 'text-slate-300'
+            : 'text-amber-300';
+
         const tooltipHtml = `
           <div class="space-y-1">
+            <div class="text-[10px] font-bold uppercase ${statusColor}">${escapeHtml(rec.status)}${rec.nr_decyzji ? ' • Dec. ' + escapeHtml(rec.nr_decyzji) : ''}</div>
             <div class="font-bold text-white leading-snug">${escapeHtml(rec.nazwa)}</div>
             <div class="text-slate-300 text-[11px]">
               <span class="font-semibold text-emerald-300">${formatNumber(rec.kubatura)} m³</span>
@@ -2142,14 +2657,55 @@
       const set = new Set();
       if (woj === '__ALL__') {
         Object.values(POWIATY_BY_WOJ).forEach(arr => arr.forEach(p => set.add(p)));
-      } else if (POWIATY_BY_WOJ[woj]) {
-        POWIATY_BY_WOJ[woj].forEach(p => set.add(p));
+        Object.values(bdlPowiatyMeta).forEach(arr => arr.forEach(p => set.add(p.name)));
+      } else {
+        if (POWIATY_BY_WOJ[woj]) POWIATY_BY_WOJ[woj].forEach(p => set.add(p));
+        if (bdlPowiatyMeta[woj]) bdlPowiatyMeta[woj].forEach(p => set.add(p.name));
       }
       allRecords.forEach(r => {
         if (woj === '__ALL__' || r.wojewodztwo === woj) {
           if (r.powiat) set.add(r.powiat);
         }
       });
+      return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
+    }
+
+    function getAllGminyForSelection(woj, powiat) {
+      const set = new Set();
+
+      if (powiat && powiat !== '__ALL__') {
+        // 1. Wbudowany słownik gmin
+        if (GMINY_BY_POWIAT[powiat]) {
+          GMINY_BY_POWIAT[powiat].forEach(g => set.add(g));
+        }
+        // 2. Gminy pobrane z GUS BDL API
+        const bdlList = bdlGminyCache[powiat.toLowerCase()];
+        if (bdlList) {
+          bdlList.forEach(g => set.add(g));
+        }
+      } else if (woj && woj !== '__ALL__') {
+        // Wszystkie gminy z wbudowanego słownika i cache BDL dla powiatów z wybranego województwa
+        const pows = getAllPowiatsForWoj(woj);
+        pows.forEach(p => {
+          if (GMINY_BY_POWIAT[p]) GMINY_BY_POWIAT[p].forEach(g => set.add(g));
+          const bdlList = bdlGminyCache[p.toLowerCase()];
+          if (bdlList) bdlList.forEach(g => set.add(g));
+        });
+      } else {
+        // Cała Polska: wszystkie znane gminy ze słownika i cache BDL
+        Object.values(GMINY_BY_POWIAT).forEach(arr => arr.forEach(g => set.add(g)));
+        Object.values(bdlGminyCache).forEach(arr => arr.forEach(g => set.add(g)));
+      }
+
+      // 3. Zawsze dodaj gminy występujące w załadowanych wnioskach / CSV
+      allRecords.forEach(r => {
+        const matchWoj = woj === '__ALL__' || r.wojewodztwo === woj;
+        const matchPow = powiat === '__ALL__' || r.powiat === powiat;
+        if (matchWoj && matchPow && r.gmina) {
+          set.add(r.gmina);
+        }
+      });
+
       return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
     }
 
@@ -2204,12 +2760,17 @@
       const visible = q ? allGminy.filter(g => g.toLowerCase().includes(q)) : allGminy;
 
       if (allGminy.length === 0) {
-        container.innerHTML = `<p class="col-span-2 text-[11px] text-slate-400 py-2 text-center">Brak wniosków w wybranym powiecie (możesz wgrać plik CSV)</p>`;
+        container.innerHTML = `<p class="col-span-2 text-[11px] text-slate-400 py-2 text-center">Wybierz powiat lub poczekaj na pobranie gmin z GUS BDL</p>`;
         document.getElementById('selectedGminyCount').textContent = '0';
         return;
       }
 
-      container.innerHTML = visible.map(g => {
+      const displayList = visible.slice(0, 120);
+      const truncatedNote = visible.length > 120
+        ? `<p class="col-span-2 text-[10px] text-slate-400 pt-1 text-center">Wyświetlono 120 z ${visible.length} gmin — użyj wyszukiwarki powyżej lub wybierz powiat.</p>`
+        : '';
+
+      container.innerHTML = displayList.map(g => {
         const checked = locState.selectedGminy.has(g) ? 'checked' : '';
         return `
           <label class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white border border-slate-200 hover:border-emerald-300 cursor-pointer text-[11px] truncate">
@@ -2217,12 +2778,7 @@
             <span class="truncate text-slate-700">${escapeHtml(g)}</span>
           </label>
         `;
-      }).join('');
-
-      container.querySelectorAll('.gmina-checkbox').forEach(cb => {
-        cb.addEventListener('change', () => {
-          if (cb.checked) locState.selectedGminy.add(cb.value);
-          else locState.selectedGminy.delete(cb.value);
+      }).join('') + truncatedNote;
           updateSelectedGminyCount();
           applyFilters();
         });
@@ -2264,7 +2820,7 @@
      * 10. FILTROWANIE, KPI, TABELA I PANEL SZCZEGÓŁÓW
      *************************************************************************/
     function applyFilters(shouldFitMap = false) {
-      const smartMatchOn = document.getElementById('smartMatchToggle').checked;
+      const presetId = document.getElementById('objectPresetSelect').value || 'hale';
       const keyword = document.getElementById('keywordInput').value.trim().toLowerCase();
       const minVolRaw = document.getElementById('minVolInput').value;
       const maxVolRaw = document.getElementById('maxVolInput').value;
@@ -2282,6 +2838,8 @@
       // Liczniki statusów w aktualnej lokalizacji
       let cntZlozony = 0;
       let cntRozpatrywanie = 0;
+      let cntWydane = 0;
+      let cntInna = 0;
 
       const availableGminy = getAllGminyForSelection(locState.wojewodztwo, locState.powiat);
 
@@ -2292,17 +2850,18 @@
 
         if (rec.status === 'Złożony wniosek') cntZlozony++;
         else if (rec.status === 'W rozpatrywaniu') cntRozpatrywanie++;
+        else if (rec.status === 'Wydane pozwolenie') cntWydane++;
+        else cntInna++;
 
         if (selectedStatuses.size > 0 && !selectedStatuses.has(rec.status)) return false;
         if (selectedStatuses.size === 0) return false;
 
         if (onlyLeads && !savedLeads.has(rec.id)) return false;
 
-        const normCat = normalizeCategory(rec.kategoria);
-        const catBucket = CATEGORY_OPTIONS.some(c => c.id === normCat) ? normCat : 'Brak';
+        const catBucket = mapCategoryToBucket(rec.kategoria);
         if (!selectedCats.has(catBucket)) return false;
 
-        if (smartMatchOn && !analyzeSmartMatch(rec).isMatch) return false;
+        if (!matchesObjectPreset(rec, presetId)) return false;
 
         if (minVol !== null && (Number(rec.kubatura) || 0) < minVol) return false;
         if (maxVol !== null && (Number(rec.kubatura) || 0) > maxVol) return false;
@@ -2310,7 +2869,7 @@
         if (keyword) {
           const hay = [
             rec.nazwa, rec.rodzaj, rec.gmina, rec.powiat, rec.miejscowosc,
-            rec.ulica, rec.inwestor, rec.nr_sprawy,
+            rec.ulica, rec.inwestor, rec.nr_sprawy, rec.nr_decyzji, rec.status,
             ...(rec.dzialki || []).map(d => `${d.nr} ${d.obreb} ${d.id_teryt}`)
           ].join(' ').toLowerCase();
           if (!hay.includes(keyword)) return false;
@@ -2321,6 +2880,8 @@
 
       document.getElementById('countStatusZlozony').textContent = cntZlozony;
       document.getElementById('countStatusRozpatrywanie').textContent = cntRozpatrywanie;
+      document.getElementById('countStatusWydane').textContent = cntWydane;
+      document.getElementById('countStatusInna').textContent = cntInna;
       document.getElementById('leadsOnlyBadge').classList.toggle('hidden', !onlyLeads);
 
       updateKPIs();
@@ -2375,9 +2936,18 @@
         const isLead = savedLeads.has(rec.id);
         const isMega = (Number(rec.kubatura) || 0) >= 50000;
         const parcelsTxt = (rec.dzialki || []).map(d => d.nr).join(', ');
+        const gunbHref = getGunbApplicationUrl(rec);
+        const statusPill = rec.status === 'Wydane pozwolenie'
+          ? `<div class="text-[10px] font-bold text-teal-700">Wydane${rec.nr_decyzji ? ' (' + escapeHtml(rec.nr_decyzji) + ')' : ''}</div>`
+          : rec.status === 'Rozpatrzony (inna decyzja)'
+            ? `<div class="text-[10px] font-semibold text-slate-500">Rozpatrzony</div>`
+            : `<div class="text-[10px] font-medium text-emerald-700">${escapeHtml(rec.status)}</div>`;
         return `
           <tr class="hover:bg-emerald-50/40 cursor-pointer transition ${rec.id === selectedRecordId ? 'bg-emerald-50' : ''}" data-id="${escapeHtml(rec.id)}">
-            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">${escapeHtml(rec.data_wplywu)}</td>
+            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">
+              <div>${escapeHtml(rec.data_wplywu)}</div>
+              ${statusPill}
+            </td>
             <td class="py-2.5 px-3 text-slate-700 whitespace-nowrap">${escapeHtml(rec.powiat)}</td>
             <td class="py-2.5 px-3">
               <div class="font-semibold text-slate-800">${escapeHtml(rec.gmina)}</div>
@@ -2397,6 +2967,9 @@
               <button class="table-lead-btn px-2 py-1 rounded-md border text-[11px] font-bold transition ${isLead ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-slate-500 border-slate-200 hover:border-violet-400 hover:text-violet-600'}" data-id="${escapeHtml(rec.id)}" title="Zapisz jako Lead">
                 ★
               </button>
+              <a href="${escapeHtml(gunbHref)}" target="_blank" rel="noopener noreferrer" class="table-gunb-link inline-block ml-1 px-2 py-1 rounded-md bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-[11px] font-bold transition" data-case="${escapeHtml(rec.nr_sprawy)}" data-has-direct="${rec.gunb_uuid || rec.gunb_url ? '1' : '0'}" title="Otwórz stronę wniosku w GUNB RWDZ">
+                GUNB ↗
+              </a>
               <button class="table-map-btn ml-1 px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[11px] font-semibold transition" data-id="${escapeHtml(rec.id)}">
                 Mapa
               </button>
@@ -2407,8 +2980,17 @@
 
       tbody.querySelectorAll('tr[data-id]').forEach(row => {
         row.addEventListener('click', (e) => {
-          if (e.target.closest('button')) return;
+          if (e.target.closest('button') || e.target.closest('a')) return;
           openDetailDrawer(row.dataset.id, true);
+        });
+      });
+
+      tbody.querySelectorAll('.table-gunb-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (link.dataset.hasDirect !== '1' && link.dataset.case) {
+            copyTextToClipboard(link.dataset.case, `Otwieram GUNB RWDZ — skopiowano nr sprawy (${link.dataset.case}) do wklejenia!`);
+          }
         });
       });
 
@@ -2440,6 +3022,12 @@
       const isLead = savedLeads.has(rec.id);
 
       document.getElementById('detailStatusBadge').textContent = rec.status;
+      document.getElementById('detailStatusBadge').className = rec.status === 'Wydane pozwolenie'
+        ? 'text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-teal-500/25 text-teal-200 border border-teal-400/40'
+        : rec.status === 'Rozpatrzony (inna decyzja)'
+          ? 'text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-600/60 text-slate-200 border border-slate-400/40'
+          : 'text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30';
+
       document.getElementById('detailSmartBadge').textContent = smart.isMatch
         ? (smart.isMisclassifiedGem ? 'Smart Match • Błędna kat. I!' : 'Smart Match: Hala / Usługi')
         : 'Poza Smart Match';
@@ -2478,8 +3066,27 @@
       document.getElementById('detailInvestor').textContent = rec.inwestor || '—';
       document.getElementById('detailCaseOrgan').textContent = `${rec.nr_sprawy} • ${rec.organ}`;
 
+      const decRow = document.getElementById('detailDecisionRow');
+      if (rec.nr_decyzji || rec.data_decyzji) {
+        decRow.classList.remove('hidden');
+        document.getElementById('detailDecisionInfo').textContent =
+          `${rec.nr_decyzji || 'Decyzja'}${rec.data_decyzji ? ' (' + rec.data_decyzji + ')' : ''}`;
+      } else {
+        decRow.classList.add('hidden');
+      }
+
       updateDetailLeadButton(isLead);
       document.getElementById('detailNoteInput').value = savedNotes[rec.id] || '';
+
+      const gunbLink = document.getElementById('detailGunbLink');
+      const gunbText = document.getElementById('detailGunbLinkText');
+      const hasDirectGunb = Boolean(rec.gunb_uuid || rec.gunb_url);
+      gunbLink.href = getGunbApplicationUrl(rec);
+      gunbLink.dataset.case = rec.nr_sprawy || '';
+      gunbLink.dataset.hasDirect = hasDirectGunb ? '1' : '0';
+      gunbText.textContent = hasDirectGunb
+        ? 'Otwórz bezpośrednio stronę wniosku (GUNB RWDZ)'
+        : 'Przejdź do wniosku w GUNB RWDZ (kopiuje nr sprawy)';
 
       const firstParcelId = rec.dzialki && rec.dzialki[0] ? rec.dzialki[0].id_teryt : '';
       document.getElementById('detailGeoportalLink').href = firstParcelId
@@ -2626,6 +3233,11 @@
           const idxSprawa = findColIndex(headers, ['numer_sprawy', 'nr_sprawy', 'znak']);
           const idxDzialka = findColIndex(headers, ['nr_dzialki', 'dzialka', 'działk', 'teryt']);
           const idxObreb = findColIndex(headers, ['obreb', 'obręb']);
+          const idxUuid = findColIndex(headers, ['numer_ewidencyjny_system', 'id_wniosku', 'uuid', 'guid']);
+          const idxUrl = findColIndex(headers, ['url', 'link']);
+          const idxStatus = findColIndex(headers, ['status', 'rodzaj_decyzji', 'stan']);
+          const idxNrDec = findColIndex(headers, ['numer_decyzji', 'nr_decyzji']);
+          const idxDataDec = findColIndex(headers, ['data_wydania_decyzji', 'data_decyzji']);
 
           const imported = [];
           const maxRows = Math.min(lines.length, 1500);
@@ -2655,10 +3267,26 @@
                 }))
               : [{ id_teryt: '', obreb: rawObreb, nr: `${100 + (i % 400)}/1` }];
 
+            const rawNrDec = idxNrDec >= 0 ? (cols[idxNrDec] || '').trim() : '';
+            const rawDataDec = idxDataDec >= 0 ? (cols[idxDataDec] || '').trim() : '';
+            const rawStatus = idxStatus >= 0 ? (cols[idxStatus] || '').trim().toLowerCase() : '';
+            let parsedStatus = 'Złożony wniosek';
+            if (rawStatus.includes('wydan') || rawStatus.includes('pozytyw') || rawNrDec) {
+              parsedStatus = 'Wydane pozwolenie';
+            } else if (rawStatus.includes('odmow') || rawStatus.includes('umorz') || rawStatus.includes('rozpatrz')) {
+              parsedStatus = 'Rozpatrzony (inna decyzja)';
+            } else if (rawStatus.includes('rozpatr') || rawStatus.includes('toku')) {
+              parsedStatus = 'W rozpatrywaniu';
+            }
+
             imported.push(makeRecord({
               id: `CSV-${i}`,
-              status: 'Złożony wniosek',
+              status: parsedStatus,
               data_wplywu: idxData >= 0 && cols[idxData] ? cols[idxData] : '2026-11-20',
+              nr_decyzji: rawNrDec,
+              data_decyzji: rawDataDec,
+              gunb_uuid: idxUuid >= 0 ? (cols[idxUuid] || '').trim() : '',
+              gunb_url: idxUrl >= 0 ? (cols[idxUrl] || '').trim() : '',
               wojewodztwo: woj,
               powiat: pow,
               gmina,
@@ -2739,7 +3367,7 @@
       const params = new URLSearchParams();
       params.set('woj', locState.wojewodztwo);
       params.set('pow', locState.powiat);
-      params.set('smart', document.getElementById('smartMatchToggle').checked ? '1' : '0');
+      params.set('preset', document.getElementById('objectPresetSelect').value || 'hale');
       const kw = document.getElementById('keywordInput').value.trim();
       if (kw) params.set('kw', kw);
       const minV = document.getElementById('minVolInput').value.trim();
@@ -2771,13 +3399,23 @@
       }
     }
 
+    function updatePresetDescription() {
+      const val = document.getElementById('objectPresetSelect').value || 'hale';
+      const meta = OBJECT_PRESETS[val] || OBJECT_PRESETS.hale;
+      document.getElementById('presetBadge').textContent = meta.badge;
+      document.getElementById('objectPresetDesc').textContent = meta.desc;
+    }
+
     function restoreStateFromUrl() {
       const params = new URLSearchParams(window.location.search);
       if (params.has('woj')) locState.wojewodztwo = params.get('woj');
       if (params.has('pow')) locState.powiat = params.get('pow');
-      if (params.has('smart')) {
-        document.getElementById('smartMatchToggle').checked = params.get('smart') !== '0';
+      if (params.has('preset') && OBJECT_PRESETS[params.get('preset')]) {
+        document.getElementById('objectPresetSelect').value = params.get('preset');
+      } else if (params.has('smart') && params.get('smart') === '0') {
+        document.getElementById('objectPresetSelect').value = 'all';
       }
+      updatePresetDescription();
       if (params.has('kw')) {
         document.getElementById('keywordInput').value = params.get('kw');
       }
@@ -2892,38 +3530,10 @@
           handleCsvImport(e.dataTransfer.files[0]);
         }
       });
-
-      document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
-        allRecords = DEMO_DATA.map(r => ({ ...r, dzialki: r.dzialki.map(d => ({ ...d })) }));
-        document.getElementById('dataSourceText').textContent = 'Baza demo RWDZ';
-        locState.wojewodztwo = 'mazowieckie';
-        locState.powiat = 'wołomiński';
-        locState.selectedGminy = new Set(GMINY_WOLOMINSKI);
-        populateWojSelect();
-        applyFilters(true);
-        closeImportModal();
-        showToast('Przywrócono wbudowaną bazę demo.', 'info');
-      });
-
-      // Kaskadowy filtr lokalizacji
-      document.getElementById('wojSelect').addEventListener('change', (e) => {
-        locState.wojewodztwo = e.target.value;
-        locState.powiat = '__ALL__';
-        document.getElementById('powiatSearchInput').value = '';
-        document.getElementById('gminaSearchInput').value = '';
-        populatePowiatSelect();
-        locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
-        populateGminyList();
-        applyFilters(true);
-      });
-
-      document.getElementById('powiatSearchInput').addEventListener('input', (e) => {
-        populatePowiatSelect(e.target.value);
-      });
-
-      document.getElementById('powiatSelect').addEventListener('change', (e) => {
+      document.getElementById('powiatSelect').addEventListener('change', async (e) => {
         locState.powiat = e.target.value;
         document.getElementById('gminaSearchInput').value = '';
+        await ensureGminyLoadedForPowiat(locState.wojewodztwo, locState.powiat);
         locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
         populateGminyList();
         applyFilters(true);
@@ -2945,8 +3555,36 @@
         applyFilters(false);
       });
 
-      // Smart Match, wyszukiwarka, kubatura, statusy, leady
-      document.getElementById('smartMatchToggle').addEventListener('change', () => applyFilters(false));
+      // Gotowy filtr obiektów (rozwijana lista Prawo budowlane)
+      document.getElementById('objectPresetSelect').addEventListener('change', () => {
+        updatePresetDescription();
+        applyFilters(false);
+      });
+
+      // Szybkie przełączniki statusów (Wnioski / Wydane / Wszystkie)
+      function setStatuses(allowedList, activeBtnId) {
+        document.querySelectorAll('.status-checkbox').forEach(cb => {
+          cb.checked = allowedList.includes(cb.value);
+        });
+        ['statusPresetPendingBtn', 'statusPresetIssuedBtn', 'statusPresetAllBtn'].forEach(id => {
+          const btn = document.getElementById(id);
+          if (!btn) return;
+          btn.className = id === activeBtnId
+            ? 'px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold hover:bg-emerald-200 transition'
+            : 'px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200 transition';
+        });
+        applyFilters(false);
+      }
+
+      document.getElementById('statusPresetPendingBtn').addEventListener('click', () => {
+        setStatuses(['Złożony wniosek', 'W rozpatrywaniu'], 'statusPresetPendingBtn');
+      });
+      document.getElementById('statusPresetIssuedBtn').addEventListener('click', () => {
+        setStatuses(['Wydane pozwolenie', 'Rozpatrzony (inna decyzja)'], 'statusPresetIssuedBtn');
+      });
+      document.getElementById('statusPresetAllBtn').addEventListener('click', () => {
+        setStatuses(['Złożony wniosek', 'W rozpatrywaniu', 'Wydane pozwolenie', 'Rozpatrzony (inna decyzja)'], 'statusPresetAllBtn');
+      });
 
       const kwInput = document.getElementById('keywordInput');
       const clearKwBtn = document.getElementById('clearKeywordBtn');
@@ -3001,7 +3639,8 @@
 
       // Reset filtrów do ustawień domyślnych (powiat wołomiński + wszystkie 12 gmin)
       document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-        document.getElementById('smartMatchToggle').checked = true;
+        document.getElementById('objectPresetSelect').value = 'hale';
+        updatePresetDescription();
         document.getElementById('keywordInput').value = '';
         document.getElementById('clearKeywordBtn').classList.add('hidden');
         document.getElementById('minVolInput').value = '';
@@ -3009,7 +3648,7 @@
         document.getElementById('onlyLeadsCheckbox').checked = false;
         document.getElementById('powiatSearchInput').value = '';
         document.getElementById('gminaSearchInput').value = '';
-        document.querySelectorAll('.status-checkbox').forEach(cb => { cb.checked = true; });
+        setStatuses(['Złożony wniosek', 'W rozpatrywaniu'], 'statusPresetPendingBtn');
         document.querySelectorAll('.cat-checkbox').forEach(cb => { cb.checked = true; });
 
         locState.wojewodztwo = 'mazowieckie';
@@ -3136,6 +3775,13 @@
         copyTextToClipboard(url, 'Skopiowano bezpośredni link do tego wniosku!');
       });
 
+      document.getElementById('detailGunbLink').addEventListener('click', (e) => {
+        const el = e.currentTarget;
+        if (el.dataset.hasDirect !== '1' && el.dataset.case) {
+          copyTextToClipboard(el.dataset.case, `Otwieram GUNB RWDZ — skopiowano nr sprawy (${el.dataset.case}) do schowka!`);
+        }
+      });
+
       window.addEventListener('resize', () => {
         if (currentView === 'map') map.invalidateSize();
         updateZoomUI();
@@ -3153,6 +3799,7 @@
       initEvents();
       updateZoomUI();
       applyFilters(!initialRecordId && !window.location.search.includes('lat='));
+      loadAllPolandPowiatsFromBDL();
       if (initialRecordId) {
         setTimeout(() => openDetailDrawer(initialRecordId, true), 250);
       }

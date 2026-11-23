@@ -118,7 +118,7 @@
       </div>
     </div>
 
-    <!-- Prawa strona: Widok + Udostępnij + Import/Eksport + GitHub Pages -->
+    <!-- Prawa strona: Widok + Udostępnij + Import/Eksport + GitHub/Streamlit -->
     <div class="flex items-center gap-1.5 sm:gap-2">
       <!-- Przełącznik Mapa / Tabela -->
       <div class="bg-slate-800 p-1 rounded-lg border border-slate-700 flex items-center">
@@ -615,7 +615,7 @@
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between gap-2">
               <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Działki ewidencyjne we wniosku</h4>
-              <button id="fetchUldkBtn" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold flex items-center gap-1 transition shadow-xs" title="Pobierz rzeczywisty obrys działki z API ULDK GUGiK po ID TERYT">
+              <button id="fetchUldkBtn" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold flex items-center gap-1 transition shadow-xs" title="Pobierz rzeczywisty obrys działki z API ULDK GUGiK">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                 </svg>
@@ -733,8 +733,8 @@
           </div>
           <div class="flex items-center">
             <label class="flex items-start gap-2 text-slate-700 cursor-pointer">
-              <input type="checkbox" id="csvAutoUldkCheckbox" class="rounded text-emerald-600 focus:ring-emerald-500 mt-0.5" />
-              <span class="leading-snug">Próbuj pobrać dokładne kształty działek z <strong>ULDK GUGiK</strong> (dla pierwszych 15 rekordów z ID TERYT)</span>
+              <input type="checkbox" id="csvAutoUldkCheckbox" class="rounded text-emerald-600 focus:ring-emerald-500 mt-0.5" checked />
+              <span class="leading-snug">Próbuj pobrać dokładne kształty działek z <strong>ULDK GUGiK</strong> dla zaimportowanych rekordów</span>
             </label>
           </div>
         </div>
@@ -771,7 +771,7 @@
           <h4 class="font-bold text-emerald-950 text-sm">1. Uruchomienie na Streamlit Community Cloud (z GitHuba)</h4>
           <ol class="list-decimal list-inside space-y-1.5">
             <li>Utwórz repozytorium na GitHubie i wrzuć plik <code>index.html</code> oraz dwa krótkie pliki: <code>app.py</code> i <code>requirements.txt</code> (z wpisem <code>streamlit</code>).</li>
-            <li>W pliku <code>app.py</code> wczytaj <code>index.html</code> za pomocą <code>streamlit.components.v1.html(..., height=900)</code>.</li>
+            <li>W pliku <code>app.py</code> wczytaj <code>index.html</code> za pomocą <code>streamlit.components.v1.html(..., height=950)</code>.</li>
             <li>Wejdź na <a href="https://share.streamlit.io/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-semibold hover:underline">share.streamlit.io</a>, zaloguj się przez GitHub, kliknij <strong>Create app</strong>, wybierz swoje repozytorium, gałąź <code>main</code> i plik <code>app.py</code>, a następnie kliknij <strong>Deploy</strong>.</li>
           </ol>
         </div>
@@ -820,7 +820,6 @@
       'Radzymin', 'Strachówka', 'Tłuszcz', 'Wołomin', 'Ząbki', 'Zielonka'
     ];
 
-    // Baza powiatów dla wszystkich 16 województw (rozszerzana dynamicznie przy imporcie CSV)
     const POWIATY_BY_WOJ = {
       'dolnośląskie': ['wrocławski', 'm. Wrocław', 'legnicki', 'lubiński', 'oleśnicki', 'świdnicki', 'wałbrzyski', 'oławski', 'trzebnicki', 'średzki'],
       'kujawsko-pomorskie': ['bydgoski', 'm. Bydgoszcz', 'toruński', 'm. Toruń', 'inowrocławski', 'włocławski', 'grudziądzki', 'świecki'],
@@ -845,7 +844,6 @@
       'zachodniopomorskie': ['policki', 'm. Szczecin', 'goleniowski', 'stargardzki', 'koszaliński', 'kołobrzeski', 'gryfiński']
     };
 
-    // Centra geograficzne dla płynnego przelotu mapy po zmianie powiatu/województwa
     const AREA_CENTERS = {
       'wołomiński': [52.368, 21.255, 11],
       'legionowski': [52.405, 20.935, 11],
@@ -894,22 +892,59 @@
     ];
 
     /*************************************************************************
-     * 2. GENERATOR REALISTYCZNYCH POLIGONÓW DZIAŁEK EWIDENCYJNYCH
+     * 2. FUNKCJE POMOCNICZE I GENERATOR POLIGONÓW DZIAŁEK
      *************************************************************************/
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatNumber(n) {
+      const num = Number(n);
+      if (!Number.isFinite(num)) return '0';
+      return num.toLocaleString('pl-PL');
+    }
+
+    function normalizeCategory(raw) {
+      const s = String(raw || '').trim().toUpperCase().replace(/^KAT\.?\s*/i, '');
+      if (!s || s === '-' || s === 'BRAK' || s === 'NULL' || s === 'NONE') return 'Brak';
+      return s;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-700 text-white border-emerald-500',
+        error: 'bg-rose-700 text-white border-rose-500',
+        info: 'bg-slate-900 text-white border-slate-700'
+      };
+      el.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-xl border text-xs font-semibold flex items-center gap-2 transition-all duration-200 ${colors[type] || colors.info}`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(6px)';
+        setTimeout(() => el.remove(), 220);
+      }, 3200);
+    }
+
     /**
-     * Tworzy realistyczny zestaw 1–3 przylegających do siebie działek ewidencyjnych
-     * (obrócone prostokąty/trapezy w stopniach WGS84, proporcjonalne do kubatury).
+     * Tworzy orientacyjny poligon działki (zastępowany automatycznie rzeczywistym kształtem z ULDK GUGiK).
      */
     function buildParcelPolygons(centerLat, centerLng, parcelDefs, kubatura, angleDeg = 18) {
       const cosLat = Math.cos(centerLat * Math.PI / 180);
-      // Skala wymiaru działki w metrach zależna od kubatury (czytelna na mapie i realistyczna)
       const baseMeters = kubatura >= 200000 ? 340
         : kubatura >= 80000 ? 230
         : kubatura >= 20000 ? 155
         : kubatura >= 5000 ? 115
         : 80;
 
-      const count = parcelDefs.length;
+      const count = Math.max(1, parcelDefs.length);
       const totalWidthM = baseMeters * (1 + (count - 1) * 0.55);
       const heightM = baseMeters * 0.72;
       const rad = (angleDeg * Math.PI) / 180;
@@ -928,7 +963,6 @@
       return parcelDefs.map((p, idx) => {
         const x0 = startX + idx * sliceW;
         const x1 = x0 + sliceW;
-        // Delikatny skos jednego boku dla naturalnego kształtu działki ewidencyjnej
         const skew = (idx % 2 === 0 ? 0.08 : -0.06) * heightM;
         const y0 = -heightM / 2;
         const y1 = heightM / 2;
@@ -961,7 +995,7 @@
         kategoria: cfg.kategoria || 'Brak',
         nazwa: cfg.nazwa,
         rodzaj: cfg.rodzaj || 'Obiekt budowlany inny niż budynek mieszkalny jednorodzinny',
-        kubatura: cfg.kubatura,
+        kubatura: Number(cfg.kubatura) || 0,
         inwestor: cfg.inwestor || 'Inwestor prywatny / Sp. z o.o. (wg akt RWDZ)',
         organ: cfg.organ || (cfg.powiat === 'm.st. Warszawa' ? 'Prezydent m.st. Warszawy' : `Starosta (${cfg.powiat || 'wołomiński'})`),
         nr_sprawy: cfg.nr_sprawy || `WAB.6740.${cfg.id.slice(-4)}.2026`,
@@ -1311,7 +1345,7 @@
         lat: 52.3765, lng: 21.5842, angle: 14,
         dzialki: [{ id_teryt: '143410_2.0015.302/5', obreb: '0015 Strachówka', nr: '302/5' }]
       }),
-      // Zwykłe domy jednorodzinne w pow. wołomińskim (widoczne po wyłączeniu Smart Match — kolor niebieski)
+      // Zwykłe domy jednorodzinne (widoczne po wyłączeniu Smart Match)
       makeRecord({
         id: 'WL-024',
         data_wplywu: '2026-11-18',
@@ -1465,7 +1499,7 @@
         dzialki: [{ id_teryt: '142102_1.0005.128/6', obreb: '0005 Pruszków 05', nr: '128/6' }]
       }),
 
-      // === INNE WOJEWÓDZTWA W POLSCE (DO TESTOWANIA FILTRA CAŁEJ POLSKI) ===
+      // === INNE WOJEWÓDZTWA W POLSCE ===
       makeRecord({
         id: 'PL-001',
         data_wplywu: '2026-11-18',
@@ -1583,7 +1617,7 @@
     const STORAGE_NOTES_KEY = 'halaradar_notes_v2';
     const STORAGE_ULDK_CACHE_KEY = 'halaradar_uldk_cache_v2';
 
-    let allRecords = [...DEMO_DATA];
+    let allRecords = DEMO_DATA.map(r => ({ ...r, dzialki: r.dzialki.map(d => ({ ...d })) }));
     let filteredRecords = [];
     let selectedRecordId = null;
     let currentView = 'map';
@@ -1592,7 +1626,6 @@
     let uldkQueueRunning = false;
     let uldkAbortToken = 0;
 
-    // Stan filtrów lokalizacji (domyślnie: mazowieckie -> wołomiński -> wszystkie 12 gmin)
     let locState = {
       wojewodztwo: 'mazowieckie',
       powiat: 'wołomiński',
@@ -1622,9 +1655,7 @@
     function persistUldkCache() {
       try {
         localStorage.setItem(STORAGE_ULDK_CACHE_KEY, JSON.stringify(uldkCache));
-      } catch (e) {
-        // W razie przepełnienia localStorage nie blokuj działania aplikacji
-      }
+      } catch (e) {}
     }
 
     /*************************************************************************
@@ -1672,7 +1703,6 @@
       maxZoom: 21
     });
 
-    // Warstwy bazowe (zawsze widoczne od zoom 5 do 21 — brak białego tła)
     const baseLayers = {
       osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
@@ -1692,7 +1722,7 @@
       })
     };
 
-    // Nakładka GUGiK Ortofotomapa WMS (WMS 1.1.1 + EPSG:3857, na wierzchu satelity Esri)
+    // Nakładka GUGiK Ortofotomapa WMS (WMS 1.1.1 + EPSG:3857)
     const ortoOverlay = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution', {
       layers: 'Raster',
       format: 'image/jpeg',
@@ -1717,13 +1747,10 @@
       zIndex: 400
     });
 
-    // Domyślny styl: Mapa (OSM) + Działki (KIEG)
     let activeBaseLayer = baseLayers.osm.addTo(map);
     kiegOverlay.addTo(map);
 
-    // Warstwa kolorowych poligonów działek (widoczna zawsze)
     const parcelsLayerGroup = L.layerGroup().addTo(map);
-    // Warstwa subtelnych znaczników orientacyjnych (widoczna tylko przy oddaleniu zoom < 14)
     const overviewMarkersLayer = L.layerGroup().addTo(map);
     const polygonIndex = new Map(); // id -> [L.Polygon, ...]
 
@@ -1747,7 +1774,6 @@
       const z = map.getZoom();
       document.getElementById('zoomBadge').textContent = `z${z}`;
 
-      // Baner informacyjny dla siatki KIEG przy zoom < 15
       const kiegActive = document.getElementById('kiegParcelsToggle').checked || document.getElementById('kiegBuildingsToggle').checked;
       const hint = document.getElementById('kiegZoomHint');
       const hintText = document.getElementById('kiegZoomHintText');
@@ -1763,14 +1789,165 @@
         hint.classList.add('opacity-0', 'pointer-events-none');
       }
 
-      // Znaczniki orientacyjne tylko przy oddaleniu (zoom < 14); przy zoom >= 14 same czyste poligony
       if (z < 14) {
         if (!map.hasLayer(overviewMarkersLayer)) overviewMarkersLayer.addTo(map);
       } else {
         if (map.hasLayer(overviewMarkersLayer)) map.removeLayer(overviewMarkersLayer);
       }
     }
-// ... existing code ... -->
+
+    map.on('zoomend', updateZoomUI);
+
+    /*************************************************************************
+     * 7. INTEGRACJA Z API ULDK GUGiK (PARSER WKT SRID=4326 + AUTO-SNAP)
+     *************************************************************************/
+    function parseRingWKT(ringStr) {
+      return ringStr
+        .trim()
+        .split(',')
+        .map(pair => {
+          const parts = pair.trim().split(/\s+/).map(Number);
+          if (parts.length >= 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])) {
+            // WKT z ULDK (SRID=4326) zwraca (lon lat), Leaflet wymaga [lat, lon]
+            return [parts[1], parts[0]];
+          }
+          return null;
+        })
+        .filter(Boolean);
+    }
+
+    /**
+     * Parsuje WKT POLYGON lub MULTIPOLYGON (obsługuje również otwory wewnętrzne).
+     * Zwraca tablicę poligonów (dla Leaflet L.polygon).
+     */
+    function parseUldkWktToLatLngs(wktRaw) {
+      if (!wktRaw) return null;
+      const wkt = wktRaw.replace(/^SRID=\d+;/i, '').trim();
+
+      if (/^POLYGON\s*\(/i.test(wkt)) {
+        const inner = wkt.replace(/^POLYGON\s*\(\s*/i, '').replace(/\s*\)\s*$/, '');
+        const rings = inner.split(/\)\s*,\s*\(/).map(r => parseRingWKT(r.replace(/^\(|\)$/g, ''))).filter(r => r.length >= 3);
+        if (rings.length === 0) return null;
+        return rings.length === 1 ? rings[0] : rings;
+      }
+
+      if (/^MULTIPOLYGON\s*\(/i.test(wkt)) {
+        const inner = wkt.replace(/^MULTIPOLYGON\s*\(\s*/i, '').replace(/\s*\)\s*$/, '');
+        const polyChunks = inner.split(/\)\s*\)\s*,\s*\(\s*\(/);
+        const multi = polyChunks.map(chunk => {
+          const cleaned = chunk.replace(/^\(+|\)+$/g, '');
+          return cleaned.split(/\)\s*,\s*\(/).map(r => parseRingWKT(r.replace(/^\(|\)$/g, ''))).filter(r => r.length >= 3);
+        }).filter(p => p.length > 0);
+        return multi.length > 0 ? multi : null;
+      }
+
+      return null;
+    }
+
+    function computeCentroid(latLngs) {
+      const flat = [];
+      function collect(arr) {
+        if (!Array.isArray(arr)) return;
+        if (typeof arr[0] === 'number' && typeof arr[1] === 'number') {
+          flat.push(arr);
+        } else {
+          arr.forEach(collect);
+        }
+      }
+      collect(latLngs);
+      if (flat.length === 0) return null;
+      const sum = flat.reduce((acc, pt) => [acc[0] + pt[0], acc[1] + pt[1]], [0, 0]);
+      return [sum[0] / flat.length, sum[1] / flat.length];
+    }
+
+    async function fetchUldkParcel(queryUrl) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 7000);
+      try {
+        const resp = await fetch(queryUrl, { signal: controller.signal });
+        if (!resp.ok) return null;
+        const text = (await resp.text()).trim();
+        const lines = text.split(/\r?\n/).filter(Boolean);
+        if (lines.length < 2 || !lines[0].startsWith('0')) return null;
+
+        const cols = lines[1].split('|');
+        const coords = parseUldkWktToLatLngs(cols[0]);
+        if (!coords) return null;
+        return {
+          coords,
+          teryt: cols[1] || '',
+          obreb: cols[2] || '',
+          nr: cols[3] || ''
+        };
+      } catch (e) {
+        return null;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    async function fetchParcelGeometryFromULDK(parcel, fallbackLat, fallbackLng, forceRefresh = false) {
+      const cacheKey = parcel.id_teryt || `${fallbackLat.toFixed(5)},${fallbackLng.toFixed(5)}`;
+      if (!forceRefresh && uldkCache[cacheKey]) {
+        return uldkCache[cacheKey];
+      }
+
+      // 1. Próba po identyfikatorze TERYT
+      if (parcel.id_teryt && parcel.id_teryt.includes('.')) {
+        const urlById = `https://uldk.gugik.gov.pl/?request=GetParcelById&id=${encodeURIComponent(parcel.id_teryt)}&result=geom_wkt,teryt,region,parcel&srid=4326`;
+        const resById = await fetchUldkParcel(urlById);
+        if (resById) {
+          uldkCache[cacheKey] = resById;
+          persistUldkCache();
+          return resById;
+        }
+      }
+
+      // 2. Fallback: pobranie rzeczywistej działki spod współrzędnych (lon, lat)
+      if (Number.isFinite(fallbackLat) && Number.isFinite(fallbackLng)) {
+        const urlByXY = `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${fallbackLng},${fallbackLat},4326&result=geom_wkt,teryt,region,parcel&srid=4326`;
+        const resByXY = await fetchUldkParcel(urlByXY);
+        if (resByXY) {
+          uldkCache[cacheKey] = resByXY;
+          persistUldkCache();
+          return resByXY;
+        }
+      }
+
+      return null;
+    }
+
+    async function updateRecordParcelsFromULDK(rec, forceRefresh = false) {
+      let updatedCount = 0;
+      for (let i = 0; i < rec.dzialki.length; i++) {
+        const p = rec.dzialki[i];
+        if (!forceRefresh && p.fromUldk) {
+          updatedCount++;
+          continue;
+        }
+        // Drobne przesunięcie dla kolejnych działek w obrębie jednego wniosku (jeśli fallback po XY)
+        const offsetLat = rec.lat + (i * 0.00025);
+        const offsetLng = rec.lng + (i * 0.00035);
+        const res = await fetchParcelGeometryFromULDK(p, offsetLat, offsetLng, forceRefresh);
+        if (res && res.coords) {
+          p.coords = res.coords;
+          p.fromUldk = true;
+          if (res.teryt) p.id_teryt = res.teryt;
+          if (res.obreb) p.obreb = res.obreb;
+          if (res.nr) p.nr = res.nr;
+          updatedCount++;
+        }
+      }
+      if (updatedCount > 0 && rec.dzialki[0] && rec.dzialki[0].coords) {
+        const c = computeCentroid(rec.dzialki[0].coords);
+        if (c) {
+          rec.lat = c[0];
+          rec.lng = c[1];
+        }
+      }
+      return updatedCount > 0;
+    }
+
     function updateUldkStatusBadge(inProgress = false) {
       const total = filteredRecords.length;
       const matched = filteredRecords.filter(r => r.dzialki && r.dzialki.some(d => d.fromUldk)).length;
@@ -1788,12 +1965,1087 @@
           : 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
       }
     }
-// ... existing code ... -->
+
+    async function runUldkAutoSnap(records, forceRefresh = false) {
+      const myToken = ++uldkAbortToken;
+      uldkQueueRunning = true;
+      updateUldkStatusBadge(true);
+
+      const pending = records.filter(r => forceRefresh || !r.dzialki.some(d => d.fromUldk));
+      if (pending.length === 0) {
+        uldkQueueRunning = false;
+        updateUldkStatusBadge(false);
+        return;
+      }
+
+      const concurrency = 4;
+      let idx = 0;
+
+      async function worker() {
+        while (idx < pending.length) {
+          if (myToken !== uldkAbortToken) return;
+          const rec = pending[idx++];
+          const changed = await updateRecordParcelsFromULDK(rec, forceRefresh);
+          if (myToken !== uldkAbortToken) return;
+          if (changed) {
+            renderMapParcels();
+            if (selectedRecordId === rec.id) {
+              openDetailDrawer(rec.id, false);
+            }
+          }
+          updateUldkStatusBadge(true);
+        }
+      }
+
+      await Promise.all(Array.from({ length: Math.min(concurrency, pending.length) }, worker));
+      if (myToken === uldkAbortToken) {
+        uldkQueueRunning = false;
+        updateUldkStatusBadge(false);
+      }
+    }
+
+    /*************************************************************************
+     * 8. STYLIZACJA I RENDEROWANIE POLIGONÓW DZIAŁEK NA MAPIE
+     *************************************************************************/
+    function getRecordStyle(rec, isSelected = false) {
+      const isLead = savedLeads.has(rec.id);
+      const smart = analyzeSmartMatch(rec);
+      const kub = Number(rec.kubatura) || 0;
+
+      let color = '#2563eb'; // pozostałe wnioski
+      if (isLead) {
+        color = '#7c3aed'; // zapisany lead ★
+      } else if (smart.isMatch && kub >= 50000) {
+        color = '#ea580c'; // mega hala >= 50 000 m³
+      } else if (smart.isMatch) {
+        color = '#059669'; // hala / magazyn / usługi
+      }
+
+      return {
+        color: isSelected ? '#0f172a' : color,
+        fillColor: color,
+        weight: isSelected ? 3.5 : 2.2,
+        opacity: 1,
+        fillOpacity: isSelected ? 0.62 : 0.42,
+        dashArray: isSelected ? '' : null
+      };
+    }
+
+    function renderMapParcels() {
+      parcelsLayerGroup.clearLayers();
+      overviewMarkersLayer.clearLayers();
+      polygonIndex.clear();
+
+      filteredRecords.forEach(rec => {
+        const isSelected = rec.id === selectedRecordId;
+        const style = getRecordStyle(rec, isSelected);
+        const polys = [];
+
+        const tooltipHtml = `
+          <div class="space-y-1">
+            <div class="font-bold text-white leading-snug">${escapeHtml(rec.nazwa)}</div>
+            <div class="text-slate-300 text-[11px]">
+              <span class="font-semibold text-emerald-300">${formatNumber(rec.kubatura)} m³</span>
+              • Kat. ${escapeHtml(normalizeCategory(rec.kategoria))}
+              • ${escapeHtml(rec.gmina)}
+            </div>
+            <div class="text-[10px] text-slate-400">
+              Działki: ${rec.dzialki.map(d => escapeHtml(d.nr)).join(', ')}
+              ${rec.dzialki.some(d => d.fromUldk) ? ' • <span class="text-emerald-400 font-semibold">ULDK</span>' : ''}
+            </div>
+          </div>
+        `;
+
+        rec.dzialki.forEach(parcel => {
+          if (!parcel.coords || parcel.coords.length === 0) return;
+          const poly = L.polygon(parcel.coords, style);
+          poly.bindTooltip(tooltipHtml, {
+            direction: 'top',
+            sticky: true,
+            className: 'parcel-tooltip'
+          });
+          poly.on('click', () => openDetailDrawer(rec.id, true));
+          poly.on('mouseover', () => {
+            if (rec.id !== selectedRecordId) {
+              poly.setStyle({ weight: 3.2, fillOpacity: 0.58 });
+            }
+          });
+          poly.on('mouseout', () => {
+            if (rec.id !== selectedRecordId) {
+              poly.setStyle(getRecordStyle(rec, false));
+            }
+          });
+          poly.addTo(parcelsLayerGroup);
+          polys.push(poly);
+        });
+
+        polygonIndex.set(rec.id, polys);
+
+        // Subtelny znacznik orientacyjny widoczny tylko przy oddaleniu (zoom < 14)
+        const radius = rec.kubatura >= 100000 ? 9 : rec.kubatura >= 20000 ? 7.5 : 6;
+        const marker = L.circleMarker([rec.lat, rec.lng], {
+          radius: isSelected ? radius + 2 : radius,
+          color: '#ffffff',
+          weight: 2,
+          fillColor: style.fillColor,
+          fillOpacity: 0.92
+        });
+        marker.bindTooltip(tooltipHtml, { direction: 'top', className: 'parcel-tooltip' });
+        marker.on('click', () => openDetailDrawer(rec.id, true));
+        marker.addTo(overviewMarkersLayer);
+      });
+
+      updateZoomUI();
+    }
+
+    function fitMapToFilteredParcels(animate = true) {
+      const bounds = L.latLngBounds([]);
+      filteredRecords.forEach(rec => {
+        rec.dzialki.forEach(p => {
+          if (p.coords && p.coords.length) {
+            try {
+              const b = L.polygon(p.coords).getBounds();
+              if (b.isValid()) bounds.extend(b);
+            } catch (e) {}
+          }
+        });
+        if (Number.isFinite(rec.lat) && Number.isFinite(rec.lng)) {
+          bounds.extend([rec.lat, rec.lng]);
+        }
+      });
+
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15, animate });
+      } else {
+        flyToSelectedArea();
+      }
+    }
+
+    function flyToSelectedArea() {
+      const keyPow = (locState.powiat || '').toLowerCase();
+      const keyWoj = (locState.wojewodztwo || '').toLowerCase();
+      if (keyPow && AREA_CENTERS[keyPow]) {
+        const [lat, lng, z] = AREA_CENTERS[keyPow];
+        map.setView([lat, lng], z, { animate: true });
+      } else if (keyWoj && AREA_CENTERS[keyWoj]) {
+        const [lat, lng, z] = AREA_CENTERS[keyWoj];
+        map.setView([lat, lng], z, { animate: true });
+      } else {
+        map.setView([52.05, 19.45], 6, { animate: true });
+      }
+    }
+
+    /*************************************************************************
+     * 9. KASKADOWE FILTRY LOKALIZACJI (WOJEWÓDZTWO -> POWIAT -> GMINY)
+     *************************************************************************/
+    function getAllPowiatsForWoj(woj) {
+      const set = new Set();
+      if (woj === '__ALL__') {
+        Object.values(POWIATY_BY_WOJ).forEach(arr => arr.forEach(p => set.add(p)));
+      } else if (POWIATY_BY_WOJ[woj]) {
+        POWIATY_BY_WOJ[woj].forEach(p => set.add(p));
+      }
+      allRecords.forEach(r => {
+        if (woj === '__ALL__' || r.wojewodztwo === woj) {
+          if (r.powiat) set.add(r.powiat);
+        }
+      });
+      return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
+    }
+
+    function getAllGminyForSelection(woj, powiat) {
+      const set = new Set();
+      if (powiat === 'wołomiński') {
+        GMINY_WOLOMINSKI.forEach(g => set.add(g));
+      }
+      allRecords.forEach(r => {
+        const matchWoj = woj === '__ALL__' || r.wojewodztwo === woj;
+        const matchPow = powiat === '__ALL__' || r.powiat === powiat;
+        if (matchWoj && matchPow && r.gmina) {
+          set.add(r.gmina);
+        }
+      });
+      return [...set].sort((a, b) => a.localeCompare(b, 'pl'));
+    }
+
+    function populateWojSelect() {
+      const select = document.getElementById('wojSelect');
+      const dynamicWojs = new Set(WOJEWODZTWA);
+      allRecords.forEach(r => { if (r.wojewodztwo) dynamicWojs.add(r.wojewodztwo); });
+      const sorted = [...dynamicWojs].sort((a, b) => a.localeCompare(b, 'pl'));
+
+      select.innerHTML = `<option value="__ALL__">Cała Polska (wszystkie województwa)</option>` +
+        sorted.map(w => `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`).join('');
+      select.value = locState.wojewodztwo;
+      populatePowiatSelect();
+    }
+
+    function populatePowiatSelect(searchTerm = '') {
+      const select = document.getElementById('powiatSelect');
+      const allPowiats = getAllPowiatsForWoj(locState.wojewodztwo);
+      const q = searchTerm.trim().toLowerCase();
+      const visible = q ? allPowiats.filter(p => p.toLowerCase().includes(q)) : allPowiats;
+
+      const options = [`<option value="__ALL__">Wszystkie powiaty (${allPowiats.length})</option>`]
+        .concat(visible.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`));
+      select.innerHTML = options.join('');
+
+      if (locState.powiat !== '__ALL__' && !allPowiats.includes(locState.powiat)) {
+        locState.powiat = '__ALL__';
+      }
+      select.value = visible.includes(locState.powiat) || locState.powiat === '__ALL__' ? locState.powiat : '__ALL__';
+      populateGminyList();
+    }
+
+    function populateGminyList(searchTerm = '') {
+      const container = document.getElementById('gminyContainer');
+      const allGminy = getAllGminyForSelection(locState.wojewodztwo, locState.powiat);
+      const q = (searchTerm || document.getElementById('gminaSearchInput').value || '').trim().toLowerCase();
+      const visible = q ? allGminy.filter(g => g.toLowerCase().includes(q)) : allGminy;
+
+      if (allGminy.length === 0) {
+        container.innerHTML = `<p class="col-span-2 text-[11px] text-slate-400 py-2 text-center">Brak wniosków w wybranym powiecie (możesz wgrać plik CSV)</p>`;
+        document.getElementById('selectedGminyCount').textContent = '0';
+        return;
+      }
+
+      container.innerHTML = visible.map(g => {
+        const checked = locState.selectedGminy.has(g) ? 'checked' : '';
+        return `
+          <label class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white border border-slate-200 hover:border-emerald-300 cursor-pointer text-[11px] truncate">
+            <input type="checkbox" class="gmina-checkbox rounded text-emerald-600 focus:ring-emerald-500 shrink-0" value="${escapeHtml(g)}" ${checked} />
+            <span class="truncate text-slate-700">${escapeHtml(g)}</span>
+          </label>
+        `;
+      }).join('');
+
+      container.querySelectorAll('.gmina-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) locState.selectedGminy.add(cb.value);
+          else locState.selectedGminy.delete(cb.value);
+          updateSelectedGminyCount();
+          applyFilters();
+        });
+      });
+
+      updateSelectedGminyCount();
+    }
+
+    function updateSelectedGminyCount() {
+      const allGminy = getAllGminyForSelection(locState.wojewodztwo, locState.powiat);
+      const activeCount = allGminy.filter(g => locState.selectedGminy.has(g)).length;
+      document.getElementById('selectedGminyCount').textContent = `${activeCount}/${allGminy.length}`;
+
+      const pill = document.getElementById('activeAreaPill');
+      if (locState.wojewodztwo === '__ALL__') {
+        pill.textContent = 'Cała Polska';
+      } else if (locState.powiat === '__ALL__') {
+        pill.textContent = `woj. ${locState.wojewodztwo}`;
+      } else {
+        pill.textContent = `pow. ${locState.powiat} (${activeCount} gmin)`;
+      }
+    }
+
+    function populateCategoriesList() {
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = CATEGORY_OPTIONS.map(c => `
+        <label class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
+          <input type="checkbox" class="cat-checkbox rounded text-emerald-600 focus:ring-emerald-500" value="${c.id}" checked />
+          <span class="text-slate-700">${escapeHtml(c.label)}</span>
+        </label>
+      `).join('');
+
+      container.querySelectorAll('.cat-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => applyFilters());
+      });
+    }
+
+    /*************************************************************************
+     * 10. FILTROWANIE, KPI, TABELA I PANEL SZCZEGÓŁÓW
+     *************************************************************************/
+    function applyFilters(shouldFitMap = false) {
+      const smartMatchOn = document.getElementById('smartMatchToggle').checked;
+      const keyword = document.getElementById('keywordInput').value.trim().toLowerCase();
+      const minVolRaw = document.getElementById('minVolInput').value;
+      const maxVolRaw = document.getElementById('maxVolInput').value;
+      const minVol = minVolRaw !== '' ? Number(minVolRaw) : null;
+      const maxVol = maxVolRaw !== '' ? Number(maxVolRaw) : null;
+      const onlyLeads = document.getElementById('onlyLeadsCheckbox').checked;
+
+      const selectedStatuses = new Set(
+        [...document.querySelectorAll('.status-checkbox:checked')].map(el => el.value)
+      );
+      const selectedCats = new Set(
+        [...document.querySelectorAll('.cat-checkbox:checked')].map(el => el.value)
+      );
+
+      // Liczniki statusów w aktualnej lokalizacji
+      let cntZlozony = 0;
+      let cntRozpatrywanie = 0;
+
+      const availableGminy = getAllGminyForSelection(locState.wojewodztwo, locState.powiat);
+
+      filteredRecords = allRecords.filter(rec => {
+        if (locState.wojewodztwo !== '__ALL__' && rec.wojewodztwo !== locState.wojewodztwo) return false;
+        if (locState.powiat !== '__ALL__' && rec.powiat !== locState.powiat) return false;
+        if (availableGminy.length > 0 && !locState.selectedGminy.has(rec.gmina)) return false;
+
+        if (rec.status === 'Złożony wniosek') cntZlozony++;
+        else if (rec.status === 'W rozpatrywaniu') cntRozpatrywanie++;
+
+        if (selectedStatuses.size > 0 && !selectedStatuses.has(rec.status)) return false;
+        if (selectedStatuses.size === 0) return false;
+
+        if (onlyLeads && !savedLeads.has(rec.id)) return false;
+
+        const normCat = normalizeCategory(rec.kategoria);
+        const catBucket = CATEGORY_OPTIONS.some(c => c.id === normCat) ? normCat : 'Brak';
+        if (!selectedCats.has(catBucket)) return false;
+
+        if (smartMatchOn && !analyzeSmartMatch(rec).isMatch) return false;
+
+        if (minVol !== null && (Number(rec.kubatura) || 0) < minVol) return false;
+        if (maxVol !== null && (Number(rec.kubatura) || 0) > maxVol) return false;
+
+        if (keyword) {
+          const hay = [
+            rec.nazwa, rec.rodzaj, rec.gmina, rec.powiat, rec.miejscowosc,
+            rec.ulica, rec.inwestor, rec.nr_sprawy,
+            ...(rec.dzialki || []).map(d => `${d.nr} ${d.obreb} ${d.id_teryt}`)
+          ].join(' ').toLowerCase();
+          if (!hay.includes(keyword)) return false;
+        }
+
+        return true;
+      });
+
+      document.getElementById('countStatusZlozony').textContent = cntZlozony;
+      document.getElementById('countStatusRozpatrywanie').textContent = cntRozpatrywanie;
+      document.getElementById('leadsOnlyBadge').classList.toggle('hidden', !onlyLeads);
+
+      updateKPIs();
+      renderMapParcels();
+      renderTable();
+      updateSelectedGminyCount();
+
+      if (shouldFitMap) {
+        fitMapToFilteredParcels(true);
+      }
+
+      // Automatyczne dociąganie rzeczywistych obrysów działek z ULDK GUGiK w tle
+      runUldkAutoSnap(filteredRecords, false);
+    }
+
+    function updateKPIs() {
+      const totalCount = filteredRecords.length;
+      const totalParcels = filteredRecords.reduce((sum, r) => sum + (r.dzialki ? r.dzialki.length : 0), 0);
+      const totalVolume = filteredRecords.reduce((sum, r) => sum + (Number(r.kubatura) || 0), 0);
+      const megaCount = filteredRecords.filter(r => (Number(r.kubatura) || 0) >= 50000).length;
+      const leadsInAll = allRecords.filter(r => savedLeads.has(r.id)).length;
+
+      document.getElementById('kpiCount').textContent = formatNumber(totalCount);
+      document.getElementById('kpiParcelsHint').textContent = `${formatNumber(totalParcels)} działek`;
+      document.getElementById('kpiVolume').textContent = formatNumber(totalVolume);
+      document.getElementById('kpiMegaCount').textContent = formatNumber(megaCount);
+      document.getElementById('kpiLeadsCount').textContent = formatNumber(leadsInAll);
+      document.getElementById('tableCountBadge').textContent = `${formatNumber(totalCount)} wyników`;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      const sorted = [...filteredRecords].sort((a, b) => {
+        const dir = sortState.dir === 'asc' ? 1 : -1;
+        const f = sortState.field;
+        if (f === 'kubatura') return ((Number(a.kubatura) || 0) - (Number(b.kubatura) || 0)) * dir;
+        return String(a[f] || '').localeCompare(String(b[f] || ''), 'pl') * dir;
+      });
+
+      if (sorted.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center text-slate-400">
+              Brak wniosków spełniających wybrane kryteria. Spróbuj zmienić filtry lub rozszerzyć lokalizację.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = sorted.map(rec => {
+        const isLead = savedLeads.has(rec.id);
+        const isMega = (Number(rec.kubatura) || 0) >= 50000;
+        const parcelsTxt = (rec.dzialki || []).map(d => d.nr).join(', ');
+        return `
+          <tr class="hover:bg-emerald-50/40 cursor-pointer transition ${rec.id === selectedRecordId ? 'bg-emerald-50' : ''}" data-id="${escapeHtml(rec.id)}">
+            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">${escapeHtml(rec.data_wplywu)}</td>
+            <td class="py-2.5 px-3 text-slate-700 whitespace-nowrap">${escapeHtml(rec.powiat)}</td>
+            <td class="py-2.5 px-3">
+              <div class="font-semibold text-slate-800">${escapeHtml(rec.gmina)}</div>
+              <div class="text-[11px] text-slate-500">dz. ${escapeHtml(parcelsTxt)}</div>
+            </td>
+            <td class="py-2.5 px-3 max-w-md">
+              <div class="font-semibold text-slate-900 line-clamp-2">${escapeHtml(rec.nazwa)}</div>
+              <div class="text-[11px] text-slate-500 truncate">${escapeHtml(rec.inwestor)}</div>
+            </td>
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px]">${escapeHtml(normalizeCategory(rec.kategoria))}</span>
+            </td>
+            <td class="py-2.5 px-3 text-right font-extrabold whitespace-nowrap ${isMega ? 'text-orange-600' : 'text-slate-900'}">
+              ${formatNumber(rec.kubatura)}
+            </td>
+            <td class="py-2.5 px-3 text-right whitespace-nowrap">
+              <button class="table-lead-btn px-2 py-1 rounded-md border text-[11px] font-bold transition ${isLead ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-slate-500 border-slate-200 hover:border-violet-400 hover:text-violet-600'}" data-id="${escapeHtml(rec.id)}" title="Zapisz jako Lead">
+                ★
+              </button>
+              <button class="table-map-btn ml-1 px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[11px] font-semibold transition" data-id="${escapeHtml(rec.id)}">
+                Mapa
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.querySelectorAll('tr[data-id]').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('button')) return;
+          openDetailDrawer(row.dataset.id, true);
+        });
+      });
+
+      tbody.querySelectorAll('.table-lead-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleLead(btn.dataset.id);
+        });
+      });
+
+      tbody.querySelectorAll('.table-map-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          switchView('map');
+          openDetailDrawer(btn.dataset.id, true);
+        });
+      });
+    }
+
+    function openDetailDrawer(id, flyTo = true) {
+      const rec = allRecords.find(r => r.id === id);
+      if (!rec) return;
+
+      selectedRecordId = id;
+      renderMapParcels();
+      renderTable();
+
+      const smart = analyzeSmartMatch(rec);
+      const isLead = savedLeads.has(rec.id);
+
+      document.getElementById('detailStatusBadge').textContent = rec.status;
+      document.getElementById('detailSmartBadge').textContent = smart.isMatch
+        ? (smart.isMisclassifiedGem ? 'Smart Match • Błędna kat. I!' : 'Smart Match: Hala / Usługi')
+        : 'Poza Smart Match';
+      document.getElementById('detailSmartBadge').className = smart.isMatch
+        ? 'text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-orange-500/25 text-orange-200 border border-orange-400/30'
+        : 'text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 border border-slate-600';
+
+      document.getElementById('detailTitle').textContent = rec.nazwa;
+      document.getElementById('detailVolume').textContent = `${formatNumber(rec.kubatura)} m³`;
+      document.getElementById('detailDate').textContent = rec.data_wplywu || '—';
+
+      const reasonBox = document.getElementById('detailMatchReasonBox');
+      if (smart.isMatch) {
+        reasonBox.classList.remove('hidden');
+        document.getElementById('detailMatchReason').textContent = `Dopasowano na podstawie: ${smart.reasons.join('; ')}.`;
+      } else {
+        reasonBox.classList.add('hidden');
+      }
+
+      document.getElementById('detailParcelsList').innerHTML = (rec.dzialki || []).map(p => `
+        <div class="p-2 rounded-lg bg-white border border-slate-200 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <div class="font-bold text-slate-800">Działka nr ${escapeHtml(p.nr)} <span class="font-normal text-slate-500">(${escapeHtml(p.obreb || 'obręb')})</span></div>
+            <div class="font-mono text-[10px] text-slate-500 truncate">${escapeHtml(p.id_teryt || 'brak ID TERYT')}</div>
+          </div>
+          <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${p.fromUldk ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
+            ${p.fromUldk ? 'ULDK OK' : 'Przybliżona'}
+          </span>
+        </div>
+      `).join('');
+
+      document.getElementById('detailLocationFull').textContent =
+        `${rec.miejscowosc}${rec.ulica ? ', ' + rec.ulica : ''} (gm. ${rec.gmina}, pow. ${rec.powiat})`;
+      document.getElementById('detailCategory').textContent = normalizeCategory(rec.kategoria);
+      document.getElementById('detailRodzaj').textContent = rec.rodzaj || '—';
+      document.getElementById('detailInvestor').textContent = rec.inwestor || '—';
+      document.getElementById('detailCaseOrgan').textContent = `${rec.nr_sprawy} • ${rec.organ}`;
+
+      updateDetailLeadButton(isLead);
+      document.getElementById('detailNoteInput').value = savedNotes[rec.id] || '';
+
+      const firstParcelId = rec.dzialki && rec.dzialki[0] ? rec.dzialki[0].id_teryt : '';
+      document.getElementById('detailGeoportalLink').href = firstParcelId
+        ? `https://mapy.geoportal.gov.pl/imap/Imgp_2.html?identifyParcel=${encodeURIComponent(firstParcelId)}`
+        : `https://mapy.geoportal.gov.pl/imap/Imgp_2.html`;
+      document.getElementById('detailGoogleMapsLink').href =
+        `https://www.google.com/maps/search/?api=1&query=${rec.lat},${rec.lng}`;
+
+      document.getElementById('detailDrawer').classList.remove('translate-x-full');
+
+      if (flyTo && currentView === 'map') {
+        const polys = polygonIndex.get(rec.id);
+        if (polys && polys.length > 0) {
+          const b = L.latLngBounds([]);
+          polys.forEach(p => { if (p.getBounds().isValid()) b.extend(p.getBounds()); });
+          if (b.isValid()) {
+            map.fitBounds(b, { padding: [90, 90], maxZoom: 17, animate: true });
+            return;
+          }
+        }
+        map.setView([rec.lat, rec.lng], 16, { animate: true });
+      }
+    }
+
+    function closeDetailDrawer() {
+      selectedRecordId = null;
+      document.getElementById('detailDrawer').classList.add('translate-x-full');
+      renderMapParcels();
+      renderTable();
+    }
+
+    function updateDetailLeadButton(isLead) {
+      const btn = document.getElementById('detailLeadToggleBtn');
+      const txt = document.getElementById('detailLeadBtnText');
+      if (isLead) {
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs bg-violet-600 hover:bg-violet-700 text-white';
+        txt.textContent = 'Zapisany Lead ★';
+      } else {
+        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs bg-white hover:bg-violet-100 text-violet-800 border border-violet-300';
+        txt.textContent = 'Dodaj do Leadów';
+      }
+    }
+
+    function toggleLead(id) {
+      if (!id) return;
+      if (savedLeads.has(id)) {
+        savedLeads.delete(id);
+        showToast('Usunięto wniosek z zapisanych Leadów.', 'info');
+      } else {
+        savedLeads.add(id);
+        showToast('Zapisano wniosek jako Lead ★', 'success');
+      }
+      persistLeadsAndNotes();
+      if (selectedRecordId === id) {
+        updateDetailLeadButton(savedLeads.has(id));
+      }
+      applyFilters(false);
+    }
+
+    function switchView(view) {
+      currentView = view;
+      const mapCont = document.getElementById('mapViewContainer');
+      const tableCont = document.getElementById('tableViewContainer');
+      const mapBtn = document.getElementById('viewMapBtn');
+      const tableBtn = document.getElementById('viewTableBtn');
+
+      if (view === 'map') {
+        mapCont.classList.remove('hidden');
+        tableCont.classList.add('hidden');
+        mapBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm transition';
+        tableBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 text-slate-300 hover:text-white transition';
+        setTimeout(() => map.invalidateSize(), 60);
+      } else {
+        mapCont.classList.add('hidden');
+        tableCont.classList.remove('hidden');
+        tableBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm transition';
+        mapBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 text-slate-300 hover:text-white transition';
+      }
+    }
+
+    /*************************************************************************
+     * 11. IMPORT I EKSPORT CSV (GUNB RWDZ)
+     *************************************************************************/
+    function parseCsvLine(line, sep) {
+      const out = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === sep && !inQuotes) {
+          out.push(cur.trim());
+          cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      out.push(cur.trim());
+      return out;
+    }
+
+    function findColIndex(headers, patterns) {
+      for (const p of patterns) {
+        const idx = headers.findIndex(h => h.includes(p));
+        if (idx !== -1) return idx;
+      }
+      return -1;
+    }
+
+    function handleCsvImport(file) {
+      const encoding = document.getElementById('csvEncodingSelect').value || 'UTF-8';
+      const autoUldk = document.getElementById('csvAutoUldkCheckbox').checked;
+      const reader = new FileReader();
+
+      reader.onload = async (ev) => {
+        try {
+          const text = String(ev.target.result || '').replace(/^\uFEFF/, '');
+          const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+          if (lines.length < 2) {
+            showToast('Plik CSV jest pusty lub ma nieprawidłowy format.', 'error');
+            return;
+          }
+
+          const sep = (lines[0].split(';').length >= lines[0].split(',').length) ? ';' : ',';
+          const headers = parseCsvLine(lines[0], sep).map(h => h.toLowerCase());
+
+          const idxWoj = findColIndex(headers, ['wojewodztwo', 'województwo']);
+          const idxPow = findColIndex(headers, ['powiat']);
+          const idxGmina = findColIndex(headers, ['gmina']);
+          const idxMiej = findColIndex(headers, ['miejscowosc', 'miejscowość', 'miasto']);
+          const idxUlica = findColIndex(headers, ['ulica']);
+          const idxNazwa = findColIndex(headers, ['nazwa_zamierzenia', 'nazwa zam', 'nazwa_zam', 'zamierzenie', 'nazwa']);
+          const idxRodzaj = findColIndex(headers, ['rodzaj_zamierzenia', 'rodzaj zam', 'rodzaj']);
+          const idxKat = findColIndex(headers, ['kategoria']);
+          const idxKub = findColIndex(headers, ['kubatura']);
+          const idxData = findColIndex(headers, ['data_wplywu', 'data wpływu', 'data_wniosku', 'data']);
+          const idxInwestor = findColIndex(headers, ['inwestor', 'wnioskodawca']);
+          const idxSprawa = findColIndex(headers, ['numer_sprawy', 'nr_sprawy', 'znak']);
+          const idxDzialka = findColIndex(headers, ['nr_dzialki', 'dzialka', 'działk', 'teryt']);
+          const idxObreb = findColIndex(headers, ['obreb', 'obręb']);
+
+          const imported = [];
+          const maxRows = Math.min(lines.length, 1500);
+
+          for (let i = 1; i < maxRows; i++) {
+            const cols = parseCsvLine(lines[i], sep);
+            if (cols.length < 2) continue;
+
+            const woj = (idxWoj >= 0 && cols[idxWoj] ? cols[idxWoj] : 'mazowieckie').toLowerCase().trim();
+            const pow = (idxPow >= 0 && cols[idxPow] ? cols[idxPow] : 'wołomiński').toLowerCase().trim();
+            const gmina = (idxGmina >= 0 && cols[idxGmina] ? cols[idxGmina] : 'Wołomin').trim();
+            const nazwa = (idxNazwa >= 0 && cols[idxNazwa] ? cols[idxNazwa] : 'Wniosek o pozwolenie na budowę').trim();
+            const kubStr = idxKub >= 0 ? String(cols[idxKub] || '0').replace(/\s+/g, '').replace(',', '.') : '0';
+            const kubatura = Math.round(parseFloat(kubStr) || 0);
+
+            const center = AREA_CENTERS[pow] || AREA_CENTERS[woj] || [52.368, 21.255, 11];
+            const jitterLat = center[0] + ((Math.sin(i * 12.9898) * 43758.5453) % 1) * 0.08 - 0.04;
+            const jitterLng = center[1] + ((Math.sin(i * 78.233) * 43758.5453) % 1) * 0.12 - 0.06;
+
+            const rawDzialka = idxDzialka >= 0 ? (cols[idxDzialka] || '') : '';
+            const rawObreb = idxObreb >= 0 ? (cols[idxObreb] || gmina) : gmina;
+            const dzList = rawDzialka
+              ? rawDzialka.split(/[,;]+/).map(s => s.trim()).filter(Boolean).slice(0, 4).map(d => ({
+                  id_teryt: d.includes('.') ? d : '',
+                  obreb: rawObreb,
+                  nr: d.includes('.') ? d.split('.').pop() : d
+                }))
+              : [{ id_teryt: '', obreb: rawObreb, nr: `${100 + (i % 400)}/1` }];
+
+            imported.push(makeRecord({
+              id: `CSV-${i}`,
+              status: 'Złożony wniosek',
+              data_wplywu: idxData >= 0 && cols[idxData] ? cols[idxData] : '2026-11-20',
+              wojewodztwo: woj,
+              powiat: pow,
+              gmina,
+              miejscowosc: idxMiej >= 0 && cols[idxMiej] ? cols[idxMiej] : gmina,
+              ulica: idxUlica >= 0 ? (cols[idxUlica] || '') : '',
+              kategoria: idxKat >= 0 ? normalizeCategory(cols[idxKat]) : 'Brak',
+              nazwa,
+              rodzaj: idxRodzaj >= 0 && cols[idxRodzaj] ? cols[idxRodzaj] : 'Obiekt budowlany inny niż budynek mieszkalny jednorodzinny',
+              kubatura,
+              inwestor: idxInwestor >= 0 && cols[idxInwestor] ? cols[idxInwestor] : 'Wg pliku CSV RWDZ',
+              nr_sprawy: idxSprawa >= 0 && cols[idxSprawa] ? cols[idxSprawa] : `CSV-${i}`,
+              lat: jitterLat,
+              lng: jitterLng,
+              dzialki: dzList
+            }));
+          }
+
+          if (imported.length === 0) {
+            showToast('Nie udało się odczytać żadnych rekordów z pliku CSV.', 'error');
+            return;
+          }
+
+          allRecords = imported;
+          document.getElementById('dataSourceText').textContent = `${file.name} (${imported.length})`;
+
+          // Przełącz lokalizację na całą Polskę / pierwszy powiat z pliku, aby od razu pokazać wyniki
+          locState.wojewodztwo = '__ALL__';
+          locState.powiat = '__ALL__';
+          locState.selectedGminy = new Set(allRecords.map(r => r.gmina));
+          populateWojSelect();
+          applyFilters(true);
+          closeImportModal();
+          showToast(`Zaimportowano ${imported.length} wniosków z pliku CSV.`, 'success');
+
+          if (autoUldk) {
+            runUldkAutoSnap(filteredRecords.slice(0, 25), false);
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Błąd podczas przetwarzania pliku CSV.', 'error');
+        }
+      };
+
+      reader.readAsText(file, encoding);
+    }
+
+    function exportFilteredToCsv() {
+      if (filteredRecords.length === 0) {
+        showToast('Brak przefiltrowanych wniosków do eksportu.', 'info');
+        return;
+      }
+      const headers = ['ID', 'Data wpływu', 'Status', 'Województwo', 'Powiat', 'Gmina', 'Miejscowość', 'Działki', 'Kategoria', 'Kubatura (m3)', 'Nazwa zamierzenia', 'Inwestor', 'Lead', 'Notatka'];
+      const rows = filteredRecords.map(r => [
+        r.id, r.data_wplywu, r.status, r.wojewodztwo, r.powiat, r.gmina, r.miejscowosc,
+        (r.dzialki || []).map(d => d.id_teryt || d.nr).join(' | '),
+        normalizeCategory(r.kategoria), r.kubatura, r.nazwa, r.inwestor,
+        savedLeads.has(r.id) ? 'TAK' : 'NIE',
+        savedNotes[r.id] || ''
+      ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';'));
+
+      const csvContent = '\uFEFF' + headers.join(';') + '\n' + rows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `halaradar_wnioski_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast(`Wyeksportowano ${filteredRecords.length} wniosków do CSV.`, 'success');
+    }
+
+    /*************************************************************************
+     * 12. UDOSTĘPNIANIE LINKIEM (URL STATE)
+     *************************************************************************/
+    function buildShareUrl(specificRecordId = null) {
+      const params = new URLSearchParams();
+      params.set('woj', locState.wojewodztwo);
+      params.set('pow', locState.powiat);
+      params.set('smart', document.getElementById('smartMatchToggle').checked ? '1' : '0');
+      const kw = document.getElementById('keywordInput').value.trim();
+      if (kw) params.set('kw', kw);
+      const minV = document.getElementById('minVolInput').value.trim();
+      if (minV) params.set('minv', minV);
+      if (specificRecordId || selectedRecordId) {
+        params.set('id', specificRecordId || selectedRecordId);
+      }
+      const c = map.getCenter();
+      params.set('lat', c.lat.toFixed(5));
+      params.set('lng', c.lng.toFixed(5));
+      params.set('z', String(map.getZoom()));
+
+      const base = window.location.href.split('?')[0];
+      return `${base}?${params.toString()}`;
+    }
+
+    async function copyTextToClipboard(text, okMsg) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(okMsg, 'success');
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast(okMsg, 'success');
+      }
+    }
+
+    function restoreStateFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('woj')) locState.wojewodztwo = params.get('woj');
+      if (params.has('pow')) locState.powiat = params.get('pow');
+      if (params.has('smart')) {
+        document.getElementById('smartMatchToggle').checked = params.get('smart') !== '0';
+      }
+      if (params.has('kw')) {
+        document.getElementById('keywordInput').value = params.get('kw');
+      }
+      if (params.has('minv')) {
+        document.getElementById('minVolInput').value = params.get('minv');
+      }
+
+      const allGminy = getAllGminyForSelection(locState.wojewodztwo, locState.powiat);
+      locState.selectedGminy = new Set(allGminy);
+
+      if (params.has('lat') && params.has('lng') && params.has('z')) {
+        const lat = parseFloat(params.get('lat'));
+        const lng = parseFloat(params.get('lng'));
+        const z = parseInt(params.get('z'), 10);
+        if (Number.isFinite(lat) && Number.isFinite(lng) && Number.isFinite(z)) {
+          map.setView([lat, lng], z, { animate: false });
+        }
+      }
+
+      return params.get('id') || null;
+    }
+
+    /*************************************************************************
+     * 13. MODALE I ZDARZENIA INTERFEJSU
+     *************************************************************************/
+    function openImportModal() {
+      const m = document.getElementById('importModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeImportModal() {
+      const m = document.getElementById('importModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+    function openHelpModal() {
+      const m = document.getElementById('helpModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+    function closeHelpModal() {
+      const m = document.getElementById('helpModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function initEvents() {
+      // Przełączanie panelu bocznego (desktop collapse + mobile drawer)
+      const sidebar = document.getElementById('filterSidebar');
+      const backdrop = document.getElementById('mobileFilterBackdrop');
+
+      function closeMobileSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+
+      document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
+        if (window.innerWidth < 1024) {
+          const isHidden = sidebar.classList.contains('-translate-x-full');
+          sidebar.classList.toggle('-translate-x-full', !isHidden);
+          backdrop.classList.toggle('hidden', !isHidden);
+        } else {
+          sidebar.classList.toggle('sidebar-collapsed');
+          setTimeout(() => map.invalidateSize(), 240);
+        }
+      });
+
+      document.getElementById('closeMobileFilterBtn').addEventListener('click', closeMobileSidebar);
+      backdrop.addEventListener('click', closeMobileSidebar);
+
+      // Widok Mapa / Tabela
+      document.getElementById('viewMapBtn').addEventListener('click', () => switchView('map'));
+      document.getElementById('viewTableBtn').addEventListener('click', () => switchView('table'));
+
+      // Udostępnij link + Import / Eksport + Pomoc
+      document.getElementById('shareLinkBtn').addEventListener('click', () => {
+        const url = buildShareUrl();
+        try { window.history.replaceState({}, '', url); } catch (e) {}
+        copyTextToClipboard(url, 'Skopiowano link z aktualnym widokiem i filtrami!');
+      });
+
+      document.getElementById('openImportModalBtn').addEventListener('click', openImportModal);
+      document.getElementById('closeImportModalBtn').addEventListener('click', closeImportModal);
+      document.getElementById('cancelImportBtn').addEventListener('click', closeImportModal);
+      document.getElementById('exportCsvBtn').addEventListener('click', exportFilteredToCsv);
+
+      document.getElementById('openHelpModalBtn').addEventListener('click', openHelpModal);
+      document.getElementById('closeHelpModalBtn').addEventListener('click', closeHelpModal);
+      document.getElementById('okHelpBtn').addEventListener('click', closeHelpModal);
+
+      // Obsługa przeciągania pliku CSV
+      const dropZone = document.getElementById('dropZone');
+      const csvInput = document.getElementById('csvFileInput');
+      dropZone.addEventListener('click', () => csvInput.click());
+      csvInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleCsvImport(e.target.files[0]);
+          csvInput.value = '';
+        }
+      });
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-emerald-600', 'bg-emerald-50');
+      });
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-emerald-600', 'bg-emerald-50');
+      });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-emerald-600', 'bg-emerald-50');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleCsvImport(e.dataTransfer.files[0]);
+        }
+      });
+
+      document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
+        allRecords = DEMO_DATA.map(r => ({ ...r, dzialki: r.dzialki.map(d => ({ ...d })) }));
+        document.getElementById('dataSourceText').textContent = 'Baza demo RWDZ';
+        locState.wojewodztwo = 'mazowieckie';
+        locState.powiat = 'wołomiński';
+        locState.selectedGminy = new Set(GMINY_WOLOMINSKI);
+        populateWojSelect();
+        applyFilters(true);
+        closeImportModal();
+        showToast('Przywrócono wbudowaną bazę demo.', 'info');
+      });
+
+      // Kaskadowy filtr lokalizacji
+      document.getElementById('wojSelect').addEventListener('change', (e) => {
+        locState.wojewodztwo = e.target.value;
+        locState.powiat = '__ALL__';
+        document.getElementById('powiatSearchInput').value = '';
+        document.getElementById('gminaSearchInput').value = '';
+        populatePowiatSelect();
+        locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
+        populateGminyList();
+        applyFilters(true);
+      });
+
+      document.getElementById('powiatSearchInput').addEventListener('input', (e) => {
+        populatePowiatSelect(e.target.value);
+      });
+
+      document.getElementById('powiatSelect').addEventListener('change', (e) => {
+        locState.powiat = e.target.value;
+        document.getElementById('gminaSearchInput').value = '';
+        locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
+        populateGminyList();
+        applyFilters(true);
+      });
+
+      document.getElementById('gminaSearchInput').addEventListener('input', (e) => {
+        populateGminyList(e.target.value);
+      });
+
+      document.getElementById('selectAllGminyBtn').addEventListener('click', () => {
+        locState.selectedGminy = new Set(getAllGminyForSelection(locState.wojewodztwo, locState.powiat));
+        populateGminyList();
+        applyFilters(false);
+      });
+
+      document.getElementById('clearAllGminyBtn').addEventListener('click', () => {
+        locState.selectedGminy.clear();
+        populateGminyList();
+        applyFilters(false);
+      });
+
+      // Smart Match, wyszukiwarka, kubatura, statusy, leady
+      document.getElementById('smartMatchToggle').addEventListener('change', () => applyFilters(false));
+
+      const kwInput = document.getElementById('keywordInput');
+      const clearKwBtn = document.getElementById('clearKeywordBtn');
+      kwInput.addEventListener('input', () => {
+        clearKwBtn.classList.toggle('hidden', !kwInput.value);
+        applyFilters(false);
+      });
+      clearKwBtn.addEventListener('click', () => {
+        kwInput.value = '';
+        clearKwBtn.classList.add('hidden');
+        applyFilters(false);
+      });
+
+      document.querySelectorAll('.kw-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          kwInput.value = chip.dataset.kw;
+          clearKwBtn.classList.remove('hidden');
+          applyFilters(false);
+        });
+      });
+
+      document.getElementById('minVolInput').addEventListener('input', () => applyFilters(false));
+      document.getElementById('maxVolInput').addEventListener('input', () => applyFilters(false));
+
+      document.querySelectorAll('.vol-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('minVolInput').value = btn.dataset.min;
+          document.getElementById('maxVolInput').value = '';
+          document.querySelectorAll('.vol-preset').forEach(b => {
+            b.className = 'vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition';
+          });
+          btn.className = 'vol-preset text-[11px] px-2 py-1 rounded-md border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold transition';
+          applyFilters(false);
+        });
+      });
+
+      document.querySelectorAll('.status-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => applyFilters(false));
+      });
+
+      document.getElementById('onlyLeadsCheckbox').addEventListener('change', () => applyFilters(false));
+      document.getElementById('kpiLeadsCard').addEventListener('click', () => {
+        const cb = document.getElementById('onlyLeadsCheckbox');
+        cb.checked = !cb.checked;
+        applyFilters(false);
+      });
+
+      document.getElementById('selectAllCatBtn').addEventListener('click', () => {
+        document.querySelectorAll('.cat-checkbox').forEach(cb => { cb.checked = true; });
+        applyFilters(false);
+      });
+
+      // Reset filtrów do ustawień domyślnych (powiat wołomiński + wszystkie 12 gmin)
+      document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+        document.getElementById('smartMatchToggle').checked = true;
+        document.getElementById('keywordInput').value = '';
+        document.getElementById('clearKeywordBtn').classList.add('hidden');
+        document.getElementById('minVolInput').value = '';
+        document.getElementById('maxVolInput').value = '';
+        document.getElementById('onlyLeadsCheckbox').checked = false;
+        document.getElementById('powiatSearchInput').value = '';
+        document.getElementById('gminaSearchInput').value = '';
+        document.querySelectorAll('.status-checkbox').forEach(cb => { cb.checked = true; });
+        document.querySelectorAll('.cat-checkbox').forEach(cb => { cb.checked = true; });
+
+        locState.wojewodztwo = 'mazowieckie';
+        locState.powiat = 'wołomiński';
+        locState.selectedGminy = new Set(GMINY_WOLOMINSKI);
+        populateWojSelect();
+        applyFilters(true);
+        showToast('Przywrócono domyślne filtry (pow. wołomiński).', 'info');
+      });
+
+      // Warstwy podkładowe (4 style) + KIEG
+      document.querySelectorAll('input[name="baseLayer"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const val = e.target.value;
+          if (map.hasLayer(activeBaseLayer)) map.removeLayer(activeBaseLayer);
+          if (map.hasLayer(ortoOverlay)) map.removeLayer(ortoOverlay);
+
+          if (val === 'osm_kieg') {
+            activeBaseLayer = baseLayers.osm.addTo(map);
+          } else if (val === 'light_kieg') {
+            activeBaseLayer = baseLayers.carto.addTo(map);
+          } else if (val === 'orto_kieg') {
+            activeBaseLayer = baseLayers.sat.addTo(map);
+            ortoOverlay.addTo(map);
+          } else if (val === 'sat') {
+            activeBaseLayer = baseLayers.sat.addTo(map);
+          }
+          updateKiegLayers();
+        });
+      });
+
       document.getElementById('kiegParcelsToggle').addEventListener('change', updateKiegLayers);
       document.getElementById('kiegBuildingsToggle').addEventListener('change', updateKiegLayers);
       document.getElementById('fitBoundsBtn').addEventListener('click', () => fitMapToFilteredParcels(true));
 
-      // Zwijanie / rozwijanie panelu Podkładu i Legendy (szczególnie wygodne na telefonie)
+      // Zwijanie / rozwijanie panelu Podkładu i Legendy (wygodne na telefonie i desktopie)
       function setPanelOpen(bodyEl, btnEl, chevronEl, isOpen) {
         bodyEl.classList.remove('md:block');
         bodyEl.classList.toggle('hidden', !isOpen);
@@ -1808,7 +3060,6 @@
       const legendBtn = document.getElementById('toggleLegendPanelBtn');
       const legendChevron = document.getElementById('legendChevron');
 
-      // Ustawienie początkowe: na desktopie (>= 768px) rozwinięte, na telefonie (< 768px) zwinięte
       const startOpen = window.innerWidth >= 768;
       setPanelOpen(layersBody, layersBtn, layersChevron, startOpen);
       setPanelOpen(legendBody, legendBtn, legendChevron, startOpen);
@@ -1816,7 +3067,6 @@
       layersBtn.addEventListener('click', () => {
         const willOpen = layersBody.classList.contains('hidden');
         setPanelOpen(layersBody, layersBtn, layersChevron, willOpen);
-        // Na telefonie otwarcie Podkładu automatycznie zwija Legendę, aby nie zasłaniać mapy
         if (willOpen && window.innerWidth < 768) {
           setPanelOpen(legendBody, legendBtn, legendChevron, false);
         }
@@ -1833,11 +3083,80 @@
       document.getElementById('zoomTo16Btn').addEventListener('click', () => {
         map.setZoom(16, { animate: true });
       });
-// ... existing code ... -->
+
+      document.getElementById('refreshUldkAllBtn').addEventListener('click', () => {
+        runUldkAutoSnap(filteredRecords, true);
+        showToast('Odświeżanie granic działek z ULDK GUGiK...', 'info');
+      });
+
+      // Sortowanie w tabeli
+      document.querySelectorAll('.sort-header').forEach(th => {
+        th.addEventListener('click', () => {
+          const field = th.dataset.sort;
+          if (sortState.field === field) {
+            sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortState.field = field;
+            sortState.dir = field === 'kubatura' || field === 'data_wplywu' ? 'desc' : 'asc';
+          }
+          renderTable();
+        });
+      });
+
+      // Panel szczegółów (Drawer)
+      document.getElementById('closeDetailBtn').addEventListener('click', closeDetailDrawer);
+      document.getElementById('detailLeadToggleBtn').addEventListener('click', () => {
+        if (selectedRecordId) toggleLead(selectedRecordId);
+      });
+
+      document.getElementById('detailNoteInput').addEventListener('input', (e) => {
+        if (!selectedRecordId) return;
+        savedNotes[selectedRecordId] = e.target.value;
+        persistLeadsAndNotes();
+      });
+
+      document.getElementById('fetchUldkBtn').addEventListener('click', async () => {
+        const rec = allRecords.find(r => r.id === selectedRecordId);
+        if (!rec) return;
+        showToast('Pobieranie rzeczywistego kształtu działki z ULDK GUGiK...', 'info');
+        const ok = await updateRecordParcelsFromULDK(rec, true);
+        if (ok) {
+          renderMapParcels();
+          openDetailDrawer(rec.id, true);
+          updateUldkStatusBadge(false);
+          showToast('Pobrano rzeczywisty obrys działki z ULDK!', 'success');
+        } else {
+          showToast('Serwer ULDK nie zwrócił geometrii dla tego ID (spróbuj ponownie za chwilę).', 'error');
+        }
+      });
+
+      document.getElementById('detailCopyLinkBtn').addEventListener('click', () => {
+        if (!selectedRecordId) return;
+        const url = buildShareUrl(selectedRecordId);
+        copyTextToClipboard(url, 'Skopiowano bezpośredni link do tego wniosku!');
+      });
+
       window.addEventListener('resize', () => {
         if (currentView === 'map') map.invalidateSize();
         updateZoomUI();
         updateUldkStatusBadge(uldkQueueRunning);
       });
     }
-// ... existing code ... -->
+
+    /*************************************************************************
+     * 14. START APLIKACJI
+     *************************************************************************/
+    (function bootstrap() {
+      populateCategoriesList();
+      const initialRecordId = restoreStateFromUrl();
+      populateWojSelect();
+      initEvents();
+      updateZoomUI();
+      applyFilters(!initialRecordId && !window.location.search.includes('lat='));
+      if (initialRecordId) {
+        setTimeout(() => openDetailDrawer(initialRecordId, true), 250);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -77,7 +77,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden">
+<body class="bg-slate-100 text-slate-800 h-screen h-[100dvh] flex flex-col overflow-hidden">
 
   <!-- ==================== GÓRNY PASEK NAWIGACJI (HEADER) ==================== -->
   <header class="bg-slate-900 text-white border-b border-slate-800 px-3 sm:px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 z-30 shrink-0 shadow-md">
@@ -171,65 +171,65 @@
   </header>
 
   <!-- ==================== PASEK KPI ==================== -->
-  <section class="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 shrink-0 z-20">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 flex items-center justify-between">
+  <section class="bg-white border-b border-slate-200 px-2.5 sm:px-4 py-1.5 sm:py-2 shrink-0 z-20">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-3">
+      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between">
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pasujące wnioski</p>
+          <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500">Pasujące wnioski</p>
           <div class="flex items-baseline gap-1.5">
-            <span id="kpiCount" class="text-lg font-extrabold text-slate-900">0</span>
-            <span id="kpiParcelsHint" class="text-[11px] text-slate-500">0 działek</span>
+            <span id="kpiCount" class="text-base sm:text-lg font-extrabold text-slate-900">0</span>
+            <span id="kpiParcelsHint" class="text-[10px] sm:text-[11px] text-slate-500">0 działek</span>
           </div>
         </div>
-        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 items-center justify-center shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
           </svg>
         </div>
       </div>
 
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 flex items-center justify-between">
+      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between">
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Łączna kubatura</p>
+          <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500">Łączna kubatura</p>
           <div class="flex items-baseline gap-1">
-            <span id="kpiVolume" class="text-lg font-extrabold text-slate-900">0</span>
-            <span class="text-xs font-semibold text-slate-500">m³</span>
+            <span id="kpiVolume" class="text-base sm:text-lg font-extrabold text-slate-900">0</span>
+            <span class="text-[11px] sm:text-xs font-semibold text-slate-500">m³</span>
           </div>
         </div>
-        <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-orange-100 text-orange-600 items-center justify-center shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
           </svg>
         </div>
       </div>
 
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 flex items-center justify-between">
+      <div class="bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between">
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Mega hale (&ge; 50 tys. m³)</p>
+          <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500">Mega hale (&ge; 50 tys. m³)</p>
           <div class="flex items-baseline gap-1.5">
-            <span id="kpiMegaCount" class="text-lg font-extrabold text-orange-600">0</span>
+            <span id="kpiMegaCount" class="text-base sm:text-lg font-extrabold text-orange-600">0</span>
             <span class="text-[11px] text-slate-500 hidden sm:inline">najwyższy priorytet</span>
           </div>
         </div>
-        <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-orange-100 text-orange-600 items-center justify-center shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
         </div>
       </div>
 
-      <button id="kpiLeadsCard" class="text-left bg-slate-50 hover:bg-violet-50 border border-slate-200/80 rounded-xl px-3 py-1.5 flex items-center justify-between transition group">
+      <button id="kpiLeadsCard" class="text-left bg-slate-50 hover:bg-violet-50 border border-slate-200/80 rounded-xl px-2.5 sm:px-3 py-1 sm:py-1.5 flex items-center justify-between transition group">
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+          <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             Zapisane Leady ★
             <span id="leadsOnlyBadge" class="hidden text-[9px] px-1.5 py-0.2 rounded bg-violet-600 text-white font-bold">AKTYWNY</span>
           </p>
           <div class="flex items-baseline gap-1.5">
-            <span id="kpiLeadsCount" class="text-lg font-extrabold text-violet-700">0</span>
-            <span class="text-[11px] text-violet-600 font-medium group-hover:underline">Filtruj leady</span>
+            <span id="kpiLeadsCount" class="text-base sm:text-lg font-extrabold text-violet-700">0</span>
+            <span class="text-[10px] sm:text-[11px] text-violet-600 font-medium group-hover:underline">Filtruj leady</span>
           </div>
         </div>
-        <div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center shrink-0">
+        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-violet-100 text-violet-600 items-center justify-center shrink-0">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
           </svg>
@@ -422,78 +422,106 @@
         <div id="map" class="w-full h-full"></div>
 
         <!-- Górny pasek statusu ULDK Auto-Snap -->
-        <div id="uldkStatusBar" class="absolute top-3 left-14 z-[400] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-md px-3 py-1.5 text-[11px] font-medium text-slate-700 flex items-center gap-2">
+        <div id="uldkStatusBar" class="absolute top-2.5 left-12 sm:top-3 sm:left-14 z-[400] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-md px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-[11px] font-medium text-slate-700 flex items-center gap-1.5 sm:gap-2 max-w-[calc(100vw-185px)] sm:max-w-none">
           <span id="uldkStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-          <span id="uldkStatusText">ULDK: przygotowywanie...</span>
-          <button id="refreshUldkAllBtn" class="ml-1 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold transition flex items-center gap-1" title="Pobierz/odśwież rzeczywiste granice działek z ULDK GUGiK">
+          <span id="uldkStatusText" class="truncate">ULDK: przygotowywanie...</span>
+          <button id="refreshUldkAllBtn" class="ml-0.5 sm:ml-1 px-1.5 sm:px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold transition flex items-center gap-1 shrink-0" title="Pobierz/odśwież rzeczywiste granice działek z ULDK GUGiK">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
-            Odśwież
+            <span class="hidden sm:inline">Odśwież</span>
           </button>
         </div>
 
         <!-- Nieinwazyjny baner informacyjny KIEG przy zoom < 15 (lewy dolny róg) -->
-        <div id="kiegZoomHint" class="absolute bottom-5 left-3 z-[400] bg-slate-900/90 backdrop-blur-sm text-white px-3.5 py-2 rounded-xl shadow-lg text-[11px] font-medium flex flex-wrap items-center gap-2.5 max-w-[420px] transition-opacity duration-200">
+        <div id="kiegZoomHint" class="absolute bottom-3 left-2.5 sm:bottom-5 sm:left-3 z-[400] bg-slate-900/90 backdrop-blur-sm text-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-lg text-[10px] sm:text-[11px] font-medium flex flex-wrap items-center gap-2 max-w-[calc(100vw-135px)] sm:max-w-[420px] transition-opacity duration-200">
           <span id="kiegZoomHintText" class="leading-snug">Zoom: 11 — siatka wszystkich działek KIEG włącza się od zoomu 15 (wnioski są widoczne zawsze)</span>
-          <button id="zoomTo16Btn" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold shrink-0 transition shadow-xs">
+          <button id="zoomTo16Btn" class="px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] sm:text-[11px] font-bold shrink-0 transition shadow-xs">
             Przybliż do 16
           </button>
         </div>
 
-        <!-- Pływająca kontrolka warstw podkładowych i nakładek GUGiK (prawy górny róg) -->
-        <div class="absolute top-3 right-3 z-[400] flex flex-col items-end gap-2">
-          <div class="bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-lg p-2.5 w-[240px] text-xs space-y-2">
-            <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center justify-between">
-              <span>Podkład i Ewidencja</span>
-              <span id="zoomBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">z11</span>
-            </div>
+        <!-- Pływająca, ZWIJANA kontrolka warstw podkładowych i nakładek GUGiK (prawy górny róg) -->
+        <div class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-[410] flex flex-col items-end gap-1.5 sm:gap-2">
+          <div id="layersPanelCard" class="bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-lg text-xs overflow-hidden transition-all">
+            <button id="toggleLayersPanelBtn" type="button" class="w-full px-2.5 py-2 flex items-center justify-between gap-2 text-left hover:bg-slate-50 transition" aria-expanded="false">
+              <span class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span class="hidden sm:inline">Podkład i Ewidencja</span>
+                <span class="sm:hidden">Podkład</span>
+              </span>
+              <span class="flex items-center gap-1.5 shrink-0">
+                <span id="zoomBadge" class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">z11</span>
+                <svg id="layersChevron" class="w-3.5 h-3.5 text-slate-500 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </span>
+            </button>
 
-            <!-- Wybór podkładu (4 style widoczne od zoom 5 do 21) -->
-            <div class="space-y-1">
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
-                <input type="radio" name="baseLayer" value="osm_kieg" class="text-emerald-600 focus:ring-emerald-500" checked />
-                <span>Mapa + Działki (KIEG)</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
-                <input type="radio" name="baseLayer" value="light_kieg" class="text-emerald-600 focus:ring-emerald-500" />
-                <span>Jasna + Działki (KIEG)</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
-                <input type="radio" name="baseLayer" value="orto_kieg" class="text-emerald-600 focus:ring-emerald-500" />
-                <span>Ortofotomapa + Działki</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
-                <input type="radio" name="baseLayer" value="sat" class="text-emerald-600 focus:ring-emerald-500" />
-                <span>Satelita (Esri)</span>
-              </label>
-            </div>
+            <div id="layersPanelBody" class="hidden md:block px-2.5 pb-2.5 pt-1 border-t border-slate-100 w-[230px] sm:w-[240px] space-y-2">
+              <!-- Wybór podkładu (4 style widoczne od zoom 5 do 21) -->
+              <div class="space-y-1">
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
+                  <input type="radio" name="baseLayer" value="osm_kieg" class="text-emerald-600 focus:ring-emerald-500" checked />
+                  <span>Mapa + Działki (KIEG)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
+                  <input type="radio" name="baseLayer" value="light_kieg" class="text-emerald-600 focus:ring-emerald-500" />
+                  <span>Jasna + Działki (KIEG)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
+                  <input type="radio" name="baseLayer" value="orto_kieg" class="text-emerald-600 focus:ring-emerald-500" />
+                  <span>Ortofotomapa + Działki</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700 hover:text-slate-950">
+                  <input type="radio" name="baseLayer" value="sat" class="text-emerald-600 focus:ring-emerald-500" />
+                  <span>Satelita (Esri)</span>
+                </label>
+              </div>
 
-            <!-- Nakładki WMS GUGiK -->
-            <div class="pt-2 border-t border-slate-200 space-y-1.5">
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-800">
-                <input type="checkbox" id="kiegParcelsToggle" class="rounded text-emerald-600 focus:ring-emerald-500" checked />
-                <span>Granice i numery działek (KIEG)</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700">
-                <input type="checkbox" id="kiegBuildingsToggle" class="rounded text-emerald-600 focus:ring-emerald-500" />
-                <span>Budynki (KIEG)</span>
-              </label>
+              <!-- Nakładki WMS GUGiK -->
+              <div class="pt-2 border-t border-slate-200 space-y-1.5">
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-semibold text-slate-800">
+                  <input type="checkbox" id="kiegParcelsToggle" class="rounded text-emerald-600 focus:ring-emerald-500" checked />
+                  <span>Granice i numery działek (KIEG)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer text-[11px] font-medium text-slate-700">
+                  <input type="checkbox" id="kiegBuildingsToggle" class="rounded text-emerald-600 focus:ring-emerald-500" />
+                  <span>Budynki (KIEG)</span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <button id="fitBoundsBtn" class="bg-white/95 backdrop-blur-sm hover:bg-slate-50 border border-slate-200 rounded-xl shadow-md px-3 py-1.5 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition" title="Dopasuj widok do widocznych działek">
-            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <button id="fitBoundsBtn" class="bg-white/95 backdrop-blur-sm hover:bg-slate-50 border border-slate-200 rounded-xl shadow-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition" title="Dopasuj widok do widocznych działek">
+            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
             </svg>
-            Dopasuj widok działek
+            <span class="hidden sm:inline">Dopasuj widok działek</span>
+            <span class="sm:hidden">Dopasuj</span>
           </button>
         </div>
 
-        <!-- Legenda kolorów poligonów działek (prawy dolny róg) -->
-        <div class="absolute bottom-5 right-3 z-[400] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-lg p-3 max-w-[245px] text-xs">
-          <div class="font-bold text-slate-800 mb-2 text-[11px] uppercase tracking-wider">Legenda działek (poligony)</div>
-          <div class="space-y-1.5 text-[11px] text-slate-700">
+        <!-- ZWIJANA Legenda kolorów poligonów działek (prawy dolny róg; na mobile odsunięta wyżej od ikony Streamlit) -->
+        <div id="legendPanelCard" class="absolute bottom-16 sm:bottom-5 right-2.5 sm:right-3 z-[410] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl shadow-lg text-xs overflow-hidden transition-all">
+          <button id="toggleLegendPanelBtn" type="button" class="w-full px-2.5 py-2 flex items-center justify-between gap-2 text-left hover:bg-slate-50 transition" aria-expanded="false">
+            <span class="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+              <span class="flex items-center -space-x-1 shrink-0">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-600 ring-1 ring-white"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 ring-1 ring-white"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-violet-600 ring-1 ring-white"></span>
+              </span>
+              <span class="hidden sm:inline">Legenda działek</span>
+              <span class="sm:hidden">Legenda</span>
+            </span>
+            <svg id="legendChevron" class="w-3.5 h-3.5 text-slate-500 transition-transform duration-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+            </svg>
+          </button>
+
+          <div id="legendPanelBody" class="hidden md:block px-3 pb-3 pt-1.5 border-t border-slate-100 w-[225px] sm:w-[240px] space-y-1.5 text-[11px] text-slate-700">
             <div class="flex items-center gap-2">
               <span class="w-4 h-3 rounded-xs shrink-0" style="background: rgba(234, 88, 12, 0.5); border: 2px solid #ea580c;"></span>
               <span>Mega hala (&ge; 50 000 m³)</span>
@@ -1723,7 +1751,11 @@
       const kiegActive = document.getElementById('kiegParcelsToggle').checked || document.getElementById('kiegBuildingsToggle').checked;
       const hint = document.getElementById('kiegZoomHint');
       const hintText = document.getElementById('kiegZoomHintText');
-      hintText.textContent = `Zoom: ${z} — siatka wszystkich działek KIEG włącza się od zoomu 15 (wnioski są widoczne zawsze)`;
+      if (window.innerWidth < 640) {
+        hintText.textContent = `Zoom ${z} — działki KIEG od z15`;
+      } else {
+        hintText.textContent = `Zoom: ${z} — siatka wszystkich działek KIEG włącza się od zoomu 15 (wnioski są widoczne zawsze)`;
+      }
 
       if (kiegActive && z < 15) {
         hint.classList.remove('opacity-0', 'pointer-events-none');
@@ -1738,1457 +1770,74 @@
         if (map.hasLayer(overviewMarkersLayer)) map.removeLayer(overviewMarkersLayer);
       }
     }
-
-    map.on('zoomend', updateZoomUI);
-
-    function getPolygonColors(rec, isSmart) {
-      const isLead = savedLeads.has(rec.id);
-      const kub = Number(rec.kubatura) || 0;
-
-      if (isLead) {
-        return { color: '#7c3aed', fillColor: '#7c3aed' }; // Fioletowy: Zapisany Lead ★
-      }
-      if (isSmart && kub >= 50000) {
-        return { color: '#ea580c', fillColor: '#ea580c' }; // Pomarańczowo-czerwony: Mega hala >= 50k m³
-      }
-      if (isSmart) {
-        return { color: '#059669', fillColor: '#059669' }; // Szmaragdowy: Hala / Magazyn / Usługi
-      }
-      return { color: '#2563eb', fillColor: '#2563eb' };   // Niebieski: Pozostałe wnioski
-    }
-
-    function getOverviewRadius(kubatura) {
-      const k = Number(kubatura) || 0;
-      if (k >= 200000) return 11;
-      if (k >= 50000) return 9;
-      if (k >= 10000) return 7;
-      return 5.5;
-    }
-
-    function getRecordBounds(recId) {
-      const polys = polygonIndex.get(recId);
-      if (!polys || polys.length === 0) return null;
-      const b = L.latLngBounds([]);
-      polys.forEach(p => {
-        const pb = p.getBounds();
-        if (pb.isValid()) b.extend(pb);
-      });
-      return b.isValid() ? b : null;
-    }
-
-    function renderParcelPolygons() {
-      parcelsLayerGroup.clearLayers();
-      overviewMarkersLayer.clearLayers();
-      polygonIndex.clear();
-
-      filteredRecords.forEach(rec => {
-        const smart = analyzeSmartMatch(rec);
-        const palette = getPolygonColors(rec, smart.isMatch);
-        const baseStyle = {
-          color: palette.color,
-          fillColor: palette.fillColor,
-          fillOpacity: 0.42,
-          weight: 2.5,
-          opacity: 0.95
-        };
-
-        const polyList = [];
-        const recordBounds = L.latLngBounds([]);
-
-        (rec.dzialki || []).forEach(dz => {
-          if (!dz.coords || dz.coords.length === 0) return;
-          const poly = L.polygon(dz.coords, baseStyle);
-
-          const uldkBadge = dz.fromUldk
-            ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/25 text-emerald-300 font-bold">ULDK</span>'
-            : '';
-
-          const tooltipHtml = `
-            <div class="flex items-center justify-between gap-2 mb-1">
-              <span class="font-mono text-[11px] font-bold text-emerald-300">dz. ${escapeHtml(dz.nr)} ${dz.id_teryt ? `(${escapeHtml(dz.id_teryt)})` : ''}</span>
-              <span class="flex items-center gap-1">${uldkBadge}${savedLeads.has(rec.id) ? '<span class="text-violet-300 font-bold">★ LEAD</span>' : ''}</span>
-            </div>
-            <div class="font-bold text-white leading-snug">${escapeHtml(truncate(rec.nazwa, 95))}</div>
-            <div class="flex items-center justify-between gap-3 text-[11px] text-slate-300 mt-1.5 pt-1 border-t border-slate-700/80">
-              <span>${escapeHtml(rec.gmina)} • Kat. ${escapeHtml(rec.kategoria || 'Brak')}</span>
-              <span class="font-extrabold text-amber-300">${formatNumber(rec.kubatura)} m³</span>
-            </div>
-          `;
-
-          poly.bindTooltip(tooltipHtml, {
-            sticky: true,
-            direction: 'top',
-            offset: [0, -8],
-            className: 'parcel-tooltip'
-          });
-
-          poly.on('mouseover', () => {
-            polyList.forEach(p => p.setStyle({ fillOpacity: 0.72, weight: 3.5 }));
-          });
-          poly.on('mouseout', () => {
-            polyList.forEach(p => p.setStyle(baseStyle));
-          });
-          poly.on('click', () => {
-            const b = getRecordBounds(rec.id);
-            if (b) {
-              map.flyToBounds(b, { padding: [70, 70], maxZoom: 17, duration: 0.65 });
-            }
-            openDetailDrawer(rec.id);
-          });
-
-          poly.addTo(parcelsLayerGroup);
-          polyList.push(poly);
-          const pb = poly.getBounds();
-          if (pb.isValid()) recordBounds.extend(pb);
-        });
-
-        polygonIndex.set(rec.id, polyList);
-
-        // Subtelny znacznik orientacyjny na środku działki (widoczny wyłącznie przy zoom < 14)
-        const centerPt = recordBounds.isValid() ? recordBounds.getCenter() : L.latLng(rec.lat, rec.lng);
-        const overviewMarker = L.circleMarker(centerPt, {
-          radius: getOverviewRadius(rec.kubatura),
-          color: '#ffffff',
-          weight: 2,
-          fillColor: palette.fillColor,
-          fillOpacity: 0.88
-        });
-
-        const overviewTooltip = `
-          <div class="font-bold text-white leading-snug">${escapeHtml(truncate(rec.nazwa, 85))}</div>
-          <div class="flex items-center justify-between gap-3 text-[11px] text-slate-300 mt-1">
-            <span>${escapeHtml(rec.gmina)} • Kliknij, aby przybliżyć działkę</span>
-            <span class="font-extrabold text-amber-300">${formatNumber(rec.kubatura)} m³</span>
-          </div>
-        `;
-        overviewMarker.bindTooltip(overviewTooltip, {
-          direction: 'top',
-          offset: [0, -6],
-          className: 'parcel-tooltip'
-        });
-
-        overviewMarker.on('click', () => {
-          const b = getRecordBounds(rec.id);
-          if (b) {
-            map.flyToBounds(b, { padding: [70, 70], maxZoom: 17, duration: 0.7 });
-          } else {
-            map.flyTo([rec.lat, rec.lng], 16, { duration: 0.7 });
-          }
-          openDetailDrawer(rec.id);
-        });
-
-        overviewMarker.addTo(overviewMarkersLayer);
-      });
-
-      updateZoomUI();
-      updateUldkStatusBadge();
-    }
-
-    function fitMapToFilteredParcels(animate = true) {
-      const allBounds = L.latLngBounds([]);
-      polygonIndex.forEach(polyList => {
-        polyList.forEach(p => {
-          const b = p.getBounds();
-          if (b.isValid()) allBounds.extend(b);
-        });
-      });
-
-      if (allBounds.isValid()) {
-        if (animate) {
-          map.flyToBounds(allBounds, { padding: [45, 45], maxZoom: 15, duration: 0.7 });
-        } else {
-          map.fitBounds(allBounds, { padding: [45, 45], maxZoom: 15 });
-        }
-        return;
-      }
-
-      // Fallback: centrum wybranego powiatu lub województwa
-      const keyPow = (locState.powiat || '').toLowerCase();
-      const keyWoj = (locState.wojewodztwo || '').toLowerCase();
-      const center = AREA_CENTERS[keyPow] || AREA_CENTERS[keyWoj] || [52.1, 19.4, 6];
-      map.flyTo([center[0], center[1]], center[2], { duration: 0.7 });
-    }
-
-    /*************************************************************************
-     * 7. LIVE API ULDK GUGiK (SRID=4326) + PARSER WKT + AUTO-SNAP Z CACHE
-     *************************************************************************/
-    /**
-     * Parsuje WKT (POLYGON z otworami lub MULTIPOLYGON, z opcjonalnym prefiksem SRID=4326;)
-     * i ZAWSZE zamienia pary (lon lat) z WKT na [lat, lon] wymagane przez Leaflet L.polygon.
-     */
-    function parseWktToLeafletLatLngs(wktText) {
-      if (!wktText) return null;
-      const cleaned = wktText.replace(/^SRID=\d+;/i, '').trim();
-
-      function parseRing(ringStr) {
-        return ringStr
-          .replace(/^\(+|\)+$/g, '')
-          .split(',')
-          .map(pair => {
-            const parts = pair.trim().split(/\s+/).map(Number);
-            if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-              // WKT: X=lon, Y=lat -> Leaflet: [lat, lon]
-              return [parts[1], parts[0]];
-            }
-            return null;
-          })
-          .filter(Boolean);
-      }
-
-      function parsePolygonRings(polyBody) {
-        const ringStrings = polyBody.split(/\)\s*,\s*\(/);
-        const rings = ringStrings.map(parseRing).filter(r => r.length >= 3);
-        return rings.length > 0 ? rings : null;
-      }
-
-      if (/^MULTIPOLYGON\s*\(/i.test(cleaned)) {
-        const body = cleaned
-          .replace(/^MULTIPOLYGON\s*\(\(\(/i, '')
-          .replace(/\)\)\)\s*$/, '');
-        const polyStrings = body.split(/\)\)\s*,\s*\(\(/);
-        const polygons = polyStrings.map(parsePolygonRings).filter(Boolean);
-        return polygons.length > 0 ? polygons : null;
-      }
-
-      if (/^POLYGON\s*\(/i.test(cleaned)) {
-        const body = cleaned
-          .replace(/^POLYGON\s*\(\(/i, '')
-          .replace(/\)\)\s*$/, '');
-        return parsePolygonRings(body);
-      }
-
-      return null;
-    }
-
-    function parseUldkResponse(text) {
-      if (!text) return null;
-      const lines = text.trim().split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      if (lines.length === 0 || lines[0].startsWith('-1')) return null;
-
-      // Format ULDK dla result=id,geom_wkt: linia 0 = "0", linia 1 = "TERYT|SRID=4326;POLYGON((...))"
-      const dataLine = lines.find(l => l.toUpperCase().includes('POLYGON'));
-      if (!dataLine) return null;
-
-      let terytId = '';
-      let wktPart = dataLine;
-      if (dataLine.includes('|')) {
-        const idx = dataLine.indexOf('|');
-        terytId = dataLine.slice(0, idx).trim();
-        wktPart = dataLine.slice(idx + 1).trim();
-      }
-
-      const coords = parseWktToLeafletLatLngs(wktPart);
-      if (!coords) return null;
-      return { id_teryt: terytId, coords };
-    }
-
-    async function fetchParcelFromULDKById(terytId) {
-      if (!terytId) return null;
-      const url = `https://uldk.gugik.gov.pl/?request=GetParcelById&id=${encodeURIComponent(terytId.trim())}&result=id,geom_wkt&srid=4326`;
-      try {
-        const resp = await fetch(url, { mode: 'cors' });
-        if (!resp.ok) return null;
-        return parseUldkResponse(await resp.text());
-      } catch (err) {
-        return null;
-      }
-    }
-
-    async function fetchParcelFromULDKByXY(lon, lat) {
-      if (isNaN(lon) || isNaN(lat)) return null;
-      // Kolejność w ULDK xy to ZAWSZE lon,lat,4326
-      const url = `https://uldk.gugik.gov.pl/?request=GetParcelByXY&xy=${lon},${lat},4326&result=id,geom_wkt&srid=4326`;
-      try {
-        const resp = await fetch(url, { mode: 'cors' });
-        if (!resp.ok) return null;
-        return parseUldkResponse(await resp.text());
-      } catch (err) {
-        return null;
-      }
-    }
-
-    function extractNrFromTeryt(teryt) {
-      if (!teryt) return '';
-      const parts = teryt.split('.');
-      return parts[parts.length - 1] || teryt;
-    }
-
-    function applyUldkDataToRecord(rec, uldkResult) {
-      if (!rec || !uldkResult || !uldkResult.coords) return false;
-      const realId = uldkResult.id_teryt || (rec.dzialki[0] && rec.dzialki[0].id_teryt) || '';
-      const realNr = extractNrFromTeryt(realId) || (rec.dzialki[0] && rec.dzialki[0].nr) || '';
-      const existingObreb = (rec.dzialki[0] && rec.dzialki[0].obreb) || rec.miejscowosc || rec.gmina;
-
-      // Zastępujemy główny obrys rzeczywistą geometrią z ULDK (idealne dopasowanie do KIEG)
-      rec.dzialki = [{
-        id_teryt: realId,
-        obreb: existingObreb,
-        nr: realNr,
-        fromUldk: true,
-        coords: uldkResult.coords
-      }];
-
-      try {
-        const tmpPoly = L.polygon(uldkResult.coords);
-        const c = tmpPoly.getBounds().getCenter();
-        if (c && !isNaN(c.lat) && !isNaN(c.lng)) {
-          rec.lat = Number(c.lat.toFixed(6));
-          rec.lng = Number(c.lng.toFixed(6));
-        }
-      } catch (e) {}
-      return true;
-    }
-
+// ... existing code ... -->
     function updateUldkStatusBadge(inProgress = false) {
       const total = filteredRecords.length;
       const matched = filteredRecords.filter(r => r.dzialki && r.dzialki.some(d => d.fromUldk)).length;
       const txt = document.getElementById('uldkStatusText');
       const dot = document.getElementById('uldkStatusDot');
+      const isMobile = window.innerWidth < 640;
 
       if (inProgress) {
-        txt.textContent = `ULDK: dopasowywanie działek (${matched}/${total})...`;
+        txt.textContent = isMobile ? `ULDK: ${matched}/${total}...` : `ULDK: dopasowywanie działek (${matched}/${total})...`;
         dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0';
       } else {
-        txt.textContent = `ULDK: dopasowano ${matched}/${total} działek`;
+        txt.textContent = isMobile ? `ULDK: ${matched}/${total}` : `ULDK: dopasowano ${matched}/${total} działek`;
         dot.className = matched > 0
           ? 'w-2 h-2 rounded-full bg-emerald-500 shrink-0'
           : 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
       }
     }
-
-    async function fetchAndSnapSingleRecord(rec, forceRefresh = false) {
-      const isImportedCsv = rec.id.startsWith('CSV-');
-      const cacheKey = isImportedCsv && rec.dzialki[0]?.id_teryt
-        ? `ID:${rec.dzialki[0].id_teryt}`
-        : `XY:${rec.id}:${rec.lng.toFixed(4)},${rec.lat.toFixed(4)}`;
-
-      if (!forceRefresh && uldkCache[cacheKey]) {
-        return applyUldkDataToRecord(rec, uldkCache[cacheKey]);
-      }
-
-      let result = null;
-      // Dla danych z CSV z prawdziwym ID TERYT najpierw próbujemy GetParcelById
-      if (isImportedCsv && rec.dzialki[0] && rec.dzialki[0].id_teryt) {
-        result = await fetchParcelFromULDKById(rec.dzialki[0].id_teryt);
-      }
-      // Dla danych demo (lub gdy GetParcelById nie zwrócił wyniku) pobieramy rzeczywistą działkę w punkcie (lon, lat)
-      if (!result) {
-        result = await fetchParcelFromULDKByXY(rec.lng, rec.lat);
-      }
-
-      if (result && result.coords) {
-        uldkCache[cacheKey] = result;
-        persistUldkCache();
-        return applyUldkDataToRecord(rec, result);
-      }
-      return false;
-    }
-
-    /**
-     * Kolejka w tle (max 4 równoległe zapytania) automatycznie dociągająca rzeczywiste
-     * granice działek z ULDK GUGiK dla aktualnie przefiltrowanych wniosków.
-     */
-    async function runUldkAutoSnap(records, forceRefresh = false) {
-      const myToken = ++uldkAbortToken;
-      const toFetch = records.filter(r => forceRefresh || !r.dzialki.some(d => d.fromUldk));
-
-      if (toFetch.length === 0) {
-        updateUldkStatusBadge(false);
-        return;
-      }
-
-      uldkQueueRunning = true;
-      updateUldkStatusBadge(true);
-
-      const CONCURRENCY = 4;
-      let idx = 0;
-      let anyUpdated = false;
-
-      async function worker() {
-        while (idx < toFetch.length) {
-          if (myToken !== uldkAbortToken) return;
-          const rec = toFetch[idx++];
-          const ok = await fetchAndSnapSingleRecord(rec, forceRefresh);
-          if (myToken !== uldkAbortToken) return;
-          if (ok) {
-            anyUpdated = true;
-            renderParcelPolygons();
-            if (selectedRecordId === rec.id) {
-              openDetailDrawer(rec.id);
-            }
-          }
-          updateUldkStatusBadge(true);
-        }
-      }
-
-      const workers = Array.from({ length: Math.min(CONCURRENCY, toFetch.length) }, () => worker());
-      await Promise.all(workers);
-
-      if (myToken === uldkAbortToken) {
-        uldkQueueRunning = false;
-        updateUldkStatusBadge(false);
-        if (anyUpdated) {
-          renderTable();
-        }
-      }
-    }
-
-    async function updateRecordParcelsFromULDK(rec) {
-      if (!rec) return 0;
-      const ok = await fetchAndSnapSingleRecord(rec, true);
-      if (ok) {
-        renderParcelPolygons();
-        const b = getRecordBounds(rec.id);
-        if (b) {
-          map.flyToBounds(b, { padding: [60, 60], maxZoom: 17, duration: 0.7 });
-        }
-        return 1;
-      }
-      return 0;
-    }
-
-    /*************************************************************************
-     * 8. KASKADOWE FILTRY LOKALIZACJI (WOJEWÓDZTWO -> POWIAT -> GMINY)
-     *************************************************************************/
-    function getAvailablePowiatyForWoj(woj) {
-      const set = new Set();
-      if (woj === 'ALL') {
-        Object.values(POWIATY_BY_WOJ).forEach(list => list.forEach(p => set.add(p)));
-      } else if (POWIATY_BY_WOJ[woj]) {
-        POWIATY_BY_WOJ[woj].forEach(p => set.add(p));
-      }
-      // Dodaj powiaty z aktualnie wczytanych rekordów (np. z CSV)
-      allRecords.forEach(r => {
-        if (woj === 'ALL' || (r.wojewodztwo || '').toLowerCase() === woj.toLowerCase()) {
-          if (r.powiat) set.add(r.powiat);
-        }
-      });
-      return Array.from(set).sort((a, b) => a.localeCompare(b, 'pl'));
-    }
-
-    function getAvailableGminyForLocation(woj, powiat) {
-      const set = new Set();
-      if (powiat.toLowerCase() === 'wołomiński') {
-        GMINY_WOLOMINSKI.forEach(g => set.add(g));
-      }
-      allRecords.forEach(r => {
-        const matchWoj = woj === 'ALL' || (r.wojewodztwo || '').toLowerCase() === woj.toLowerCase();
-        const matchPow = powiat === 'ALL' || (r.powiat || '').toLowerCase() === powiat.toLowerCase();
-        if (matchWoj && matchPow && r.gmina) {
-          set.add(r.gmina);
-        }
-      });
-      return Array.from(set).sort((a, b) => a.localeCompare(b, 'pl'));
-    }
-
-    function populateWojSelect() {
-      const sel = document.getElementById('wojSelect');
-      const allWoj = new Set(WOJEWODZTWA);
-      allRecords.forEach(r => { if (r.wojewodztwo) allWoj.add(r.wojewodztwo.toLowerCase()); });
-
-      sel.innerHTML = `<option value="ALL">Cała Polska (wszystkie województwa)</option>` +
-        Array.from(allWoj).sort((a, b) => a.localeCompare(b, 'pl')).map(w =>
-          `<option value="${escapeHtml(w)}">${escapeHtml(capitalize(w))}</option>`
-        ).join('');
-
-      sel.value = locState.wojewodztwo;
-    }
-
-    function populatePowiatSelect(filterText = '') {
-      const sel = document.getElementById('powiatSelect');
-      const list = getAvailablePowiatyForWoj(locState.wojewodztwo);
-      const q = filterText.trim().toLowerCase();
-      const filtered = q ? list.filter(p => p.toLowerCase().includes(q)) : list;
-
-      const labelAll = locState.wojewodztwo === 'ALL' ? 'Wszystkie powiaty w Polsce' : 'Wszystkie powiaty w woj.';
-      sel.innerHTML = `<option value="ALL">${labelAll}</option>` +
-        filtered.map(p => {
-          const cnt = allRecords.filter(r =>
-            (locState.wojewodztwo === 'ALL' || (r.wojewodztwo || '').toLowerCase() === locState.wojewodztwo) &&
-            (r.powiat || '').toLowerCase() === p.toLowerCase()
-          ).length;
-          const suffix = cnt > 0 ? ` (${cnt})` : '';
-          return `<option value="${escapeHtml(p)}">${escapeHtml(p)}${suffix}</option>`;
-        }).join('');
-
-      // Jeśli bieżący powiat jest na liście, zachowaj go
-      const exists = Array.from(sel.options).some(o => o.value === locState.powiat);
-      sel.value = exists ? locState.powiat : 'ALL';
-      locState.powiat = sel.value;
-    }
-
-    function populateGminyList(selectAllNew = false) {
-      const container = document.getElementById('gminyContainer');
-      const gminy = getAvailableGminyForLocation(locState.wojewodztwo, locState.powiat);
-      const q = document.getElementById('gminaSearchInput').value.trim().toLowerCase();
-
-      if (selectAllNew) {
-        locState.selectedGminy = new Set(gminy);
-      }
-
-      const visibleGminy = q ? gminy.filter(g => g.toLowerCase().includes(q)) : gminy;
-      if (visibleGminy.length === 0) {
-        container.innerHTML = `<div class="col-span-2 text-[11px] text-slate-400 py-2 text-center">Brak gmin z wnioskami w tym obszarze</div>`;
-        document.getElementById('selectedGminyCount').textContent = '0';
-        return;
-      }
-
-      container.innerHTML = visibleGminy.map(g => {
-        const checked = locState.selectedGminy.has(g) ? 'checked' : '';
-        const cnt = allRecords.filter(r =>
-          (locState.wojewodztwo === 'ALL' || (r.wojewodztwo || '').toLowerCase() === locState.wojewodztwo) &&
-          (locState.powiat === 'ALL' || (r.powiat || '').toLowerCase() === locState.powiat.toLowerCase()) &&
-          (r.gmina || '').toLowerCase() === g.toLowerCase()
-        ).length;
-        return `
-          <label class="flex items-center justify-between px-2 py-1 rounded-lg bg-white border border-slate-200 hover:border-emerald-300 cursor-pointer text-[11px] transition">
-            <span class="flex items-center gap-1.5 truncate">
-              <input type="checkbox" class="gmina-checkbox rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5" value="${escapeHtml(g)}" ${checked} />
-              <span class="text-slate-700 font-medium truncate">${escapeHtml(g)}</span>
-            </span>
-            <span class="text-[10px] font-semibold text-slate-400 ml-1">${cnt}</span>
-          </label>
-        `;
-      }).join('');
-
-      document.getElementById('selectedGminyCount').textContent = `${locState.selectedGminy.size}/${gminy.length}`;
-
-      container.querySelectorAll('.gmina-checkbox').forEach(cb => {
-        cb.addEventListener('change', () => {
-          if (cb.checked) locState.selectedGminy.add(cb.value);
-          else locState.selectedGminy.delete(cb.value);
-          document.getElementById('selectedGminyCount').textContent = `${locState.selectedGminy.size}/${gminy.length}`;
-          applyFilters(true);
-        });
-      });
-    }
-
-    function buildCategoryFilters() {
-      const catContainer = document.getElementById('categoriesContainer');
-      catContainer.innerHTML = CATEGORY_OPTIONS.map(cat => `
-        <label class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-slate-50 cursor-pointer">
-          <input type="checkbox" class="cat-checkbox rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5" value="${cat.id}" checked />
-          <span class="text-slate-700">${cat.label}</span>
-        </label>
-      `).join('');
-      catContainer.querySelectorAll('.cat-checkbox').forEach(cb => cb.addEventListener('change', () => applyFilters(false)));
-    }
-
-    /*************************************************************************
-     * 9. FILTROWANIE REKORDÓW, KPI I AKTUALIZACJA WIDOKÓW
-     *************************************************************************/
-    function normalizeCategory(cat) {
-      if (!cat) return 'Brak';
-      const u = String(cat).trim().toUpperCase();
-      if (['XVIII', 'XVII', 'XVI', 'XIX', 'XX', 'I'].includes(u)) return u;
-      return 'Brak';
-    }
-
-    function getCheckedValues(selector) {
-      return Array.from(document.querySelectorAll(`${selector}:checked`)).map(el => el.value);
-    }
-
-    function applyFilters(shouldFly = false) {
-      const smartMatchOn = document.getElementById('smartMatchToggle').checked;
-      const selectedStatuses = getCheckedValues('.status-checkbox');
-      const selectedCats = getCheckedValues('.cat-checkbox');
-      const onlyLeads = document.getElementById('onlyLeadsCheckbox').checked;
-      const keyword = document.getElementById('keywordInput').value.trim().toLowerCase();
-      const minVol = document.getElementById('minVolInput').value !== '' ? Number(document.getElementById('minVolInput').value) : null;
-      const maxVol = document.getElementById('maxVolInput').value !== '' ? Number(document.getElementById('maxVolInput').value) : null;
-
-      document.getElementById('clearKeywordBtn').classList.toggle('hidden', !keyword);
-
-      const availableGminy = getAvailableGminyForLocation(locState.wojewodztwo, locState.powiat);
-
-      filteredRecords = allRecords.filter(rec => {
-        if (onlyLeads && !savedLeads.has(rec.id)) return false;
-
-        // Lokalizacja
-        if (locState.wojewodztwo !== 'ALL' && (rec.wojewodztwo || '').toLowerCase() !== locState.wojewodztwo.toLowerCase()) return false;
-        if (locState.powiat !== 'ALL' && (rec.powiat || '').toLowerCase() !== locState.powiat.toLowerCase()) return false;
-        if (availableGminy.length > 0 && !locState.selectedGminy.has(rec.gmina)) return false;
-
-        // Status
-        if (!selectedStatuses.includes(rec.status)) return false;
-
-        // Smart Match
-        const smart = analyzeSmartMatch(rec);
-        if (smartMatchOn && !smart.isMatch) return false;
-
-        // Kategoria
-        if (!selectedCats.includes(normalizeCategory(rec.kategoria))) return false;
-
-        // Kubatura
-        const kub = Number(rec.kubatura) || 0;
-        if (minVol !== null && kub < minVol) return false;
-        if (maxVol !== null && kub > maxVol) return false;
-
-        // Wyszukiwarka tekstowa
-        if (keyword) {
-          const parcelsText = (rec.dzialki || []).map(d => `${d.nr} ${d.obreb} ${d.id_teryt}`).join(' ');
-          const hay = `${rec.nazwa} ${rec.miejscowosc} ${rec.ulica} ${rec.gmina} ${rec.powiat} ${rec.inwestor} ${rec.nr_sprawy} ${parcelsText}`.toLowerCase();
-          if (!hay.includes(keyword)) return false;
-        }
-
-        return true;
-      });
-
-      updateAreaPill();
-      updateStatusCounters();
-      updateKPIs();
-      renderParcelPolygons();
-      renderTable();
-
-      if (shouldFly && currentView === 'map') {
-        fitMapToFilteredParcels(true);
-      }
-
-      // Automatyczne dociąganie rzeczywistych obrysów działek z ULDK GUGiK w tle
-      runUldkAutoSnap(filteredRecords, false);
-    }
-
-    function updateAreaPill() {
-      const pill = document.getElementById('activeAreaPill');
-      if (locState.wojewodztwo === 'ALL' && locState.powiat === 'ALL') {
-        pill.textContent = 'Cała Polska';
-      } else if (locState.powiat === 'ALL') {
-        pill.textContent = `woj. ${locState.wojewodztwo}`;
-      } else {
-        pill.textContent = `pow. ${locState.powiat} (${locState.selectedGminy.size} gmin)`;
-      }
-    }
-
-    function updateStatusCounters() {
-      document.getElementById('countStatusZlozony').textContent = allRecords.filter(r => r.status === 'Złożony wniosek').length;
-      document.getElementById('countStatusRozpatrywanie').textContent = allRecords.filter(r => r.status === 'W rozpatrywaniu').length;
-    }
-
-    function updateKPIs() {
-      const count = filteredRecords.length;
-      const parcelsCount = filteredRecords.reduce((sum, r) => sum + (r.dzialki ? r.dzialki.length : 0), 0);
-      const totalVolume = filteredRecords.reduce((sum, r) => sum + (Number(r.kubatura) || 0), 0);
-      const megaCount = filteredRecords.filter(r => (Number(r.kubatura) || 0) >= 50000).length;
-
-      document.getElementById('kpiCount').textContent = formatNumber(count);
-      document.getElementById('kpiParcelsHint').textContent = `${formatNumber(parcelsCount)} działek`;
-      document.getElementById('kpiVolume').textContent = formatNumber(totalVolume);
-      document.getElementById('kpiMegaCount').textContent = formatNumber(megaCount);
-      document.getElementById('kpiLeadsCount').textContent = formatNumber(savedLeads.size);
-      document.getElementById('leadsOnlyBadge').classList.toggle('hidden', !document.getElementById('onlyLeadsCheckbox').checked);
-    }
-
-    /*************************************************************************
-     * 10. WIDOK TABELI (SORTOWALNY)
-     *************************************************************************/
-    function renderTable() {
-      const tbody = document.getElementById('tableBody');
-      document.getElementById('tableCountBadge').textContent = `${filteredRecords.length} wyników`;
-
-      if (filteredRecords.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="py-12 text-center text-slate-400">
-              Brak wniosków spełniających wybrane kryteria. Zmień filtry lub obszar wyszukiwania.
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      const sorted = [...filteredRecords].sort((a, b) => {
-        const f = sortState.field;
-        const dir = sortState.dir === 'asc' ? 1 : -1;
-        if (f === 'kubatura') {
-          return ((Number(a.kubatura) || 0) - (Number(b.kubatura) || 0)) * dir;
-        }
-        return String(a[f] || '').localeCompare(String(b[f] || ''), 'pl') * dir;
-      });
-
-      tbody.innerHTML = sorted.map(rec => {
-        const isLead = savedLeads.has(rec.id);
-        const smart = analyzeSmartMatch(rec);
-        const kub = Number(rec.kubatura) || 0;
-        const parcelNums = (rec.dzialki || []).map(d => d.nr).join(', ');
-        const volClass = kub >= 50000 ? 'text-orange-600 font-extrabold' : 'text-slate-800 font-bold';
-
-        return `
-          <tr class="hover:bg-emerald-50/50 transition cursor-pointer" onclick="openDetailDrawer('${rec.id}')">
-            <td class="py-3 px-3 font-mono text-slate-600 whitespace-nowrap">${escapeHtml(rec.data_wplywu || '—')}</td>
-            <td class="py-3 px-3 whitespace-nowrap">
-              <div class="font-semibold text-slate-800">${escapeHtml(rec.powiat)}</div>
-              <div class="text-[10px] text-slate-400">${escapeHtml(rec.wojewodztwo)}</div>
-            </td>
-            <td class="py-3 px-3 whitespace-nowrap">
-              <div class="font-semibold text-slate-800">${escapeHtml(rec.gmina)}</div>
-              <div class="text-[11px] font-mono text-emerald-700">dz. ${escapeHtml(parcelNums || '—')}</div>
-            </td>
-            <td class="py-3 px-3 max-w-md">
-              <div class="font-semibold text-slate-900 line-clamp-2">${escapeHtml(rec.nazwa)}</div>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="text-[10px] text-slate-400">${escapeHtml(rec.inwestor)}</span>
-                ${smart.isMisclassifiedGem ? '<span class="text-[10px] px-1.5 rounded bg-amber-100 text-amber-800 font-bold">Błędna kat.</span>' : ''}
-              </div>
-            </td>
-            <td class="py-3 px-3 whitespace-nowrap">
-              <span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-slate-700">${escapeHtml(rec.kategoria || 'Brak')}</span>
-            </td>
-            <td class="py-3 px-3 text-right whitespace-nowrap ${volClass}">${formatNumber(kub)} m³</td>
-            <td class="py-3 px-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
-              <div class="inline-flex items-center gap-1.5">
-                <button onclick="focusRecordOnMap('${rec.id}')" class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition" title="Pokaż działkę na mapie">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  </svg>
-                </button>
-                <button onclick="toggleLead('${rec.id}')" class="p-1.5 rounded-lg ${isLead ? 'bg-violet-100 text-violet-600' : 'bg-slate-100 text-slate-400 hover:text-violet-600'} transition" title="Zapisz jako Lead">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
-                  </svg>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    window.focusRecordOnMap = function (id) {
-      const rec = allRecords.find(r => r.id === id);
-      if (!rec) return;
-      switchView('map');
-      setTimeout(() => {
-        const polys = polygonIndex.get(id);
-        if (polys && polys[0]) {
-          map.flyToBounds(polys[0].getBounds(), { padding: [70, 70], maxZoom: 16, duration: 0.7 });
-        } else if (rec.lat && rec.lng) {
-          map.flyTo([rec.lat, rec.lng], 15, { duration: 0.7 });
-        }
-        openDetailDrawer(id);
-      }, 80);
-    };
-
-    /*************************************************************************
-     * 11. PANEL SZCZEGÓŁÓW (DRAWER)
-     *************************************************************************/
-    window.openDetailDrawer = function (id) {
-      const rec = allRecords.find(r => r.id === id);
-      if (!rec) return;
-      selectedRecordId = id;
-      const smart = analyzeSmartMatch(rec);
-
-      document.getElementById('detailTitle').textContent = rec.nazwa;
-      document.getElementById('detailStatusBadge').textContent = rec.status;
-      document.getElementById('detailSmartBadge').classList.toggle('hidden', !smart.isMatch);
-      document.getElementById('detailVolume').textContent = `${formatNumber(rec.kubatura)} m³`;
-      document.getElementById('detailDate').textContent = rec.data_wplywu || '—';
-
-      const matchBox = document.getElementById('detailMatchReasonBox');
-      if (smart.isMatch) {
-        matchBox.classList.remove('hidden');
-        document.getElementById('detailMatchReason').textContent = `Dopasowano: ${smart.reasons.join('; ')}.`;
-      } else {
-        matchBox.classList.add('hidden');
-      }
-
-      // Lista działek ewidencyjnych
-      const listEl = document.getElementById('detailParcelsList');
-      listEl.innerHTML = (rec.dzialki || []).map(dz => `
-        <div class="bg-white border border-slate-200 rounded-lg px-2.5 py-2 flex items-center justify-between gap-2">
-          <div class="min-w-0">
-            <div class="font-mono font-bold text-slate-800 text-[11px] truncate">${escapeHtml(dz.id_teryt || `dz. ${dz.nr}`)}</div>
-            <div class="text-[10px] text-slate-500">Obręb: ${escapeHtml(dz.obreb || '—')} • Nr działki: <strong>${escapeHtml(dz.nr)}</strong></div>
-          </div>
-          ${dz.fromUldk
-            ? '<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 shrink-0">ULDK LIVE</span>'
-            : '<span class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0">Obrys</span>'}
-        </div>
-      `).join('');
-
-      document.getElementById('detailLocationFull').textContent =
-        `woj. ${rec.wojewodztwo}, pow. ${rec.powiat}, gm. ${rec.gmina}${rec.miejscowosc ? `, ${rec.miejscowosc}` : ''}`;
-
-      document.getElementById('detailCategory').textContent = rec.kategoria || 'Brak';
-      document.getElementById('detailRodzaj').textContent = rec.rodzaj || '—';
-      document.getElementById('detailInvestor').textContent = rec.inwestor || '—';
-      document.getElementById('detailCaseOrgan').textContent = `${rec.nr_sprawy} • ${rec.organ}`;
-
-      // Linki zewnętrzne (Geoportal z identyfikatorem działki + Google Maps)
-      const primaryTeryt = rec.dzialki && rec.dzialki[0] ? rec.dzialki[0].id_teryt : '';
-      document.getElementById('detailGeoportalLink').href = primaryTeryt
-        ? `https://mapy.geoportal.gov.pl/imap/Imgp_2.html?identifyParcel=${encodeURIComponent(primaryTeryt)}`
-        : `https://mapy.geoportal.gov.pl/imap/Imgp_2.html?gpmap=gp0`;
-      document.getElementById('detailGoogleMapsLink').href =
-        `https://www.google.com/maps/search/?api=1&query=${rec.lat},${rec.lng}`;
-
-      document.getElementById('detailNoteInput').value = savedNotes[id] || '';
-      updateDetailLeadButton(id);
-
-      document.getElementById('detailDrawer').classList.remove('translate-x-full');
-    };
-
-    function closeDetailDrawer() {
-      document.getElementById('detailDrawer').classList.add('translate-x-full');
-      selectedRecordId = null;
-    }
-
-    function updateDetailLeadButton(id) {
-      const isLead = savedLeads.has(id);
-      const btn = document.getElementById('detailLeadToggleBtn');
-      const txt = document.getElementById('detailLeadBtnText');
-      if (isLead) {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs bg-violet-600 hover:bg-violet-700 text-white';
-        txt.textContent = 'Zapisany Lead ★';
-      } else {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs bg-white hover:bg-violet-100 text-violet-700 border border-violet-300';
-        txt.textContent = 'Dodaj do Leadów';
-      }
-    }
-
-    window.toggleLead = function (id) {
-      if (savedLeads.has(id)) {
-        savedLeads.delete(id);
-        showToast('Usunięto z zapisanych leadów.');
-      } else {
-        savedLeads.add(id);
-        showToast('Zapisano jako Lead ★ (działka oznaczona na fioletowo)!', 'success');
-      }
-      persistLeadsAndNotes();
-      if (selectedRecordId === id) updateDetailLeadButton(id);
-      applyFilters(false);
-    };
-
-    /*************************************************************************
-     * 12. UDOSTĘPNIANIE LINKIEM (URL STATE) — GOTOWE POD GITHUB PAGES
-     *************************************************************************/
-    function buildShareUrl(explicitRecordId = null) {
-      const params = new URLSearchParams();
-      params.set('woj', locState.wojewodztwo);
-      params.set('powiat', locState.powiat);
-
-      const availGminy = getAvailableGminyForLocation(locState.wojewodztwo, locState.powiat);
-      if (locState.selectedGminy.size > 0 && locState.selectedGminy.size < availGminy.length) {
-        params.set('gminy', Array.from(locState.selectedGminy).join(','));
-      }
-
-      params.set('smart', document.getElementById('smartMatchToggle').checked ? '1' : '0');
-      const minV = document.getElementById('minVolInput').value;
-      const maxV = document.getElementById('maxVolInput').value;
-      const q = document.getElementById('keywordInput').value.trim();
-      if (minV) params.set('minKub', minV);
-      if (maxV) params.set('maxKub', maxV);
-      if (q) params.set('q', q);
-      if (document.getElementById('onlyLeadsCheckbox').checked) params.set('leadOnly', '1');
-
-      const activeId = explicitRecordId || selectedRecordId;
-      if (activeId) params.set('id', activeId);
-
-      const center = map.getCenter();
-      params.set('lat', center.lat.toFixed(5));
-      params.set('lng', center.lng.toFixed(5));
-      params.set('zoom', String(map.getZoom()));
-
-      const base = `${window.location.origin}${window.location.pathname}`;
-      return `${base}?${params.toString()}`;
-    }
-
-    function copyTextToClipboard(text) {
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        if (ok) return true;
-      } catch (e) {}
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text);
-          return true;
-        }
-      } catch (e) {}
-      return false;
-    }
-
-    function shareCurrentState(explicitRecordId = null) {
-      const shareUrl = buildShareUrl(explicitRecordId);
-      try {
-        window.history.replaceState({}, '', shareUrl);
-      } catch (e) {}
-      copyTextToClipboard(shareUrl);
-      showToast('Skopiowano link z aktualnym widokiem i filtrami do schowka!', 'success');
-    }
-
-    function restoreStateFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      if (!params.toString()) return false;
-
-      if (params.has('woj')) locState.wojewodztwo = params.get('woj');
-      if (params.has('powiat')) locState.powiat = params.get('powiat');
-
-      populateWojSelect();
-      populatePowiatSelect();
-
-      const availGminy = getAvailableGminyForLocation(locState.wojewodztwo, locState.powiat);
-      if (params.has('gminy')) {
-        const requested = params.get('gminy').split(',').map(s => s.trim()).filter(Boolean);
-        locState.selectedGminy = new Set(requested);
-      } else {
-        locState.selectedGminy = new Set(availGminy);
-      }
-      populateGminyList(false);
-
-      if (params.has('smart')) document.getElementById('smartMatchToggle').checked = params.get('smart') === '1';
-      if (params.has('minKub')) document.getElementById('minVolInput').value = params.get('minKub');
-      if (params.has('maxKub')) document.getElementById('maxVolInput').value = params.get('maxKub');
-      if (params.has('q')) document.getElementById('keywordInput').value = params.get('q');
-      if (params.has('leadOnly')) document.getElementById('onlyLeadsCheckbox').checked = params.get('leadOnly') === '1';
-
-      applyFilters(false);
-
-      const lat = parseFloat(params.get('lat'));
-      const lng = parseFloat(params.get('lng'));
-      const zoom = parseInt(params.get('zoom'), 10);
-      if (!isNaN(lat) && !isNaN(lng) && !isNaN(zoom)) {
-        map.setView([lat, lng], zoom);
-      } else {
-        fitMapToFilteredParcels(false);
-      }
-
-      if (params.has('id')) {
-        const recId = params.get('id');
-        if (allRecords.some(r => r.id === recId)) {
-          openDetailDrawer(recId);
-        }
-      }
-      return true;
-    }
-
-    /*************************************************************************
-     * 13. IMPORTER I EKSPORTER CSV (GUNB RWDZ)
-     *************************************************************************/
-    function parseCSVText(text) {
-      const cleanText = text.replace(/^\uFEFF/, '');
-      const firstLine = cleanText.split(/\r?\n/)[0] || '';
-      const delimiter = (firstLine.match(/;/g) || []).length >= (firstLine.match(/,/g) || []).length ? ';' : ',';
-
-      const rows = [];
-      let row = [];
-      let val = '';
-      let inQuotes = false;
-
-      for (let i = 0; i < cleanText.length; i++) {
-        const c = cleanText[i];
-        const next = cleanText[i + 1];
-        if (c === '"') {
-          if (inQuotes && next === '"') { val += '"'; i++; }
-          else { inQuotes = !inQuotes; }
-        } else if (c === delimiter && !inQuotes) {
-          row.push(val.trim()); val = '';
-        } else if ((c === '\n' || c === '\r') && !inQuotes) {
-          if (c === '\r' && next === '\n') i++;
-          row.push(val.trim());
-          if (row.some(cell => cell !== '')) rows.push(row);
-          row = []; val = '';
-        } else {
-          val += c;
-        }
-      }
-      if (val.length > 0 || row.length > 0) {
-        row.push(val.trim());
-        if (row.some(cell => cell !== '')) rows.push(row);
-      }
-      if (rows.length < 2) return [];
-
-      const headers = rows[0].map(h => h.toLowerCase().trim());
-      return rows.slice(1).map(r => {
-        const obj = {};
-        headers.forEach((h, idx) => { obj[h] = r[idx] !== undefined ? r[idx] : ''; });
-        return obj;
-      });
-    }
-
-    function pickField(row, keys) {
-      const rowKeys = Object.keys(row);
-      for (const k of keys) {
-        if (row[k] !== undefined && row[k] !== '') return row[k];
-        const partial = rowKeys.find(rk => rk.includes(k));
-        if (partial && row[partial] !== '') return row[partial];
-      }
-      return '';
-    }
-
-    function guessCoordsForCsvRecord(woj, powiat) {
-      const base = AREA_CENTERS[(powiat || '').toLowerCase()] ||
-                   AREA_CENTERS[(woj || '').toLowerCase()] ||
-                   [52.23, 21.01];
-      const lat = base[0] + (Math.random() - 0.5) * 0.08;
-      const lng = base[1] + (Math.random() - 0.5) * 0.12;
-      return [Number(lat.toFixed(6)), Number(lng.toFixed(6))];
-    }
-
-    async function handleCsvFile(file) {
-      if (!file) return;
-      const encoding = document.getElementById('csvEncodingSelect').value || 'UTF-8';
-      const autoUldk = document.getElementById('csvAutoUldkCheckbox').checked;
-
-      const reader = new FileReader();
-      reader.onload = async function (e) {
-        try {
-          const rows = parseCSVText(e.target.result);
-          if (rows.length === 0) {
-            showToast('Plik CSV jest pusty lub ma nierozpoznany format.', 'error');
-            return;
-          }
-
-          const imported = rows.map((row, idx) => {
-            const woj = (pickField(row, ['wojewodztwo', 'województwo', 'woj']) || 'mazowieckie').toLowerCase().replace(/^woj\.\s*/i, '').trim();
-            const powiat = (pickField(row, ['powiat']) || 'wołomiński').replace(/^powiat\s+|^pow\.\s*/i, '').trim();
-            const gmina = (pickField(row, ['gmina', 'jednostka_ewidencyjna']) || 'Wołomin').replace(/^gmina\s+|^gm\.\s+|^m\.\s+/i, '').trim();
-            const miejscowosc = pickField(row, ['miejscowosc', 'miejscowość', 'miasto']) || gmina;
-            const obreb = pickField(row, ['obreb', 'obręb', 'nazwa_obrebu']) || miejscowosc;
-            const nrDzialki = pickField(row, ['nr_dzialki', 'numer_dzialki', 'dzialka', 'działka']) || `${idx + 1}/1`;
-            const idTeryt = pickField(row, ['id_dzialki', 'identyfikator_dzialki', 'teryt']) || '';
-            const nazwa = pickField(row, ['nazwa_zamierzenia_bud', 'nazwa_zam_budowlanego', 'nazwa_zamierzenia', 'nazwa']) || 'Zamierzenie budowlane';
-            const rodzaj = pickField(row, ['rodzaj_zam_budowlanego', 'rodzaj_zamierzenia', 'rodzaj']) || 'Obiekt budowlany inny niż budynek mieszkalny jednorodzinny';
-            const kategoria = pickField(row, ['kategoria', 'kategoria_obiektu', 'kat']) || 'Brak';
-            const kubRaw = pickField(row, ['kubatura', 'kubatura_m3']).replace(/\s/g, '').replace(',', '.');
-            const kubatura = Math.round(parseFloat(kubRaw) || 0);
-            const dataWplywu = pickField(row, ['data_wplywu_wniosku', 'data_wplywu', 'data_wniosku', 'data']) || new Date().toISOString().slice(0, 10);
-            const stanRaw = pickField(row, ['stan', 'status']).toLowerCase();
-            const status = stanRaw.includes('rozpatr') ? 'W rozpatrywaniu' : 'Złożony wniosek';
-
-            const latRaw = parseFloat(pickField(row, ['lat', 'szerokosc']).replace(',', '.'));
-            const lngRaw = parseFloat(pickField(row, ['lng', 'lon', 'dlugosc']).replace(',', '.'));
-            const coords = (!isNaN(latRaw) && !isNaN(lngRaw) && latRaw > 48 && latRaw < 56)
-              ? [latRaw, lngRaw]
-              : guessCoordsForCsvRecord(woj, powiat);
-
-            return makeRecord({
-              id: `CSV-${idx + 1}-${Date.now().toString().slice(-4)}`,
-              status,
-              data_wplywu: dataWplywu.slice(0, 10),
-              wojewodztwo: woj,
-              powiat,
-              gmina,
-              miejscowosc,
-              ulica: pickField(row, ['ulica', 'adres']),
-              kategoria,
-              nazwa,
-              rodzaj,
-              kubatura,
-              inwestor: pickField(row, ['inwestor', 'wnioskodawca']) || 'Wg dokumentacji RWDZ',
-              organ: pickField(row, ['organ', 'organ_wydajacy']) || `Starosta (${powiat})`,
-              nr_sprawy: pickField(row, ['nr_wniosku', 'nr_sprawy', 'znak_sprawy']) || `CSV-${idx + 1}`,
-              lat: coords[0],
-              lng: coords[1],
-              angle: (idx * 23) % 60 - 30,
-              dzialki: [{ id_teryt: idTeryt, obreb, nr: nrDzialki }]
-            });
-          });
-
-          allRecords = imported;
-          document.getElementById('dataSourceText').textContent = file.name;
-
-          // Ustaw filtry lokalizacji na pierwszy zaimportowany obszar lub Całą Polskę
-          const uniquePow = new Set(imported.map(r => r.powiat));
-          if (uniquePow.size === 1) {
-            locState.wojewodztwo = imported[0].wojewodztwo;
-            locState.powiat = imported[0].powiat;
-          } else {
-            locState.wojewodztwo = 'ALL';
-            locState.powiat = 'ALL';
-          }
-
-          populateWojSelect();
-          populatePowiatSelect();
-          populateGminyList(true);
-          closeImportModal();
-          applyFilters(true);
-          showToast(`Zaimportowano ${imported.length} wniosków z pliku ${file.name}!`, 'success');
-
-          // Opcjonalnie pobierz kształty z ULDK dla pierwszych 15 rekordów z ID TERYT
-          if (autoUldk) {
-            const withTeryt = imported.filter(r => r.dzialki[0] && r.dzialki[0].id_teryt).slice(0, 15);
-            if (withTeryt.length > 0) {
-              showToast(`Pobieranie kształtów działek z ULDK GUGiK (${withTeryt.length} szt.)...`);
-              let okCnt = 0;
-              for (const rec of withTeryt) {
-                const updated = await updateRecordParcelsFromULDK(rec);
-                if (updated > 0) okCnt++;
-              }
-              if (okCnt > 0) showToast(`Pobrano dokładne kształty z ULDK dla ${okCnt} działek!`, 'success');
-            }
-          }
-        } catch (err) {
-          console.error(err);
-          showToast('Błąd podczas przetwarzania pliku CSV.', 'error');
-        }
-      };
-      reader.readAsText(file, encoding);
-    }
-
-    function exportFilteredToCSV() {
-      if (filteredRecords.length === 0) {
-        showToast('Brak wyfiltrowanych wniosków do eksportu.', 'error');
-        return;
-      }
-      const headers = [
-        'Nr sprawy', 'Status', 'Data wplywu', 'Wojewodztwo', 'Powiat', 'Gmina',
-        'Miejscowosc', 'Dzialki (TERYT / nr)', 'Kategoria', 'Rodzaj',
-        'Nazwa zamierzenia', 'Kubatura (m3)', 'Inwestor', 'Lead', 'Notatka'
-      ];
-      const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-      const lines = [
-        headers.join(';'),
-        ...filteredRecords.map(r => [
-          r.nr_sprawy, r.status, r.data_wplywu, r.wojewodztwo, r.powiat, r.gmina,
-          r.miejscowosc,
-          (r.dzialki || []).map(d => d.id_teryt || d.nr).join(', '),
-          r.kategoria, r.rodzaj, r.nazwa, r.kubatura, r.inwestor,
-          savedLeads.has(r.id) ? 'TAK' : 'NIE',
-          savedNotes[r.id] || ''
-        ].map(esc).join(';'))
-      ];
-
-      const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `HalaRadar_Wnioski_${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast(`Wyeksportowano ${filteredRecords.length} wniosków do CSV.`, 'success');
-    }
-
-    /*************************************************************************
-     * 14. POMOCNICZE FUNKCJE UI I ZDARZENIA
-     *************************************************************************/
-    function formatNumber(n) { return Number(n || 0).toLocaleString('pl-PL'); }
-    function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-    function truncate(s, max) { return !s ? '' : (s.length > max ? s.slice(0, max - 1) + '…' : s); }
-    function escapeHtml(str) {
-      return String(str ?? '')
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      const bg = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-900';
-      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold text-white ${bg} transition-all duration-300 opacity-0 translate-y-2`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      requestAnimationFrame(() => toast.classList.remove('opacity-0', 'translate-y-2'));
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => toast.remove(), 300);
-      }, 3200);
-    }
-
-    function switchView(view) {
-      currentView = view;
-      const mapCont = document.getElementById('mapViewContainer');
-      const tableCont = document.getElementById('tableViewContainer');
-      const mapBtn = document.getElementById('viewMapBtn');
-      const tableBtn = document.getElementById('viewTableBtn');
-
-      if (view === 'map') {
-        mapCont.classList.remove('hidden');
-        tableCont.classList.add('hidden');
-        mapBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm transition';
-        tableBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 text-slate-300 hover:text-white transition';
-        setTimeout(() => map.invalidateSize(), 60);
-      } else {
-        mapCont.classList.add('hidden');
-        tableCont.classList.remove('hidden');
-        tableBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 bg-emerald-600 text-white shadow-sm transition';
-        mapBtn.className = 'px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 text-slate-300 hover:text-white transition';
-      }
-    }
-
-    function openImportModal() {
-      const m = document.getElementById('importModal');
-      m.classList.remove('hidden'); m.classList.add('flex');
-    }
-    function closeImportModal() {
-      const m = document.getElementById('importModal');
-      m.classList.add('hidden'); m.classList.remove('flex');
-    }
-    function openHelpModal() {
-      const m = document.getElementById('helpModal');
-      m.classList.remove('hidden'); m.classList.add('flex');
-    }
-    function closeHelpModal() {
-      const m = document.getElementById('helpModal');
-      m.classList.add('hidden'); m.classList.remove('flex');
-    }
-
-    function toggleSidebar() {
-      const sidebar = document.getElementById('filterSidebar');
-      const backdrop = document.getElementById('mobileFilterBackdrop');
-      if (window.innerWidth < 1024) {
-        const isHidden = sidebar.classList.contains('-translate-x-full');
-        sidebar.classList.toggle('-translate-x-full', !isHidden);
-        backdrop.classList.toggle('hidden', !isHidden);
-      } else {
-        sidebar.classList.toggle('sidebar-collapsed');
-        setTimeout(() => map.invalidateSize(), 220);
-      }
-    }
-
-    function initEvents() {
-      document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebar);
-      document.getElementById('closeMobileFilterBtn').addEventListener('click', toggleSidebar);
-      document.getElementById('mobileFilterBackdrop').addEventListener('click', toggleSidebar);
-
-      document.getElementById('viewMapBtn').addEventListener('click', () => switchView('map'));
-      document.getElementById('viewTableBtn').addEventListener('click', () => switchView('table'));
-      document.getElementById('shareLinkBtn').addEventListener('click', () => shareCurrentState());
-      document.getElementById('exportCsvBtn').addEventListener('click', exportFilteredToCSV);
-
-      // Kaskadowy filtr lokalizacji
-      document.getElementById('wojSelect').addEventListener('change', e => {
-        locState.wojewodztwo = e.target.value;
-        locState.powiat = 'ALL';
-        document.getElementById('powiatSearchInput').value = '';
-        document.getElementById('gminaSearchInput').value = '';
-        populatePowiatSelect();
-        populateGminyList(true);
-        applyFilters(true);
-      });
-
-      document.getElementById('powiatSearchInput').addEventListener('input', e => {
-        populatePowiatSelect(e.target.value);
-      });
-
-      document.getElementById('powiatSelect').addEventListener('change', e => {
-        locState.powiat = e.target.value;
-        document.getElementById('gminaSearchInput').value = '';
-        populateGminyList(true);
-        applyFilters(true);
-      });
-
-      document.getElementById('gminaSearchInput').addEventListener('input', () => populateGminyList(false));
-
-      document.getElementById('selectAllGminyBtn').addEventListener('click', () => {
-        const allG = getAvailableGminyForLocation(locState.wojewodztwo, locState.powiat);
-        locState.selectedGminy = new Set(allG);
-        populateGminyList(false);
-        applyFilters(true);
-      });
-
-      document.getElementById('clearAllGminyBtn').addEventListener('click', () => {
-        locState.selectedGminy.clear();
-        populateGminyList(false);
-        applyFilters(false);
-      });
-
-      // Filtry branżowe
-      document.getElementById('smartMatchToggle').addEventListener('change', () => applyFilters(false));
-      document.querySelectorAll('.status-checkbox').forEach(cb => cb.addEventListener('change', () => applyFilters(false)));
-      document.getElementById('onlyLeadsCheckbox').addEventListener('change', () => applyFilters(false));
-      document.getElementById('kpiLeadsCard').addEventListener('click', () => {
-        const cb = document.getElementById('onlyLeadsCheckbox');
-        cb.checked = !cb.checked;
-        applyFilters(false);
-      });
-
-      document.getElementById('keywordInput').addEventListener('input', () => applyFilters(false));
-      document.getElementById('clearKeywordBtn').addEventListener('click', () => {
-        document.getElementById('keywordInput').value = '';
-        applyFilters(false);
-      });
-      document.querySelectorAll('.kw-chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.getElementById('keywordInput').value = btn.dataset.kw;
-          applyFilters(false);
-        });
-      });
-
-      document.getElementById('minVolInput').addEventListener('input', () => applyFilters(false));
-      document.getElementById('maxVolInput').addEventListener('input', () => applyFilters(false));
-      document.querySelectorAll('.vol-preset').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.getElementById('minVolInput').value = btn.dataset.min;
-          document.getElementById('maxVolInput').value = '';
-          document.querySelectorAll('.vol-preset').forEach(b => {
-            b.className = 'vol-preset text-[11px] px-2 py-1 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium transition';
-          });
-          btn.className = 'vol-preset text-[11px] px-2 py-1 rounded-md border border-emerald-300 bg-emerald-50 text-emerald-800 font-semibold transition';
-          applyFilters(false);
-        });
-      });
-
-      document.getElementById('selectAllCatBtn').addEventListener('click', () => {
-        document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = true);
-        applyFilters(false);
-      });
-
-      // Reset do domyślnych (Powiat Wołomiński + wszystkie 12 gmin + Smart Match ON)
-      document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-        locState.wojewodztwo = 'mazowieckie';
-        locState.powiat = 'wołomiński';
-        locState.selectedGminy = new Set(GMINY_WOLOMINSKI);
-        document.getElementById('powiatSearchInput').value = '';
-        document.getElementById('gminaSearchInput').value = '';
-        document.getElementById('smartMatchToggle').checked = true;
-        document.getElementById('onlyLeadsCheckbox').checked = false;
-        document.getElementById('keywordInput').value = '';
-        document.getElementById('minVolInput').value = '';
-        document.getElementById('maxVolInput').value = '';
-        document.querySelectorAll('.status-checkbox').forEach(cb => { cb.checked = true; });
-        document.querySelectorAll('.cat-checkbox').forEach(cb => { cb.checked = true; });
-        populateWojSelect();
-        populatePowiatSelect();
-        populateGminyList(false);
-        applyFilters(true);
-        showToast('Przywrócono domyślne filtry (powiat wołomiński, 12 gmin).');
-      });
-
-      // Przełączanie 4 stylów mapy podkładowej (każdy widoczny od zoom 5 do 21)
-      document.querySelectorAll('input[name="baseLayer"]').forEach(radio => {
-        radio.addEventListener('change', e => {
-          const val = e.target.value;
-          map.removeLayer(activeBaseLayer);
-          if (map.hasLayer(ortoOverlay)) map.removeLayer(ortoOverlay);
-
-          if (val === 'osm_kieg') {
-            activeBaseLayer = baseLayers.osm.addTo(map);
-            document.getElementById('kiegParcelsToggle').checked = true;
-          } else if (val === 'light_kieg') {
-            activeBaseLayer = baseLayers.carto.addTo(map);
-            document.getElementById('kiegParcelsToggle').checked = true;
-          } else if (val === 'orto_kieg') {
-            // Baza satelity Esri (zawsze widoczna) + GUGiK Ortofotomapa WMS (wysoka rozdzielczość dla Polski)
-            activeBaseLayer = baseLayers.sat.addTo(map);
-            ortoOverlay.addTo(map);
-            document.getElementById('kiegParcelsToggle').checked = true;
-          } else {
-            activeBaseLayer = baseLayers.sat.addTo(map);
-            document.getElementById('kiegParcelsToggle').checked = false;
-          }
-          activeBaseLayer.bringToBack();
-          updateKiegLayers();
-        });
-      });
-
+// ... existing code ... -->
       document.getElementById('kiegParcelsToggle').addEventListener('change', updateKiegLayers);
       document.getElementById('kiegBuildingsToggle').addEventListener('change', updateKiegLayers);
       document.getElementById('fitBoundsBtn').addEventListener('click', () => fitMapToFilteredParcels(true));
 
-      document.getElementById('zoomTo16Btn').addEventListener('click', () => {
-        map.setZoom(16, { animate: true });
-      });
+      // Zwijanie / rozwijanie panelu Podkładu i Legendy (szczególnie wygodne na telefonie)
+      function setPanelOpen(bodyEl, btnEl, chevronEl, isOpen) {
+        bodyEl.classList.remove('md:block');
+        bodyEl.classList.toggle('hidden', !isOpen);
+        btnEl.setAttribute('aria-expanded', String(isOpen));
+        chevronEl.classList.toggle('rotate-180', isOpen);
+      }
 
-      document.getElementById('refreshUldkAllBtn').addEventListener('click', () => {
-        showToast('Odświeżanie rzeczywistych granic działek z ULDK GUGiK...');
-        runUldkAutoSnap(filteredRecords, true);
-      });
+      const layersBody = document.getElementById('layersPanelBody');
+      const layersBtn = document.getElementById('toggleLayersPanelBtn');
+      const layersChevron = document.getElementById('layersChevron');
+      const legendBody = document.getElementById('legendPanelBody');
+      const legendBtn = document.getElementById('toggleLegendPanelBtn');
+      const legendChevron = document.getElementById('legendChevron');
 
-      // Panel szczegółów
-      document.getElementById('closeDetailBtn').addEventListener('click', closeDetailDrawer);
-      document.getElementById('detailLeadToggleBtn').addEventListener('click', () => {
-        if (selectedRecordId) toggleLead(selectedRecordId);
-      });
-      document.getElementById('detailNoteInput').addEventListener('input', e => {
-        if (!selectedRecordId) return;
-        savedNotes[selectedRecordId] = e.target.value;
-        persistLeadsAndNotes();
-      });
-      document.getElementById('detailCopyLinkBtn').addEventListener('click', () => {
-        if (selectedRecordId) shareCurrentState(selectedRecordId);
-      });
-      document.getElementById('fetchUldkBtn').addEventListener('click', async () => {
-        const rec = allRecords.find(r => r.id === selectedRecordId);
-        if (!rec) return;
-        const btn = document.getElementById('fetchUldkBtn');
-        btn.disabled = true;
-        btn.classList.add('opacity-60');
-        showToast('Łączenie z API ULDK GUGiK...');
-        const count = await updateRecordParcelsFromULDK(rec);
-        btn.disabled = false;
-        btn.classList.remove('opacity-60');
-        if (count > 0) {
-          openDetailDrawer(rec.id);
-          showToast(`Pobrano dokładną geometrię ${count} działek z ULDK GUGiK!`, 'success');
-        } else {
-          showToast('Brak odpowiedzi ULDK dla tego ID TERYT (pozostawiono obrys lokalny).', 'error');
+      // Ustawienie początkowe: na desktopie (>= 768px) rozwinięte, na telefonie (< 768px) zwinięte
+      const startOpen = window.innerWidth >= 768;
+      setPanelOpen(layersBody, layersBtn, layersChevron, startOpen);
+      setPanelOpen(legendBody, legendBtn, legendChevron, startOpen);
+
+      layersBtn.addEventListener('click', () => {
+        const willOpen = layersBody.classList.contains('hidden');
+        setPanelOpen(layersBody, layersBtn, layersChevron, willOpen);
+        // Na telefonie otwarcie Podkładu automatycznie zwija Legendę, aby nie zasłaniać mapy
+        if (willOpen && window.innerWidth < 768) {
+          setPanelOpen(legendBody, legendBtn, legendChevron, false);
         }
       });
 
-      // Sortowanie tabeli
-      document.querySelectorAll('.sort-header').forEach(th => {
-        th.addEventListener('click', () => {
-          const f = th.dataset.sort;
-          if (sortState.field === f) sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-          else { sortState.field = f; sortState.dir = (f === 'kubatura' || f === 'data_wplywu') ? 'desc' : 'asc'; }
-          renderTable();
-        });
+      legendBtn.addEventListener('click', () => {
+        const willOpen = legendBody.classList.contains('hidden');
+        setPanelOpen(legendBody, legendBtn, legendChevron, willOpen);
+        if (willOpen && window.innerWidth < 768) {
+          setPanelOpen(layersBody, layersBtn, layersChevron, false);
+        }
       });
 
-      // Modal importu CSV
-      document.getElementById('openImportModalBtn').addEventListener('click', openImportModal);
-      document.getElementById('closeImportModalBtn').addEventListener('click', closeImportModal);
-      document.getElementById('cancelImportBtn').addEventListener('click', closeImportModal);
-
-      const dropZone = document.getElementById('dropZone');
-      const fileInput = document.getElementById('csvFileInput');
-      dropZone.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', e => { if (e.target.files[0]) handleCsvFile(e.target.files[0]); e.target.value = ''; });
-      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-emerald-600', 'bg-emerald-100/60'); });
-      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-emerald-600', 'bg-emerald-100/60'));
-      dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.classList.remove('border-emerald-600', 'bg-emerald-100/60');
-        if (e.dataTransfer.files[0]) handleCsvFile(e.dataTransfer.files[0]);
+      document.getElementById('zoomTo16Btn').addEventListener('click', () => {
+        map.setZoom(16, { animate: true });
       });
-
-      document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
-        allRecords = [...DEMO_DATA];
-        document.getElementById('dataSourceText').textContent = 'Baza demo RWDZ';
-        locState = { wojewodztwo: 'mazowieckie', powiat: 'wołomiński', selectedGminy: new Set(GMINY_WOLOMINSKI) };
-        populateWojSelect();
-        populatePowiatSelect();
-        populateGminyList(false);
-        closeImportModal();
-        applyFilters(true);
-        showToast('Przywrócono wbudowaną bazę demonstracyjną.');
-      });
-
-      // Modal GitHub Pages / Pomoc
-      document.getElementById('openHelpModalBtn').addEventListener('click', openHelpModal);
-      document.getElementById('closeHelpModalBtn').addEventListener('click', closeHelpModal);
-      document.getElementById('okHelpBtn').addEventListener('click', closeHelpModal);
-
+// ... existing code ... -->
       window.addEventListener('resize', () => {
         if (currentView === 'map') map.invalidateSize();
+        updateZoomUI();
+        updateUldkStatusBadge(uldkQueueRunning);
       });
     }
-
-    // Start aplikacji
-    window.addEventListener('DOMContentLoaded', () => {
-      buildCategoryFilters();
-      populateWojSelect();
-      populatePowiatSelect();
-      populateGminyList(false);
-      initEvents();
-      updateZoomUI();
-
-      const restored = restoreStateFromUrl();
-      if (!restored) {
-        applyFilters(false);
-        fitMapToFilteredParcels(false);
-      }
-    });
-  </script>
-</body>
-</html>
+// ... existing code ... -->

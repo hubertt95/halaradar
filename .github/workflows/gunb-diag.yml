@@ -39,6 +39,31 @@ jobs:
                   for n in range(6): print(repr(t.readline()[:1500]))
           PY
           fi
+          if [ -s mazowieckie.zip ]; then
+            python - <<'PY' > diag/pending.txt 2>&1 || true
+          import zipfile, io, csv, collections
+          z = zipfile.ZipFile('mazowieckie.zip')
+          for info in z.infolist():
+              print('ENTRY', info.filename)
+              with z.open(info) as fh:
+                  t = io.TextIOWrapper(fh, encoding='utf-8-sig', errors='replace')
+                  r = csv.reader(t, delimiter=';')
+                  h = next(r); iw = h.index('data_wplywu_wniosku'); idd = h.index('data_wydania_decyzji'); ig = h.index('numer_gunb'); ii = h.index('nazwa_inwestor')
+                  by_year = collections.Counter(); empty = collections.Counter(); kinds = collections.Counter(); maxd = ''
+                  for row in r:
+                      if len(row) <= idd: continue
+                      y = row[iw][:4]; by_year[y] += 1
+                      if not row[idd].strip(): empty[y] += 1
+                      kinds[row[ig].split('/')[1] if '/' in row[ig] else row[ig][:10]] += 1
+                      maxd = max(maxd, row[iw][:10])
+                      if any(n in row[ii] for n in ('Mackiewicz', 'Zajkowski', 'Wolbel', 'Biveris', 'Monraf', 'CAN AGRI')):
+                          print('FOUND', row[iw][:10], row[idd][:10], row[ig], row[ii])
+                  print('rows by year', sorted(by_year.items()))
+                  print('empty decision date by year', sorted(empty.items()))
+                  print('numer_gunb kinds', kinds.most_common(8))
+                  print('max data_wplywu', maxd)
+          PY
+          fi
           python gunb_loader.py --regions mazowieckie --days 365 --out-dir out > diag/loader.txt 2>&1 || true
           cp out/index.json diag/ 2>/dev/null || true
           python - <<'PY' >> diag/loader.txt 2>&1 || true

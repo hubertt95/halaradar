@@ -566,6 +566,7 @@
             <div class="p-3 flex justify-between gap-3"><span class="text-slate-500 shrink-0">Kategoria obiektu</span><span id="detailCategory" class="font-bold text-slate-800 text-right">—</span></div>
             <div class="p-3 flex justify-between gap-3"><span class="text-slate-500 shrink-0">Rodzaj zamierzenia</span><span id="detailRodzaj" class="font-medium text-slate-800 text-right">—</span></div>
             <div class="p-3 flex justify-between gap-3"><span class="text-slate-500 shrink-0">Inwestor</span><span id="detailInvestor" class="font-semibold text-slate-800 text-right">—</span></div>
+            <div class="p-3 flex justify-between gap-3"><span class="text-slate-500 shrink-0">Projektant</span><span id="detailDesigner" class="font-semibold text-slate-800 text-right">—</span></div>
             <div class="p-3 flex justify-between gap-3"><span class="text-slate-500 shrink-0">Organ</span><span id="detailOrgan" class="font-medium text-slate-800 text-right">—</span></div>
             <div class="p-3 flex justify-between gap-3 items-center"><span class="text-slate-500 shrink-0">Nr sprawy</span>
               <span class="flex items-center gap-1.5 min-w-0"><span id="detailCaseNr" class="font-mono text-[11px] font-medium text-slate-800 text-right truncate">—</span>
@@ -752,7 +753,8 @@
       const CANON_FIELDS = [
         'key', 'nr_urzad', 'data_wplywu', 'data_decyzji', 'typ', 'organ', 'woj', 'powiat',
         'gmina', 'terc', 'miejscowosc', 'ulica', 'nr_domu', 'kategoria', 'nazwa', 'rodzaj',
-        'kubatura', 'jednostka', 'obreb', 'dzialka', 'arkusz', 'inwestor', 'stan'
+        'kubatura', 'jednostka', 'obreb', 'dzialka', 'arkusz', 'inwestor', 'stan',
+        'cel', 'projektant', 'projektant_imie', 'nr_decyzji'
       ];
 
       const FIELD_LABELS = {
@@ -761,12 +763,16 @@
         powiat: 'Powiat', gmina: 'Gmina', terc: 'TERC (kod gminy)', miejscowosc: 'Miejscowość',
         ulica: 'Ulica', nr_domu: 'Nr domu', kategoria: 'Kategoria obiektu', nazwa: 'Nazwa zamierzenia',
         rodzaj: 'Rodzaj zamierzenia', kubatura: 'Kubatura', jednostka: 'Jednostka ewidencyjna',
-        obreb: 'Obręb', dzialka: 'Nr działki', arkusz: 'Arkusz mapy', inwestor: 'Inwestor', stan: 'Stan prawny sprawy'
+        obreb: 'Obręb', dzialka: 'Nr działki', arkusz: 'Arkusz mapy', inwestor: 'Inwestor', stan: 'Stan prawny sprawy',
+        cel: 'Rodzaj robót (budowa/rozbudowa…)', projektant: 'Projektant — nazwisko', projektant_imie: 'Projektant — imię',
+        nr_decyzji: 'Nr decyzji'
       };
 
       const COLUMN_RULES = [
-        ['key', ['numer_ewidencyjny_system', 'id_wniosku', 'identyfikator'], []],
-        ['nr_urzad', ['numer_ewidencyjny_urzad', 'numer_ewidencyjny', 'znak_sprawy', 'nr_sprawy', 'numer_sprawy', 'znak'], ['system']],
+        ['key', ['numer_gunb', 'numer_ewidencyjny_system', 'id_wniosku', 'identyfikator'], []],
+        ['nr_decyzji', ['numer_decyzji_urzedu', 'numer_decyzji', 'nr_decyzji'], []],
+        ['nr_urzad', ['numer_urzad', 'numer_ewidencyjny_urzad', 'numer_ewidencyjny', 'znak_sprawy', 'nr_sprawy', 'numer_sprawy', 'znak'], ['system', 'decyz', 'gunb', 'uprawn']],
+        ['cel', ['nazwa_zamierzenia_bud', 'rodzaj_zamierzenia_bud', 'cel_inwestycji'], []],
         ['data_decyzji', ['data_wydania_decyzji', 'data_wydania', 'data_decyzji'], []],
         ['data_wplywu', ['data_wplywu_wniosku_do_urzedu', 'data_wplywu', 'data_zlozenia', 'data_wniosku', 'data_wplyw'], []],
         ['typ', ['typ_dokumentu', 'rodzaj_dokumentu', 'typ', 'rejestr', 'dokument'], ['inwest', 'obiekt', 'zamierz']],
@@ -779,14 +785,16 @@
         ['ulica', ['ulica'], ['dalej']],
         ['nr_domu', ['nr_domu', 'numer_domu', 'nr_budynku'], []],
         ['kategoria', ['kategoria'], []],
-        ['nazwa', ['nazwa_zam_budowlanego', 'nazwa_zam', 'nazwa_zamierzenia', 'zamierzenie', 'nazwa_inwestycji'], ['organ']],
+        ['nazwa', ['nazwa_zam_budowlanego', 'nazwa_zam', 'nazwa_zamierzenia', 'zamierzenie', 'nazwa_inwestycji'], ['organ', 'inwestor']],
         ['rodzaj', ['rodzaj_zam_budowlanego', 'rodzaj_zam', 'rodzaj_inwestycji', 'rodzaj_zamierzenia', 'rodzaj_robot'], []],
         ['kubatura', ['kubatura'], []],
-        ['jednostka', ['jednostki_numer', 'jednostka_numer', 'jednostka_ewid', 'jednostki', 'jednostka'], ['nazwa']],
-        ['obreb', ['obreb_numer', 'numer_obrebu', 'obreb'], ['nazwa']],
-        ['dzialka', ['numer_dzialki', 'nr_dzialki', 'dzialki', 'dzialka'], ['arkusz']],
+        ['jednostka', ['jednosta_numer_ew', 'jednostka_numer_ew', 'jednostki_numer', 'jednostka_numer', 'jednostka_ewid', 'jednosta', 'jednostki', 'jednostka'], ['nazwa', 'stara']],
+        ['obreb', ['obreb_numer', 'numer_obrebu', 'obreb'], ['nazwa', 'stara']],
+        ['dzialka', ['numer_dzialki', 'nr_dzialki', 'dzialki', 'dzialka'], ['arkusz', 'stara']],
         ['arkusz', ['arkusz'], []],
-        ['inwestor', ['nazwa_inwestora', 'inwestor', 'wnioskodawca'], []],
+        ['inwestor', ['nazwa_inwestor', 'nazwa_inwestora', 'inwestor', 'wnioskodawca'], []],
+        ['projektant', ['projektant_nazwisko', 'projektant'], ['imie', 'uprawn']],
+        ['projektant_imie', ['projektant_imie'], []],
         ['stan', ['stan_prawny', 'stan_sprawy', 'stan', 'status'], ['budow', 'obiekt']]
       ];
 
@@ -821,8 +829,8 @@
           if (field === 'data_wplywu' && idx === -1) {
             idx = norm.findIndex((h, i) => !used.has(i) && h.includes('data') && !/decyz|wydan|modyf|aktualiz/.test(h));
           }
-          if (field === 'nazwa' && idx === -1) {
-            idx = norm.findIndex((h, i) => !used.has(i) && h.includes('nazwa') && !h.includes('organ'));
+          if (field === 'nazwa' && idx === -1) { // ostatnia deska ratunku
+            idx = norm.findIndex((h, i) => !used.has(i) && h.includes('nazwa') && !h.includes('organ') && !h.includes('inwestor'));
           }
           if (idx !== -1) { map[field] = idx; used.add(idx); }
         }
@@ -908,11 +916,14 @@
       const NEG_RES = /mieszkaln|jednorodzin|wielorodzin/;
       const NEG_INFRA = new RegExp(`sieci|sieć|przy[lł][aą]cz|${B}lini[ia]|gazoci[aą]g|wodoci[aą]g|kanalizac|${B}drog[aiy]|drogow|chodnik|o[sś]wietleni|fotowolt|elektrowni|transformator|kablow|[sś]wiat[lł]owod|telekomunik|maszt|ogrodzeni`);
       const NEG_DEMO = /rozbi[oó]rk/;
+      const MAIN_INFRA = /^(?:\S+\s+){0,2}(?:instalacj|sieci|sie[cć]\b|przy[lł][aą]cz|lini[ia]|kabl|gazoci[aą]g|wodoci[aą]g|kanaliz|stacj[iay]\s+(?:transf|[lł]adowania|bazow|elektroenerget)|zbiornik[aóo]?w?\s+(?:na\s+gaz|lpg|gazu)|fotowolt|elektrowni|farm[yaę]\s+(?:fotow|wiatr|pv)|bess\b|mikroinstalac|o[sś]wietleni|drog|chodnik|ogrodzeni|masztu|wie[zż]y\s+telekom)/;
       const CAT_W = { XVIII: 35, XVII: 25, XIX: 20, XX: 20, XVI: 15, XV: 15, II: 15 };
 
       function analyzeSmartFields(nazwa, rodzaj, cats, kub) {
         // „hala garażowa” w bloku mieszkalnym to nie hala przemysłowa
-        const n = String(nazwa ?? '').toLowerCase().replace(/hal[a-ząćęłńóśźż]*\s+gara[zż]\S*/g, ' garaż ');
+        const n = String(nazwa ?? '').toLowerCase()
+          .replace(/hal[a-ząćęłńóśźż]*\s+gara[zż]\S*/g, ' garaż ')
+          .replace(/magazyn[a-ząćęłńóśźż]*\s+energii/g, ' bess ');
         const r = String(rodzaj ?? '').toLowerCase();
         cats = cats || [];
         kub = Number(kub) || 0;
@@ -933,7 +944,9 @@
         else if (kub >= 1500) { score += 10; reasons.push(`kubatura ${kubTxt} m³`); }
         const resid = NEG_RES.test(n) || /^budynek mieszkalny/.test(r) || cats.includes('XIII');
         if (resid && !strong) { score -= 40; reasons.push('wygląda na budownictwo mieszkaniowe (−40)'); }
-        if (NEG_INFRA.test(n) && !strong) { score -= 50; reasons.push('sieci / drogi / infrastruktura (−50)'); }
+        // obiekt główny to sieć / instalacja / PV — nawet jeśli dalej pada „hala” czy „centrum dystrybucyjne”
+        const infraMain = MAIN_INFRA.test(n.trim());
+        if ((NEG_INFRA.test(n) && !strong) || infraMain) { score -= 50; reasons.push(infraMain ? 'obiektem głównym jest instalacja / sieć / PV (−50)' : 'sieci / drogi / infrastruktura (−50)'); }
         if ((NEG_DEMO.test(n) || NEG_DEMO.test(r)) && !strong) { score -= 30; reasons.push('rozbiórka (−30)'); }
         const misclass = strong && (cats.includes('I') || (/jednorodzinn/.test(r) && !/inny ni[zż]/.test(r)));
         if (misclass) reasons.push('uwaga: prawdopodobnie błędnie zaklasyfikowany w RWDZ jako kat. I / dom jednorodzinny');
@@ -1013,7 +1026,8 @@
       }
 
       function groupKey(c) {
-        const k = [c.key, c.nr_urzad, c.organ].filter(Boolean).join('|');
+        if (c.key) return 'K|' + c.key;
+        const k = c.nr_urzad ? [c.nr_urzad, c.organ, normalizeDate(c.data_wplywu)].join('|') : '';
         return k || [c.nazwa, c.data_wplywu, c.jednostka, c.dzialka].join('|');
       }
 
@@ -1043,11 +1057,15 @@
           kategoria: cats.length ? cats.join(', ') : 'Brak',
           nazwa: c.nazwa || '(brak nazwy zamierzenia)',
           rodzaj: c.rodzaj || '',
-          rodzajBucket: rodzajBucket(c.rodzaj, c.nazwa),
+          cel: c.cel || '',
+          rodzajBucket: rodzajBucket(c.cel || c.rodzaj, c.nazwa),
+          projektant: [c.projektant_imie, c.projektant].map(x => String(x || '').trim()).filter(Boolean).join(' '),
+          nr_decyzji: c.nr_decyzji || '',
           kubatura: parseKubatura(c.kubatura),
           inwestor: c.inwestor || '',
           organ: c.organ || '',
           nr_sprawy: c.nr_urzad || c.key || '',
+          nr_gunb: c.key || '',
           lat: null,
           lng: null,
           geoState: null,
@@ -2161,7 +2179,7 @@
         if (minVol !== null && rec.kubatura < minVol) return false;
         if (maxVol !== null && rec.kubatura > maxVol) return false;
         if (keyword) {
-          const hay = C.stripPl([rec.nazwa, rec.rodzaj, recGmina(rec), recPowiat(rec), rec.miejscowosc, rec.ulica, rec.inwestor, rec.organ, rec.nr_sprawy,
+          const hay = C.stripPl([rec.nazwa, rec.rodzaj, recGmina(rec), recPowiat(rec), rec.miejscowosc, rec.ulica, rec.inwestor, rec.projektant, rec.organ, rec.nr_sprawy, rec.nr_gunb,
             ...rec.dzialki.map(d0 => `${d0.nr} ${d0.obreb} ${d0.obrebName || ''} ${d0.id_teryt}`)].join(' '));
           if (!hay.includes(keyword)) return false;
         }
@@ -2263,7 +2281,7 @@
           <td class="py-2.5 px-3 text-slate-700 whitespace-nowrap">${escapeHtml(recPowiat(rec))}</td>
           <td class="py-2.5 px-3"><div class="font-semibold text-slate-800">${escapeHtml(recGmina(rec))} ${geoIcon}</div><div class="text-[11px] text-slate-500">${escapeHtml(rec.miejscowosc && rec.miejscowosc !== recGmina(rec) ? rec.miejscowosc + ' • ' : '')}dz. ${escapeHtml(parcelsTxt || '—')}</div></td>
           <td class="py-2.5 px-3 max-w-md"><div class="font-semibold text-slate-900 line-clamp-2">${escapeHtml(rec.nazwa)}</div>
-            <div class="text-[11px] text-slate-500 truncate">${escapeHtml(rec.demo ? 'DEMO — dane fikcyjne' : (rec.inwestor || rec.organ))}${stage ? ` • <span class="text-violet-700 font-semibold">${escapeHtml(stage)}</span>` : ''}</div></td>
+            <div class="text-[11px] text-slate-500 truncate">${escapeHtml(rec.demo ? 'DEMO — dane fikcyjne' : [rec.inwestor || rec.organ, rec.projektant ? 'proj. ' + rec.projektant : ''].filter(Boolean).join(' • '))}${stage ? ` • <span class="text-violet-700 font-semibold">${escapeHtml(stage)}</span>` : ''}</div></td>
           <td class="py-2.5 px-3 whitespace-nowrap"><span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px]">${escapeHtml(rec.kategoria)}</span></td>
           <td class="py-2.5 px-3 text-right font-extrabold whitespace-nowrap ${rec.kubatura >= 50000 ? 'text-orange-600' : 'text-slate-900'}">${rec.kubatura ? formatNumber(rec.kubatura) : '<span class="text-slate-300 font-normal">b.d.</span>'}</td>
           <td class="py-2.5 px-3 text-right whitespace-nowrap">
@@ -2314,6 +2332,7 @@
       $('detailRodzaj').textContent = rec.rodzaj || '—';
       $('detailInvestor').textContent = rec.inwestor || 'brak w pliku — sprawdź w GUNB';
       $('detailOrgan').textContent = rec.organ || '—';
+      $('detailDesigner').textContent = rec.projektant || '—';
       $('detailCaseNr').textContent = rec.nr_sprawy || '—';
       $('detailDecisionRow').classList.toggle('hidden', !rec.data_decyzji);
       $('detailDecisionDate').textContent = rec.data_decyzji || '—';
@@ -2586,10 +2605,10 @@
 
     function exportFilteredToCsv() {
       if (!filteredRecords.length) { showToast('Brak spraw do eksportu.', 'info'); return; }
-      const headers = ['ID', 'Data wpływu', 'Data decyzji', 'Status', 'Score', 'Województwo', 'Powiat', 'Gmina', 'Miejscowość', 'Ulica', 'Działki (ID)', 'Kategoria', 'Kubatura (m3)', 'Nazwa zamierzenia', 'Rodzaj robót', 'Inwestor', 'Organ', 'Nr sprawy', 'Lead', 'Etap CRM', 'Notatka', 'Szer. geogr.', 'Dł. geogr.'];
+      const headers = ['ID', 'Data wpływu', 'Data decyzji', 'Status', 'Score', 'Województwo', 'Powiat', 'Gmina', 'Miejscowość', 'Ulica', 'Działki (ID)', 'Kategoria', 'Kubatura (m3)', 'Nazwa zamierzenia', 'Rodzaj robót', 'Inwestor', 'Projektant', 'Organ', 'Nr sprawy', 'Lead', 'Etap CRM', 'Notatka', 'Szer. geogr.', 'Dł. geogr.'];
       const rows = filteredRecords.map(r => [
         r.id, r.data_wplywu, r.data_decyzji, r.status, smartOf(r).score, r.wojewodztwo, recPowiat(r), recGmina(r), r.miejscowosc, r.ulica,
-        r.dzialki.map(d => d.id_teryt || d.nr).join(' | '), r.kategoria, r.kubatura, r.nazwa, r.rodzajBucket || '', r.inwestor, r.organ, r.nr_sprawy,
+        r.dzialki.map(d => d.id_teryt || d.nr).join(' | '), r.kategoria, r.kubatura, r.nazwa, r.rodzajBucket || '', r.inwestor, r.projektant || '', r.organ, r.nr_sprawy,
         savedLeads.has(r.id) ? 'TAK' : 'NIE', leadStages[r.id] || '', savedNotes[r.id] || '',
         Number.isFinite(r.lat) ? r.lat.toFixed(6) : '', Number.isFinite(r.lng) ? r.lng.toFixed(6) : ''
       ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';'));

@@ -43,12 +43,26 @@ jobs:
           cp out/index.json diag/ 2>/dev/null || true
           python - <<'PY' >> diag/loader.txt 2>&1 || true
           import gzip, json, collections
+          import gunb_loader as g
           p = json.load(gzip.open('out/mazowieckie.json.gz'))
-          print(json.dumps(p['meta'], ensure_ascii=False, indent=1)[:6000])
-          f = p['fields']; rows = p['rows']
-          for r in rows[:15]: print(dict(zip(f, r)))
-          print('STAN', collections.Counter(r[f.index('stan')] for r in rows).most_common(15))
-          print('TYP', collections.Counter(r[f.index('typ')] for r in rows).most_common(10))
+          m = p['meta']['members'][0]
+          print('MAPPING', json.dumps(m['mapping'], ensure_ascii=False))
+          print('ROWS', m['rows'], 'KEPT', m['kept'])
+          f = p['fields']; rows = [dict(zip(f, r)) for r in p['rows']]
+          recs = {}
+          for d in rows:
+              k = d['key'] or (d['nr_urzad'] + d['organ'])
+              recs.setdefault(k, {**d, 'parcels': []})['parcels'].append(d['dzialka'])
+          print('RECORDS (grouped)', len(recs))
+          def sc(d): return g.smart_score(d['nazwa'], d['rodzaj'], g.normalize_categories(d['kategoria']), g.parse_kubatura(d['kubatura']))
+          wol = [d for d in recs.values() if (d['jednostka'] or d['terc']).startswith('1434')]
+          good = sorted([d for d in wol if sc(d) >= 40], key=lambda d: d['data_wplywu'], reverse=True)
+          print('WOLOMIN records', len(wol), 'smart>=40', len(good))
+          for d in good[:40]:
+              print(sc(d), d['data_wplywu'][:10], d['kategoria'], '|', d['cel'][:12], '|', d['nazwa'][:90], '|', d['inwestor'][:40], '| kub', d['kubatura'], '| dz', len(d['parcels']), d['jednostka'], d['obreb'], d['parcels'][0])
+          print('--- Wołomin odrzucone z kat. XVIII/XVII (score<40):')
+          for d in [d for d in wol if sc(d) < 40 and set(g.normalize_categories(d['kategoria'])) & {'XVIII', 'XVII'}][:20]:
+              print(sc(d), d['data_wplywu'][:10], d['kategoria'], '|', d['nazwa'][:100])
           PY
       - name: Zapisz wynik na gałęzi diag
         if: always()

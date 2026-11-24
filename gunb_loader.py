@@ -57,12 +57,15 @@ CANON_FIELDS = [
     "key", "nr_urzad", "data_wplywu", "data_decyzji", "typ", "organ", "woj", "powiat",
     "gmina", "terc", "miejscowosc", "ulica", "nr_domu", "kategoria", "nazwa", "rodzaj",
     "kubatura", "jednostka", "obreb", "dzialka", "arkusz", "inwestor", "stan",
+    "cel", "projektant", "projektant_imie", "nr_decyzji",
 ]
 
 # (pole, wzorce w kolejności preferencji, wykluczenia) — nagłówki po normalizacji
 COLUMN_RULES = [
-    ("key", ["numer_ewidencyjny_system", "id_wniosku", "identyfikator"], []),
-    ("nr_urzad", ["numer_ewidencyjny_urzad", "numer_ewidencyjny", "znak_sprawy", "nr_sprawy", "numer_sprawy", "znak"], ["system"]),
+    ("key", ["numer_gunb", "numer_ewidencyjny_system", "id_wniosku", "identyfikator"], []),
+    ("nr_decyzji", ["numer_decyzji_urzedu", "numer_decyzji", "nr_decyzji"], []),
+    ("nr_urzad", ["numer_urzad", "numer_ewidencyjny_urzad", "numer_ewidencyjny", "znak_sprawy", "nr_sprawy", "numer_sprawy", "znak"], ["system", "decyz", "gunb", "uprawn"]),
+    ("cel", ["nazwa_zamierzenia_bud", "rodzaj_zamierzenia_bud", "cel_inwestycji"], []),
     ("data_decyzji", ["data_wydania_decyzji", "data_wydania", "data_decyzji"], []),
     ("data_wplywu", ["data_wplywu_wniosku_do_urzedu", "data_wplywu", "data_zlozenia", "data_wniosku", "data_wplyw"], []),
     ("typ", ["typ_dokumentu", "rodzaj_dokumentu", "typ", "rejestr", "dokument"], ["inwest", "obiekt", "zamierz"]),
@@ -75,14 +78,16 @@ COLUMN_RULES = [
     ("ulica", ["ulica"], ["dalej"]),
     ("nr_domu", ["nr_domu", "numer_domu", "nr_budynku"], []),
     ("kategoria", ["kategoria"], []),
-    ("nazwa", ["nazwa_zam_budowlanego", "nazwa_zam", "nazwa_zamierzenia", "zamierzenie", "nazwa_inwestycji"], ["organ"]),
+    ("nazwa", ["nazwa_zam_budowlanego", "nazwa_zam", "nazwa_zamierzenia", "zamierzenie", "nazwa_inwestycji"], ["organ", "inwestor"]),
     ("rodzaj", ["rodzaj_zam_budowlanego", "rodzaj_zam", "rodzaj_inwestycji", "rodzaj_zamierzenia", "rodzaj_robot"], []),
     ("kubatura", ["kubatura"], []),
-    ("jednostka", ["jednostki_numer", "jednostka_numer", "jednostka_ewid", "jednostki", "jednostka"], ["nazwa"]),
-    ("obreb", ["obreb_numer", "numer_obrebu", "obreb"], ["nazwa"]),
-    ("dzialka", ["numer_dzialki", "nr_dzialki", "dzialki", "dzialka"], ["arkusz"]),
+    ("jednostka", ["jednosta_numer_ew", "jednostka_numer_ew", "jednostki_numer", "jednostka_numer", "jednostka_ewid", "jednosta", "jednostki", "jednostka"], ["nazwa", "stara"]),
+    ("obreb", ["obreb_numer", "numer_obrebu", "obreb"], ["nazwa", "stara"]),
+    ("dzialka", ["numer_dzialki", "nr_dzialki", "dzialki", "dzialka"], ["arkusz", "stara"]),
     ("arkusz", ["arkusz"], []),
-    ("inwestor", ["nazwa_inwestora", "inwestor", "wnioskodawca"], []),
+    ("inwestor", ["nazwa_inwestor", "nazwa_inwestora", "inwestor", "wnioskodawca"], []),
+    ("projektant", ["projektant_nazwisko", "projektant"], ["imie", "uprawn"]),
+    ("projektant_imie", ["projektant_imie"], []),
     ("stan", ["stan_prawny", "stan_sprawy", "stan", "status"], ["budow", "obiekt"]),
 ]
 
@@ -120,7 +125,7 @@ def map_columns(headers: list[str]) -> dict[str, int]:
                     break
         if field == "nazwa" and idx == -1:
             for i, h in enumerate(norm):
-                if i not in used and "nazwa" in h and "organ" not in h:
+                if i not in used and "nazwa" in h and "organ" not in h and "inwestor" not in h:
                     idx = i
                     break
         if idx != -1:
@@ -220,11 +225,17 @@ NEG_INFRA = re.compile(
     r"o[sś]wietleni|fotowolt|elektrowni|transformator|kablow|[sś]wiat[lł]owod|telekomunik|maszt|ogrodzeni"
 )
 NEG_DEMO = re.compile(r"rozbi[oó]rk")
+MAIN_INFRA = re.compile(
+    r"^(?:\S+\s+){0,2}(?:instalacj|sieci|sie[cć]\b|przy[lł][aą]cz|lini[ia]|kabl|gazoci[aą]g|wodoci[aą]g|kanaliz|"
+    r"stacj[iay]\s+(?:transf|[lł]adowania|bazow|elektroenerget)|zbiornik[aóo]?w?\s+(?:na\s+gaz|lpg|gazu)|fotowolt|elektrowni|"
+    r"farm[yaę]\s+(?:fotow|wiatr|pv)|bess\b|mikroinstalac|o[sś]wietleni|drog|chodnik|ogrodzeni|masztu|wie[zż]y\s+telekom)"
+)
 CAT_W = {"XVIII": 35, "XVII": 25, "XIX": 20, "XX": 20, "XVI": 15, "XV": 15, "II": 15}
 
 
 def smart_score(nazwa: str, rodzaj: str, cats: list[str], kub: int) -> int:
     n = re.sub(r"hal[a-ząćęłńóśźż]*\s+gara[zż]\S*", " garaż ", (nazwa or "").lower())
+    n = re.sub(r"magazyn[a-ząćęłńóśźż]*\s+energii", " bess ", n)
     r = (rodzaj or "").lower()
     score = 0
     strong = False
@@ -246,7 +257,7 @@ def smart_score(nazwa: str, rodzaj: str, cats: list[str], kub: int) -> int:
     resid = bool(NEG_RES.search(n)) or r.startswith("budynek mieszkalny") or "XIII" in cats
     if resid and not strong:
         score -= 40
-    if NEG_INFRA.search(n) and not strong:
+    if (NEG_INFRA.search(n) and not strong) or MAIN_INFRA.search(n.strip()):
         score -= 50
     if (NEG_DEMO.search(n) or NEG_DEMO.search(r)) and not strong:
         score -= 30
@@ -281,8 +292,16 @@ def filter_rows(text_stream, days: int | None, smart_min: int, max_rows: int):
     sep = detect_separator(header_line)
     headers = next(csv.reader([header_line], delimiter=sep))
     mapping = map_columns(headers)
-    quoted = header_line.lstrip("\ufeff").startswith('"')
-    reader = csv.reader(text_stream, delimiter=sep, quoting=csv.QUOTE_MINIMAL if quoted else csv.QUOTE_NONE)
+    # cudzysłowy wykrywamy w pierwszych wierszach danych (GUNB zapisuje puste pola jako "")
+    peek = [text_stream.readline() for _ in range(50)]
+    sample = header_line + "".join(peek)
+    quoted = bool(re.search(r'(^|[' + re.escape(sep) + r'])"', sample, re.M))
+
+    def lines():
+        yield from (l for l in peek if l)
+        yield from text_stream
+
+    reader = csv.reader(lines(), delimiter=sep, quoting=csv.QUOTE_MINIMAL if quoted else csv.QUOTE_NONE)
 
     cutoff = (dt.date.today() - dt.timedelta(days=days)).isoformat() if days else ""
     idx = [mapping.get(f, -1) for f in CANON_FIELDS]
@@ -295,7 +314,13 @@ def filter_rows(text_stream, days: int | None, smart_min: int, max_rows: int):
 
     stats = {"rows": 0, "kept": 0}
     out = []
-    for row in reader:
+    while True:
+        try:
+            row = next(reader)
+        except StopIteration:
+            break
+        except csv.Error:
+            continue
         stats["rows"] += 1
         if len(row) < 3:
             continue

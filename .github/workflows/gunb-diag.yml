@@ -1,0 +1,63 @@
+name: Test dostępu do GUNB (jednorazowy)
+
+on:
+  push:
+    branches: [auto-dane-gunb]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test połączenia i pobranie danych
+        run: |
+          mkdir -p diag
+          {
+            echo "== runner IP =="; curl -s --max-time 20 https://api.ipify.org || true; echo
+            echo "== HEAD wynik_mazowieckie.zip =="
+            curl -sS -I --max-time 60 https://wyszukiwarka.gunb.gov.pl/pliki_pobranie/wynik_mazowieckie.zip 2>&1 || true
+            echo "== HEAD pobranie.html =="
+            curl -sS -I --max-time 60 https://wyszukiwarka.gunb.gov.pl/pobranie.html 2>&1 | head -5 || true
+          } > diag/net.txt 2>&1
+          curl -sS --max-time 600 -o mazowieckie.zip https://wyszukiwarka.gunb.gov.pl/pliki_pobranie/wynik_mazowieckie.zip && ls -la mazowieckie.zip >> diag/net.txt 2>&1 || echo "DOWNLOAD FAILED" >> diag/net.txt
+          if [ -s mazowieckie.zip ]; then
+            python - <<'PY' > diag/sample.txt 2>&1 || true
+          import zipfile, io
+          z = zipfile.ZipFile('mazowieckie.zip')
+          for i in z.infolist(): print('ENTRY', i.filename, i.file_size, i.compress_type)
+          for i in z.infolist()[:3]:
+              with z.open(i) as fh:
+                  t = io.TextIOWrapper(fh, encoding='utf-8-sig', errors='replace')
+                  for n in range(6): print(repr(t.readline()[:1500]))
+          PY
+          fi
+          python gunb_loader.py --regions mazowieckie --days 365 --out-dir out > diag/loader.txt 2>&1 || true
+          cp out/index.json diag/ 2>/dev/null || true
+          python - <<'PY' >> diag/loader.txt 2>&1 || true
+          import gzip, json, collections
+          p = json.load(gzip.open('out/mazowieckie.json.gz'))
+          print(json.dumps(p['meta'], ensure_ascii=False, indent=1)[:6000])
+          f = p['fields']; rows = p['rows']
+          for r in rows[:15]: print(dict(zip(f, r)))
+          print('STAN', collections.Counter(r[f.index('stan')] for r in rows).most_common(15))
+          print('TYP', collections.Counter(r[f.index('typ')] for r in rows).most_common(10))
+          PY
+      - name: Zapisz wynik na gałęzi diag
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd diag
+          git init -q -b diag
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "diag $(date -u +%FT%TZ)"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" diag

@@ -867,7 +867,8 @@
           if (parts.length > 2) t = parts.slice(0, -1).join('') + '.' + parts[parts.length - 1];
         }
         const n = parseFloat(t);
-        return Number.isFinite(n) ? Math.round(n) : 0;
+        // największe hale w Polsce to ~1–2 mln m³; większe wartości to błędy wpisu w RWDZ
+        return Number.isFinite(n) && n < 10_000_000 ? Math.round(n) : 0;
       }
 
       const ROMAN_RE = /^(XXX|XX[IVX]?I{0,3}|X{0,2}(IX|IV|V?I{0,3}))$/;

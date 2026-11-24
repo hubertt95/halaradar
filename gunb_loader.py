@@ -162,9 +162,10 @@ def parse_kubatura(s: str) -> int:
             head, _, tail = t.rpartition(".")
             t = head.replace(".", "") + "." + tail
     try:
-        return int(round(float(t)))
+        v = float(t)
     except ValueError:
         return 0
+    return int(round(v)) if v < 10_000_000 else 0  # większe wartości to błędy wpisu w RWDZ
 
 
 _ROMAN = re.compile(r"^(XXX|XX[IVX]?I{0,3}|X{0,2}(IX|IV|V?I{0,3}))$")

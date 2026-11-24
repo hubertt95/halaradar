@@ -1,0 +1,11 @@
+ENTRY wynik_mazowieckie.csv
+FOUND 2019-05-16 2019-06-26 ST-MZ-CI/WNIOSEK/20633/2019 LUWIX Zajkowski Sp. J.
+FOUND 2017-05-17 2017-06-29 ST-MZ-WY/WNIOSEK/17386/2017 Wyszyńska-Zajkowska ilona i Zajkowski Tomasz
+FOUND 2022-07-04 2022-08-25 ST-MZ-CI/WNIOSEK/23587/2022 LUWIX Zajkowski Spółka Jawna
+FOUND 2021-09-20 2021-12-16 ST-MZ-WO/WNIOSEK/40599/2021 Monraf Rafał Ciok
+FOUND 2018-12-18 2019-01-25 ST-MZ-CI/WNIOSEK/48350/2018 LUWIX Zajkowski Sp. .J.
+FOUND 2019-01-21 2019-01-29 ST-MZ-WY/WNIOSEK/2685/2019 Wyszyńska-Zajkowska Ilona i Zajkowski Tomasz
+rows by year [('2013', 1), ('2014', 2), ('2015', 178), ('2016', 71408), ('2017', 76854), ('2018', 75051), ('2019', 75768), ('2020', 76683), ('2021', 77309), ('2022', 60562), ('2023', 50698), ('2024', 50093), ('2025', 51149), ('2026', 33969)]
+empty decision date by year []
+numer_gunb kinds [('WNIOSEK', 699725)]
+max data_wplywu 2026-11-18

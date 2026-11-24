@@ -1,0 +1,52 @@
+mazowieckie: 4102 wierszy, błąd: None
+MAPPING {"key": "numer_gunb", "nr_decyzji": "numer_decyzji_urzedu", "nr_urzad": "numer_urzad", "cel": "nazwa_zamierzenia_bud", "data_decyzji": "data_wydania_decyzji", "data_wplywu": "data_wplywu_wniosku", "organ": "nazwa_organu", "woj": "wojewodztwo", "terc": "terc", "miejscowosc": "miasto", "ulica": "ulica", "nr_domu": "nr_domu", "kategoria": "kategoria", "nazwa": "nazwa_zam_budowlanego", "rodzaj": "rodzaj_inwestycji", "kubatura": "kubatura", "jednostka": "jednosta_numer_ew", "obreb": "obreb_numer", "dzialka": "numer_dzialki", "arkusz": "numer_arkusza_dzialki", "inwestor": "nazwa_inwestor", "projektant": "projektant_nazwisko", "projektant_imie": "projektant_imie"}
+ROWS 699725 KEPT 4102
+RECORDS (grouped) 2141
+WOLOMIN records 93 smart>=40 74
+100 2026-09-24 XVIII | budowa noweg | Budowa budynku magazynowego z częścią biurowo-socjalną |  | kub 2960.67 | dz 1 143401_1 0002 128
+100 2026-09-17 XVIII | budowa noweg | Budowa budynku magazynowego z częścią biurową oraz szczelnego osadnika na ścieki 9,5 m3 -  | 4 SAFETY SPÓŁKA Z OGRANICZONĄ ODPOWIEDZI | kub 15501 | dz 1 143407_2 0016 453/38
+65 2026-09-14 XVII | budowa noweg | Budowa budynku usługowego - siedziba Ośrodka Pomocy Społecznej w Wołominie wraz z parkingi | Gmina Wołomin | kub 7127.72 | dz 2 143412_4 0028 103
+80 2026-09-03 XVIII | rozbudowa is | Przebudowa budynku magazynowego. |  | kub 906 | dz 1 143409_5 0018 488/1
+80 2026-09-03 XVIII | rozbudowa is | Przebudowa budynku magazynowego. | Alpida Sp. z o.o. | kub 906 | dz 1 143409_5 0018 488/4
+45 2026-09-02 XI | budowa noweg | Budowa dwóch budynków usługowych - usługi medyczne (hospicjum) wraz z niezbędną infrastruk | Hospicjum Opatrzności Bożej Księża Orion | kub 21940.5 | dz 4 143412_4 0014 136/1
+85 2026-08-28 XVIII | budowa noweg | Budowa budynku usługowego - na potrzeby istniejącej działalności gospodarczej "RYD-JAJ RYD |  | kub 7107.9 | dz 2 143412_5 0001 115
+65 2026-08-25 XIX | wykonanie ro | Budowa zbiornika 33.000 m3 do magazynowania produktów naftowych III klasy wraz z infrastru | PERN S.A. | kub  | dz 1 143407_2 0012 94/1
+45 2026-08-20 XXVII | budowa noweg | projekt zamienny dotyczący budowy dwóch budynków usługowych. | MAR-BUD Mariusz Browarny | kub 10000 | dz 1 143409_5 0004 49/4
+50 2026-08-19 I | budowa noweg | Budowa budynku rzemiosła produkcyjnego wraz z niezbędną infrastrukturą techniczną - projek |  | kub 2285.69 | dz 2 143401_1 0037 23/9
+85 2026-08-17 III | wykonanie ro | Przebudowa budynku handlowo-usługowego " Centrum Handlowe M1" wraz z przebudową przegród z | BRUIN Sp. z. o.o. | kub 359402 | dz 10 143402_1 0056 50/2
+100 2026-08-11 XVIII | wykonanie ro | Przebudowa istniejącego budynku produkcyjno-magazynowego wraz ze zmianą sposobu użytkowani | INTERFIBER SPÓŁKA Z OGRANICZONĄ ODPOWIED | kub 34900 | dz 2 143407_2 0008 949/2
+100 2026-08-06 XVIII | budowa noweg | Budowa budynku produkcyjno-magazynowego |  | kub 21309 | dz 14 143412_5 0028 8/2
+55 2026-08-05 II | rozbudowa is | Rozbudowa budynku inwentarskiego. |  | kub 11842.6 | dz 2 143409_5 0013 272
+60 2026-07-27 XVII | budowa noweg | Budowa budynku usługowego (usługi poligraficzne) wraz z infrastrukturą techniczną |  | kub 2370 | dz 2 143412_5 0008 50/2
+45 2026-07-24 VIII | wykonanie ro | Rozbudowa i przebudowa wraz ze zmianą sposobu użytkowania budynku byłej lecznicy weterynar | Gmina Jadów | kub  | dz 1 143406_4 0001 386/1
+50 2026-07-14 XVII | budowa noweg | Budowa budynku usługowego. | Optimum Paweł Florczak | kub 176.88 | dz 1 143409_5 0018 813/23
+90 2026-07-13 XVI | budowa noweg | Budowa budynku usługowo-biurowego z hurtownią |  | kub 3380.72 | dz 1 143401_1 0007 187/7
+50 2026-07-08 XVII | budowa noweg | Budowa budynku handlowo-usługowego wraz z niezbędną infrastrukturą techniczną. Infrastrukt | DINO POLSKA S.A. | kub 3133.6 | dz 4 143407_2 0016 44/13
+60 2026-07-07 VIII | wykonanie ro | Przebudowa części budynku hali C produkcyjno-usługowo-magazynowy wraz ze zmianą sposobu uż | AWI Poland Sp. zo.o. | kub  | dz 20 143409_5 0004 138/4
+70 2026-07-03 VIII | budowa noweg | Budowa 3 budynków handlowo-usługowych C, D, E wraz z infrastrukturą towarzyszącą w tym par | ZENOR Sp. zo.o. | kub 18546.6 | dz 5 143409_5 0004 100/15
+45 2026-06-29 XI | rozbudowa is | Rozbudowa i przebudowa istniejącego budynku usługowego domu pomocy społecznej wraz z niezb |  | kub 12416.5 | dz 3 143411_5 0010 271
+50 2026-06-24 XVII | budowa noweg | Budowa budynku usługowego wraz z infrastrukturą techniczną w postaci szczelnego zbiornika  |  | kub 1488.6 | dz 1 143412_5 0005 17/7
+90 2026-06-23 XVIII | budowa noweg | Budowa budynku produkcyjnego | TRANS-PÓLKO Andrzej Marciniak, Emilian S | kub 3871.02 | dz 1 143405_2 0011 202/9
+45 2026-06-22 XXVIII | budowa noweg | Budowa estakady dla rurociągu wahadła oparów w ramach zadania: "Dostosowanie zbiornika nr  | PERN S.A. | kub  | dz 1 143407_2 0012 94/1
+70 2026-06-09 XVII | budowa noweg | Budowa budynku usługowego z urządzeniami budowlanymi. | MGN INVEST Sp. z o.o. | kub 26565 | dz 7 143409_5 0013 1345/2
+100 2026-05-27 XVI | budowa noweg | Budowa hali magazynowej z częścią socjalno biurową. | Tuplex Sp. z o.o. | kub 241584 | dz 4 143409_5 0007 24/2
+50 2026-05-27 XVI | budowa noweg | Budowa budynku usługowego. |  | kub 2021.14 | dz 1 143409_4 0020 73/1
+45 2026-05-26 XVII | budowa noweg | Myjnia samochodowa bezdotykowa wraz z niezbędną infrastrukturą techniczną i obsługą komuni | REN-TRANS Mariusz Stępień | kub 300.65 | dz 3 143412_5 0011 310/6
+100 2026-05-25 XVII | budowa noweg | Budowa pawilonu handlowo- usługowego, pylonu informacyjnego i naziemnego parkingu. |  | kub 409120 | dz 1 143409_5 0004 101/9
+100 2026-05-22 XVIII | budowa noweg | Budowa hali magazynowej z częścią biurową oraz wiatą. |  | kub 2214.66 | dz 1 143409_5 0005 82/21
+50 2026-05-14 XVII | budowa noweg | budowa budynku usługowego | Mariusz Murawski prowadzący działalność  | kub 1011.07 | dz 1 143401_1 0029 12/1
+50 2026-05-08 XVI | budowa noweg | Budowa budynku biurowo-usługowego dwulokalowy |  | kub 1159.92 | dz 1 143412_4 0035 5/2
+85 2026-05-07 XVII | budowa noweg | Budowa budynku biurowo-handlowo-usługowego |  | kub 115 | dz 1 143412_4 0033 27/2
+95 2026-04-29 XVIII | budowa noweg | Budowa budynku magazynowego. | MGR Zabudowy S.C. Mateusz Idzikowski, Gr | kub 3527 | dz 1 143402_1 0028 63
+40 2026-04-29 IX | nadbudowa is | Przebudowa, nadbudowa, rozbudowa i remont budynku usługowego - projekt zamienny | Miasto Zielonka | kub 3355 | dz 2 143404_1 0053 9/260
+100 2026-04-24 XVIII | budowa noweg | Hala produkcyjno-magazynowa wraz z częściami socjalno-biurowymi, pompownią, zbiornikiem wo | Libra Food Ingredients Sp. z o.o. | kub 72255.6 | dz 3 143407_2 0005 16
+100 2026-04-24 XVII | budowa noweg | Budowa hali magazynowej z częścią socjalno-biurową wraz z niezbędną infrastrukturą technic | Betta Sp. zo.o. | kub 32870 | dz 1 143409_5 0006 433/2
+90 2026-04-16 XVII | budowa noweg | Budowa budynku usługowo-handlowego z zagospodarowaniem terenu, szczelnym zbiornikiem na ni |  | kub 3813.2 | dz 2 143407_2 0016 426/7
+85 2026-04-16 XXVIII | rozbudowa is | Rozbudowa magazynu wysokiego składowania spółki Henry kruse Sp. z o.o. | Henry Kruse Nieruchomości Sp. z o.o. | kub 56541 | dz 1 143402_1 0029 12
+--- Wołomin odrzucone z kat. XVIII/XVII (score<40):
+25 2026-10-06 XVIII | Budowa instalacji gazowej dla budynku produkcyjnego.
+35 2026-09-02 XVIII | Budowa układu kogeneracyjnego o mocy 0,999 MWe zasilanego gazem w obudowie technicznej oraz trafosta
+35 2026-09-02 XVIII | Budowa układu kogeneracyjnego o mocy 0,999 MWe zasilanego gazem w obudowie technicznej oraz trafosta
+30 2026-06-18 XVII | Rozbudowa i przebudowa budynku usługowego z wbudowanymi lokalami mieszkalnymi
+25 2026-05-20 XVII | Budowa instalacji gazowej dla budynku usługowo-handlowego
+25 2026-01-29 XVII | Budowa budynku usługowego z wbudowanymi lokalami mieszkalnymi

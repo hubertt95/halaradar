@@ -1,0 +1,20 @@
+== runner IP ==
+4.154.47.32
+== HEAD wynik_mazowieckie.zip ==
+HTTP/1.1 200 OK
+Date: Tue, 24 Nov 2026 10:04:37 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Last-Modified: Mon, 23 Nov 2026 22:35:07 GMT
+ETag: "2cacda3-660f934b6ef93"
+Accept-Ranges: bytes
+Content-Length: 46845347
+Connection: close
+Content-Type: application/zip
+
+== HEAD pobranie.html ==
+HTTP/1.1 200 OK
+Date: Tue, 24 Nov 2026 10:04:38 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Last-Modified: Fri, 19 Jan 2024 11:16:23 GMT
+ETag: "2274-60f4a9c354fc0"
+-rw-r--r-- 1 runner runner 46845347 Nov 24 10:04 mazowieckie.zip

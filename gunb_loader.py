@@ -7,19 +7,29 @@ gunb_loader.py — pobieranie i wstępne filtrowanie danych RWDZ (GUNB) dla Hala
     separator jest wykrywany automatycznie: '#', ';', tabulator, ',' lub '|').
 
 Moduł nie zależy od Streamlit, więc można go testować i uruchamiać samodzielnie:
-    python gunb_loader.py mazowieckie 365 > dane.json
+    python gunb_loader.py --regions mazowieckie,slaskie --days 365 --out-dir out
+(tak robi codzienny GitHub Action: zapisuje out/<region>.json.gz na gałąź „data”).
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime as dt
+import gzip
 import io
+import os
 import json
 import re
 import sys
 import urllib.request
 import zipfile
+
+try:
+    from zoneinfo import ZoneInfo
+    _TZ = ZoneInfo("Europe/Warsaw")
+except Exception:  # brak bazy stref czasowych
+    _TZ = None
 
 GUNB_URL = "https://wyszukiwarka.gunb.gov.pl/pliki_pobranie/wynik_{slug}.zip"
 
@@ -315,7 +325,7 @@ def filter_rows(text_stream, days: int | None, smart_min: int, max_rows: int):
 
 def build_payload(slug: str, days: int = 365, smart_min: int = 25, max_rows: int = 40000, raw: bytes | None = None) -> dict:
     """Pełny pakiet danych dla index.html (wstrzykiwany jako window-owa stała SERVER_PAYLOAD)."""
-    fetched = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
+    fetched = dt.datetime.now(_TZ).strftime("%Y-%m-%d %H:%M")
     meta = {
         "source": "GUNB RWDZ",
         "region": slug,
@@ -350,9 +360,50 @@ def payload_to_js(payload: dict) -> str:
     return s.replace("</", "<\\/").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
+def load_snapshot(url: str, timeout: int = 60) -> dict | None:
+    """Wczytuje dzienną kopię (JSON.gz) opublikowaną przez GitHub Action. Zwraca None przy błędzie."""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "HalaRadar/2.0"})
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            raw = resp.read()
+        if raw[:2] == b"\x1f\x8b":
+            raw = gzip.decompress(raw)
+        data = json.loads(raw.decode("utf-8"))
+        return data if isinstance(data, dict) and "rows" in data else None
+    except Exception:
+        return None
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="Pobiera i filtruje dane GUNB RWDZ dla HalaRadar.")
+    ap.add_argument("--regions", default="mazowieckie", help="lista województw po przecinku, np. mazowieckie,slaskie")
+    ap.add_argument("--days", type=int, default=365, help="ile dni wstecz (data wpływu)")
+    ap.add_argument("--out-dir", default="", help="katalog na pliki <region>.json.gz (bez tego: JSON na stdout)")
+    args = ap.parse_args(argv)
+
+    slugs = [r.strip().lower() for r in args.regions.split(",") if r.strip()]
+    index, ok = {}, 0
+    for slug in slugs:
+        p = build_payload(slug, args.days)
+        meta = p["meta"]
+        print(f"{slug}: {len(p['rows'])} wierszy, błąd: {meta.get('error')}", file=sys.stderr)
+        index[slug] = {k: meta.get(k) for k in ("fetched_at", "days", "kept_rows", "error")}
+        if not args.out_dir:
+            print(payload_to_js(p))
+            continue
+        if p["rows"]:
+            os.makedirs(args.out_dir, exist_ok=True)
+            body = json.dumps(p, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            with open(os.path.join(args.out_dir, f"{slug}.json.gz"), "wb") as fh:
+                fh.write(gzip.compress(body, compresslevel=9, mtime=0))
+            ok += 1
+    if args.out_dir:
+        os.makedirs(args.out_dir, exist_ok=True)
+        with open(os.path.join(args.out_dir, "index.json"), "w", encoding="utf-8") as fh:
+            json.dump({"generated_at": dt.datetime.now(_TZ).strftime("%Y-%m-%d %H:%M"), "regions": index}, fh, ensure_ascii=False, indent=1)
+        return 0 if ok else 1
+    return 0
+
+
 if __name__ == "__main__":
-    region = sys.argv[1] if len(sys.argv) > 1 else "mazowieckie"
-    days_arg = int(sys.argv[2]) if len(sys.argv) > 2 else 365
-    p = build_payload(region, days_arg)
-    print(json.dumps(p["meta"], ensure_ascii=False, indent=2), file=sys.stderr)
-    print(payload_to_js(p))
+    sys.exit(main())

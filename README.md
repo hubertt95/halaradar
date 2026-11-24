@@ -11,13 +11,20 @@ Mapa i tabela wniosków o pozwolenie na budowę obiektów kubaturowych (hale mag
 | `requirements.txt` | `streamlit` |
 
 ## Uruchomienie
-**Streamlit Cloud:** wrzuć wszystkie pliki do repozytorium → share.streamlit.io → `app.py` → Deploy.
-Dane z GUNB pobierają się same (cache 6 h). Parametry adresu: `?region=slaskie&dni=730`.
+**Streamlit Cloud:** share.streamlit.io → to repozytorium → `app.py` → Deploy.
+Dane odświeżają się same, bez ręcznego wgrywania:
+- przy pierwszym otwarciu danego dnia (po 5:00) serwer pobiera świeży plik z GUNB,
+- gdy GUNB nie odpowiada, używa kopii dziennej z gałęzi `data`, którą co noc tworzy GitHub Action `.github/workflows/gunb-daily.yml`.
 
-**GitHub Pages / lokalnie:** otwórz `index.html`, kliknij **Dane / Import** i upuść ZIP województwa z
-https://wyszukiwarka.gunb.gov.pl/pobranie.html (bez rozpakowywania).
+Parametry adresu: `?region=slaskie`, `?dni=730`, `?odswiez=1` (wymuszenie pobrania).
 
-**Test loadera z konsoli:** `python gunb_loader.py mazowieckie 365 > dane.json`
+**GitHub Pages / lokalnie:** `index.html` sam pobiera kopię dzienną z gałęzi `data` (gdy ta w przeglądarce ma ponad 24 h).
+Ręczny import ZIP z https://wyszukiwarka.gunb.gov.pl/pobranie.html (**Dane / Import**) jest potrzebny tylko dla innych województw lub okresów.
+
+**Kopia dzienna — pierwsze uruchomienie:** zakładka **Actions** → „Dane GUNB (codziennie)” → **Run workflow**
+(można podać kilka województw, np. `mazowieckie,lodzkie`).
+
+**Loader z konsoli:** `python gunb_loader.py --regions mazowieckie --days 365 --out-dir out`
 
 ## Jak to działa
 1. Plik GUNB (ZIP, CSV z separatorem `#`) jest czytany strumieniowo; kolumny są rozpoznawane automatycznie (z podglądem i ręczną korektą w oknie importu).

@@ -715,12 +715,13 @@
           <ol class="list-decimal list-inside space-y-1.5">
             <li>W repozytorium GitHub umieść: <code>index.html</code>, <code>app.py</code>, <code>gunb_loader.py</code>, <code>requirements.txt</code> (wpis: <code>streamlit</code>).</li>
             <li>Na <a href="https://share.streamlit.io/" target="_blank" rel="noopener noreferrer" class="text-emerald-700 font-semibold hover:underline">share.streamlit.io</a> wybierz repozytorium i plik <code>app.py</code> → <strong>Deploy</strong>.</li>
-            <li>Serwer co 6 godzin pobiera z GUNB plik województwa (domyślnie mazowieckie) i odrzuca domy, sieci i stare sprawy. Inne województwo: dopisz do adresu <code>?region=slaskie</code> (albo <code>wielkopolskie</code>, <code>lodzkie</code>, <code>malopolskie</code>…), dłuższy okres: <code>&amp;dni=730</code>.</li>
+            <li>Dane odświeżają się same: przy pierwszym otwarciu danego dnia serwer pobiera plik województwa z GUNB (domyślnie mazowieckie). Gdy GUNB nie odpowiada, używa kopii dziennej z GitHub. Wymuszenie odświeżenia: <code>?odswiez=1</code>. Inne województwo: <code>?region=slaskie</code>, dłuższy okres: <code>&amp;dni=730</code>.</li>
+            <li>Kopię dzienną tworzy co noc GitHub Action „Dane GUNB (codziennie)” (zakładka <strong>Actions</strong> w repozytorium) i zapisuje na gałęzi <code>data</code>.</li>
           </ol>
         </div>
         <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-2">
           <h4 class="font-bold text-sky-950 text-sm">2. GitHub Pages — sam index.html</h4>
-          <p>Strona działa bez serwera, ale dane trzeba wczytać ręcznie: <strong>Dane / Import</strong> → upuść ZIP z <a href="https://wyszukiwarka.gunb.gov.pl/pobranie.html" target="_blank" rel="noopener noreferrer" class="text-sky-700 font-semibold hover:underline">GUNB</a>. Import zostaje zapamiętany w przeglądarce.</p>
+          <p>Bez serwera strona sama pobiera kopię dzienną z gałęzi <code>data</code> (jeśli ta w przeglądarce jest starsza niż 24 h). Ręczny import ZIP z <a href="https://wyszukiwarka.gunb.gov.pl/pobranie.html" target="_blank" rel="noopener noreferrer" class="text-sky-700 font-semibold hover:underline">GUNB</a> (<strong>Dane / Import</strong>) jest potrzebny tylko dla innych województw lub dłuższych okresów.</p>
         </div>
         <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
           <h4 class="font-bold text-slate-900 text-sm">3. Ograniczenia danych RWDZ</h4>
@@ -1003,7 +1004,7 @@
       function powiatFromOrgan(organ) {
         const o = String(organ ?? '').trim();
         let m = o.match(/^Starost(?:a|wo)\s+(?:Powiatu|Powiatowe w)\s+(.+)$/i);
-        if (m) return 'pow. ' + m[1].replace(/\s*\(.*\)$/, '').trim();
+        if (m) return m[1].replace(/\s*\(.*\)$/, '').trim();
         m = o.match(/^Starosta\s+(.+)$/i);
         if (m) return m[1].trim().toLowerCase();
         m = o.match(/^Prezydent\s+(?:Miasta\s+(?:Stołecznego\s+)?|m\.\s*st\.\s*|m\.\s*)([^-–(]+)/i);
@@ -1371,6 +1372,10 @@
     // Wstrzykiwane przez app.py (Streamlit). Na GitHub Pages pozostają null.
     const SERVER_PAYLOAD = /*__HALARADAR_SERVER_DATA__*/null;
     const SERVER_QUERY = /*__HALARADAR_QUERY__*/null;
+    // Dzienna kopia danych publikowana przez GitHub Action (gałąź „data”) — używana bez serwera Streamlit
+    const SNAPSHOT_BASE = 'https://raw.githubusercontent.com/hubertt95/halaradar/data/';
+    const SNAPSHOT_MAX_AGE_H = 24;
+    let snapshotPayload = null;
 
     /* ======================= 1. STAŁE ======================= */
     const WOJEWODZTWA = Object.values(C.WOJ_BY_CODE);
@@ -2490,8 +2495,15 @@
         const n = (SERVER_PAYLOAD.rows || []).length;
         items.push(`<div class="flex items-center justify-between gap-2 p-2.5 rounded-lg border ${m.error ? 'border-rose-200 bg-rose-50' : 'border-slate-200'}">
           <div><div class="font-semibold text-slate-800">Serwer: GUNB RWDZ — woj. ${escapeHtml(m.region_name || m.region || '')}${cur('server')}</div>
-          <div class="text-[11px] text-slate-500">${m.error ? 'Błąd pobierania: ' + escapeHtml(m.error) : `pobrano ${escapeHtml(m.fetched_at || '')} • ${formatNumber(n)} wierszy • ostatnie ${escapeHtml(m.days)} dni`}</div></div>
+          <div class="text-[11px] text-slate-500">${m.error ? 'Błąd pobierania: ' + escapeHtml(m.error) : `pobrano ${escapeHtml(m.fetched_at || '')} ${m.origin === 'snapshot' ? '(kopia dzienna — GUNB nie odpowiedział serwerowi)' : '(na żywo z GUNB)'} • ${formatNumber(n)} wierszy • ostatnie ${escapeHtml(m.days)} dni • odświeżane raz na dobę`}</div></div>
           ${!m.error && n ? '<button data-src="server" class="px-2.5 py-1 rounded-md bg-slate-900 text-white text-[11px] font-semibold">Użyj</button>' : ''}</div>`);
+      }
+      if (!SERVER_PAYLOAD) {
+        const m = snapshotPayload?.meta || {};
+        items.push(`<div class="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-slate-200">
+          <div><div class="font-semibold text-slate-800">Automatyczna kopia dzienna GUNB (GitHub)${cur('snapshot')}</div>
+          <div class="text-[11px] text-slate-500">${snapshotPayload ? `woj. ${escapeHtml(m.region_name || m.region)} • pobrano ${escapeHtml(m.fetched_at || '')} • odświeżana co noc` : 'jeszcze niedostępna — uruchom akcję „Dane GUNB” na GitHubie'}</div></div>
+          <button data-src="snapshot" class="px-2.5 py-1 rounded-md bg-slate-900 text-white text-[11px] font-semibold">${snapshotPayload ? 'Odśwież' : 'Spróbuj'}</button></div>`);
       }
       if (saved && saved.records) {
         items.push(`<div class="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-slate-200">
@@ -2508,6 +2520,12 @@
       list.querySelectorAll('[data-src]').forEach(b => b.addEventListener('click', async () => {
         const src = b.dataset.src;
         if (src === 'server') loadServerData();
+        else if (src === 'snapshot') {
+          b.textContent = '…';
+          snapshotPayload = await fetchSnapshot(currentRegionSlug(), true);
+          if (!snapshotPayload || !(snapshotPayload.rows || []).length) { showToast('Kopia dzienna jest niedostępna (akcja GitHub jeszcze nie działała?).', 'error'); renderSourcesList(); return; }
+          loadPayloadData(snapshotPayload, 'snapshot');
+        }
         else if (src === 'demo') { setRecords(buildDemoRecords(), { kind: 'demo', label: 'Dane demo (fikcyjne)', meta: null }); }
         else if (src === 'import') { if (!(await loadSavedImport())) return; }
         else if (src === 'import-del') { await idbDel('lastImport'); renderSourcesList(); return; }
@@ -2516,11 +2534,48 @@
       }));
     }
 
-    function loadServerData() {
-      const recs = recordsFromServerPayload(SERVER_PAYLOAD);
-      const m = SERVER_PAYLOAD.meta || {};
-      setRecords(recs, { kind: 'server', label: `GUNB • woj. ${m.region_name || m.region} (${formatNumber(recs.length)})`, meta: m });
+    function shortDate(s) { const m = String(s || '').match(/^\d{4}-(\d{2})-(\d{2})(?:[ T](\d{2}:\d{2}))?/); return m ? `${m[2]}.${m[1]}${m[3] ? ' ' + m[3] : ''}` : ''; }
+    function payloadAgeHours(m) {
+      const t = Date.parse(String(m?.fetched_at || '').replace(' ', 'T'));
+      return Number.isFinite(t) ? (Date.now() - t) / 3600e3 : Infinity;
+    }
+    function loadPayloadData(payload, kind) {
+      const recs = recordsFromServerPayload(payload);
+      const m = payload.meta || {};
+      const via = kind === 'snapshot' || m.origin === 'snapshot' ? ' • kopia' : '';
+      setRecords(recs, { kind, label: `GUNB • ${m.region_name || m.region} • ${shortDate(m.fetched_at)}${via} (${formatNumber(recs.length)})`, meta: m });
+      if (payloadAgeHours(m) > 36) showToast(`Uwaga: dane GUNB pochodzą z ${m.fetched_at} — nie udało się pobrać nowszych.`, 'error');
       return recs.length;
+    }
+    function loadServerData() { return loadPayloadData(SERVER_PAYLOAD, 'server'); }
+
+    function currentRegionSlug() {
+      const q = readUrlParams().get('region');
+      return /^[a-z-]+$/.test(q || '') ? q : 'mazowieckie';
+    }
+    /** Kopia dzienna z GitHub: z pamięci przeglądarki, jeśli młodsza niż 24 h, inaczej pobierana na nowo. */
+    async function fetchSnapshot(slug, force = false) {
+      const key = 'snapshot_' + slug;
+      const cached = await idbGet(key);
+      if (!force && cached && Date.now() - cached.savedAt < SNAPSHOT_MAX_AGE_H * 3600e3) return cached.payload;
+      try {
+        const resp = await fetch(`${SNAPSHOT_BASE}${slug}.json.gz?t=${Date.now()}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const buf = new Uint8Array(await resp.arrayBuffer());
+        let text;
+        if (buf[0] === 0x1f && buf[1] === 0x8b) {
+          text = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+        } else {
+          text = new TextDecoder().decode(buf);
+        }
+        const payload = JSON.parse(text);
+        if (!payload || !Array.isArray(payload.rows)) throw new Error('zły format');
+        await idbSet(key, { savedAt: Date.now(), payload });
+        return payload;
+      } catch (e) {
+        console.warn('Kopia dzienna niedostępna:', e);
+        return cached ? cached.payload : null;
+      }
     }
     async function loadSavedImport() {
       const saved = await idbGet('lastImport');
@@ -2556,7 +2611,7 @@
     }
     function buildShareUrl(recordId = null) {
       const p = new URLSearchParams();
-      if (dataSource.kind === 'server' && dataSource.meta?.region) p.set('region', dataSource.meta.region);
+      if ((dataSource.kind === 'server' || dataSource.kind === 'snapshot') && dataSource.meta?.region && dataSource.meta.region !== 'mazowieckie') p.set('region', dataSource.meta.region);
       if (dataSource.kind === 'server' && dataSource.meta?.days && Number(dataSource.meta.days) !== 365) p.set('dni', dataSource.meta.days);
       p.set('woj', locState.woj); p.set('pow', locState.powiat);
       p.set('smart', $('smartMatchToggle').checked ? '1' : '0'); p.set('thr', String(smartThreshold()));
@@ -2779,6 +2834,10 @@
       let loaded = false;
       if (SERVER_PAYLOAD && (SERVER_PAYLOAD.rows || []).length) {
         loaded = loadServerData() > 0;
+      }
+      if (!loaded && !SERVER_PAYLOAD) {
+        snapshotPayload = await fetchSnapshot(currentRegionSlug());
+        if (snapshotPayload && (snapshotPayload.rows || []).length) loaded = loadPayloadData(snapshotPayload, 'snapshot') > 0;
       }
       if (!loaded) loaded = await loadSavedImport();
       if (!loaded) setRecords(buildDemoRecords(), { kind: 'demo', label: 'Dane demo (fikcyjne)', meta: null });

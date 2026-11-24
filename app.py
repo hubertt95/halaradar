@@ -1,25 +1,30 @@
 """
-HalaRadar na Streamlit Community Cloud.
+HalaRadar na Streamlit Community Cloud — dane GUNB pobierane automatycznie.
 
-Co robi:
-  1. Pobiera z GUNB aktualny plik RWDZ wybranego województwa (domyślnie mazowieckie),
-  2. odfiltrowuje domy jednorodzinne, sieci i drogi (wstępny Smart Match) oraz stare sprawy,
-  3. wstrzykuje wynik do index.html — aplikacja startuje od razu na prawdziwych danych.
+Skąd biorą się dane (bez ręcznego wgrywania):
+  1. Na żywo z GUNB: przy otwarciu aplikacji, najwyżej raz na dobę (nowa „doba danych”
+     zaczyna się o 5:00 czasu polskiego, po nocnej aktualizacji rejestru GUNB).
+  2. Zapas: dzienna kopia, którą GitHub Action (.github/workflows/gunb-daily.yml)
+     publikuje co noc na gałęzi „data” tego repozytorium. Używana, gdy GUNB nie odpowiada.
 
 Parametry w adresie (opcjonalne):
-  ?region=slaskie   — inne województwo (nazwy jak w pliku GUNB: dolnoslaskie, lodzkie, malopolskie, …)
-  ?dni=730          — ile dni wstecz pobierać (domyślnie 365)
-
-Wymagane pliki w repozytorium: app.py, gunb_loader.py, index.html, requirements.txt (z wpisem: streamlit).
+  ?region=slaskie   — inne województwo (dolnoslaskie, lodzkie, malopolskie, wielkopolskie, …)
+  ?dni=730          — ile dni wstecz (domyślnie 365)
+  ?odswiez=1        — wymuś ponowne pobranie danych teraz
 """
 
+import datetime as dt
 import json
 import pathlib
+from zoneinfo import ZoneInfo
 
 import streamlit as st
 import streamlit.components.v1 as components
 
 import gunb_loader
+
+# Dzienna kopia danych (gałąź „data”, publikowana przez GitHub Action)
+SNAPSHOT_URL = "https://raw.githubusercontent.com/hubertt95/halaradar/data/{slug}.json.gz"
 
 st.set_page_config(
     page_title="HalaRadar — Mapa Wniosków o Pozwolenie na Budowę",
@@ -48,11 +53,30 @@ except ValueError:
     days = 365
 
 
-@st.cache_data(ttl=6 * 3600, show_spinner=False, max_entries=6)
-def load_payload(region_slug: str, days_back: int) -> str:
+def data_day() -> str:
+    """Klucz bufora: zmienia się codziennie o 5:00 czasu polskiego."""
+    now = dt.datetime.now(ZoneInfo("Europe/Warsaw")) - dt.timedelta(hours=5)
+    return now.strftime("%Y-%m-%d")
+
+
+@st.cache_data(ttl=24 * 3600, show_spinner=False, max_entries=8)
+def load_payload(region_slug: str, days_back: int, day_key: str) -> str:
     payload = gunb_loader.build_payload(region_slug, days_back)
+    if payload["rows"]:
+        payload["meta"]["origin"] = "live"
+        return gunb_loader.payload_to_js(payload)
+    # GUNB nie odpowiedział → dzienna kopia z GitHub
+    snap = gunb_loader.load_snapshot(SNAPSHOT_URL.format(slug=region_slug))
+    if snap and snap.get("rows"):
+        snap["meta"]["origin"] = "snapshot"
+        snap["meta"]["live_error"] = payload["meta"].get("error")
+        return gunb_loader.payload_to_js(snap)
+    payload["meta"]["origin"] = "none"
     return gunb_loader.payload_to_js(payload)
 
+
+if params.get("odswiez") == "1":
+    load_payload.clear()
 
 html_path = pathlib.Path(__file__).parent / "index.html"
 try:
@@ -61,8 +85,8 @@ except FileNotFoundError:
     st.error("Nie znaleziono pliku `index.html` obok `app.py` w repozytorium.")
     st.stop()
 
-with st.spinner(f"Pobieranie aktualnych danych GUNB RWDZ (woj. {gunb_loader.REGIONS[region]})… pierwsze uruchomienie trwa do ~1 min."):
-    payload_js = load_payload(region, days)
+with st.spinner(f"Pobieranie aktualnych danych GUNB RWDZ (woj. {gunb_loader.REGIONS[region]})… pierwsze otwarcie danego dnia trwa do ~1 min."):
+    payload_js = load_payload(region, days, data_day())
 
 query_js = json.dumps({k: str(v) for k, v in params.items()}, ensure_ascii=False).replace("</", "<\\/")
 html_code = html_code.replace("/*__HALARADAR_SERVER_DATA__*/null", payload_js, 1)
